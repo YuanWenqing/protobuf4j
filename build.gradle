@@ -1,0 +1,51 @@
+
+apply from: "http://mlook.oss-cn-beijing.aliyuncs.com/open/look.gradle"
+// apply from : "../gradle/look.gradle"
+
+ext {
+    // 本地开发：true，取本地saproto项目中的java文件；false，取saproto.jar
+    local_dev = project.defaultProperty("local_dev", "false")
+}
+// project setting
+subprojects {
+    apply plugin: "java"
+
+    ext.group = "org.protoframework"
+
+    dependencies {
+        // protobuf & grpc
+        compile 'com.google.protobuf:protobuf-java:3.0.0'
+        compile 'io.grpc:grpc-all:1.9.0'
+
+    }
+}
+// config for subprojects
+project(':protoframework-core') {
+    dependencies {
+
+    }
+}
+// config for subprojects
+project(':protoframework-sql') {
+    dependencies {
+        
+    }
+}
+// config for subprojects
+project(':protoframework-dao') {
+    dependencies {
+        
+    }
+}
+// config for subprojects
+project(':protoframework-web') {
+    dependencies {
+        
+    }
+}
+// config for subprojects
+project(':protoframework-grpc') {
+    dependencies {
+        
+    }
+}
