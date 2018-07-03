@@ -58,7 +58,7 @@ public interface IBeanHelper<T> {
    * <li>集合类型: true=不为空</li>
    * </ul>
    *
-   * @throws NoSuchFieldException no field found
+   * @throws RuntimeException no field found
    */
   boolean isFieldSet(T bean, String fieldName);
 
@@ -69,7 +69,7 @@ public interface IBeanHelper<T> {
    * <li>未设置：默认值，其中对于集合类型返回空集合</li>
    * </ul>
    *
-   * @throws NoSuchFieldException no field found
+   * @throws RuntimeException no field found
    * @see #isFieldSet(T, String)
    */
   Object getFieldValue(T bean, String fieldName);
@@ -78,7 +78,7 @@ public interface IBeanHelper<T> {
    * 设置bean的{@code fieldName}字段值为{@code fieldValue}
    *
    * @return new Bean with the field set
-   * @throws NoSuchFieldException no field found
+   * @throws RuntimeException no field found
    */
   T setFieldValue(T bean, String fieldName, Object fieldValue);
 

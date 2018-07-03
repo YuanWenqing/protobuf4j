@@ -13,15 +13,19 @@ subprojects {
     ext.group = "org.protoframework"
 
     dependencies {
-        // protobuf & grpc
-        compile 'com.google.protobuf:protobuf-java:3.0.0'
-        compile 'io.grpc:grpc-all:1.9.0'
 
     }
 }
 // config for subprojects
 project(':protoframework-core') {
     dependencies {
+
+        // protobuf
+        compile 'com.google.protobuf:protobuf-java:3.0.0'
+
+        // util
+        compile 'org.apache.commons:commons-lang3:3.4'
+        compile 'com.google.guava:guava:18.0'
 
     }
 }
@@ -46,6 +50,8 @@ project(':protoframework-web') {
 // config for subprojects
 project(':protoframework-grpc') {
     dependencies {
-        
+
+        compile 'io.grpc:grpc-all:1.9.0'
+
     }
 }
