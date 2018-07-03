@@ -20,7 +20,6 @@ import java.util.Set;
  */
 public class ProtobufHelper<T extends Message> implements IBeanHelper<T> {
   private static final String METHOD_GET_DESCRIPTOR = "getDescriptor";
-  private static final String METHOD_GET_DEFAULT_INSTANCE = "getDefaultInstance";
   private static final String METHOD_NEW_BUILDER = "newBuilder";
 
   private final Class<T> cls;
@@ -101,6 +100,7 @@ public class ProtobufHelper<T extends Message> implements IBeanHelper<T> {
     }
   }
 
+  @SuppressWarnings("unchecked")
   public <R extends Message.Builder> R newBuilder() {
     return (R) invokeStaticMethodUnchecked(METHOD_NEW_BUILDER);
   }
@@ -114,6 +114,7 @@ public class ProtobufHelper<T extends Message> implements IBeanHelper<T> {
     return cls;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public T defaultValue() {
     return (T) internalBuilder.getDefaultInstanceForType();
@@ -171,6 +172,7 @@ public class ProtobufHelper<T extends Message> implements IBeanHelper<T> {
     return bean.getField(fd);
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public T setFieldValue(T bean, String fieldName, Object fieldValue) {
     Descriptors.FieldDescriptor fd = checkField(fieldName);
