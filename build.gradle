@@ -17,7 +17,6 @@ project(':protoframework-core') {
 
         // protobuf
         compile 'com.google.protobuf:protobuf-java:3.0.0'
-        compile 'com.googlecode.protobuf-java-format:protobuf-java-format:1.4'
 
         // util
         compile 'org.apache.commons:commons-lang3:3.4'
