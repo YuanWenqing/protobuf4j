@@ -144,6 +144,14 @@ public class ProtobufHelper<T extends Message> implements IBeanHelper<T> {
     return field2descriptor.get(fieldName);
   }
 
+  public Map<String, Descriptors.FieldDescriptor> getFieldDescriptorMap() {
+    return field2descriptor;
+  }
+
+  public List<Descriptors.FieldDescriptor> getFieldDescriptorList() {
+    return descriptor.getFields();
+  }
+
   @Override
   public Map<String, Class<?>> getFieldTypeMap() {
     return field2type;
