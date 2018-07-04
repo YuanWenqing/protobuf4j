@@ -15,10 +15,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 处理Protobuf Message反射的辅助类
+ *
  * @author: yuanwq
  * @date: 2018/7/2
  */
-public class ProtobufHelper<T extends Message> implements IBeanHelper<T> {
+public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
   private static final String METHOD_GET_DESCRIPTOR = "getDescriptor";
   private static final String METHOD_NEW_BUILDER = "newBuilder";
 
@@ -28,7 +30,7 @@ public class ProtobufHelper<T extends Message> implements IBeanHelper<T> {
   private Map<String, Class<?>> field2type;
   private Message.Builder internalBuilder;
 
-  private ProtobufHelper(Class<T> cls) {
+  private ProtoMessageHelper(Class<T> cls) {
     Preconditions.checkNotNull(cls);
     this.cls = cls;
     doInit();
@@ -121,8 +123,8 @@ public class ProtobufHelper<T extends Message> implements IBeanHelper<T> {
   }
 
   @Override
-  public boolean isEmpty(T bean) {
-    return bean == null || defaultValue().equals(bean);
+  public boolean isEmpty(T msg) {
+    return msg == null || defaultValue().equals(msg);
   }
 
   @Override
@@ -166,35 +168,35 @@ public class ProtobufHelper<T extends Message> implements IBeanHelper<T> {
   }
 
   @Override
-  public boolean isFieldSet(T bean, String fieldName) {
+  public boolean isFieldSet(T msg, String fieldName) {
     Descriptors.FieldDescriptor fd = checkField(fieldName);
     if (fd.isRepeated()) {
-      return !((Collection<?>) bean.getField(fd)).isEmpty();
+      return !((Collection<?>) msg.getField(fd)).isEmpty();
     }
-    return bean.hasField(fd);
+    return msg.hasField(fd);
   }
 
   @Override
-  public Object getFieldValue(T bean, String fieldName) {
+  public Object getFieldValue(T msg, String fieldName) {
     Descriptors.FieldDescriptor fd = checkField(fieldName);
-    return bean.getField(fd);
+    return msg.getField(fd);
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public T setFieldValue(T bean, String fieldName, Object fieldValue) {
+  public T setFieldValue(T msg, String fieldName, Object fieldValue) {
     Descriptors.FieldDescriptor fd = checkField(fieldName);
-    return (T) bean.toBuilder().setField(fd, fieldValue).build();
+    return (T) msg.toBuilder().setField(fd, fieldValue).build();
   }
 
   @Override
-  public String toString(T bean) {
-    if (bean == null) {
+  public String toString(T msg) {
+    if (msg == null) {
       return "null";
     }
     // TextFormat.shortDebugString 中文是类似"\350\212\261\345"这样的编码，无法可视化
     // 所以，我们用下面这种方式，略tricky
-    String line = TextFormat.printToUnicodeString(bean);
+    String line = TextFormat.printToUnicodeString(msg);
     // 把内容中的\r转义，以免在进行文件读取一行时因为\r分行导致出错
     line = line.replace("\r", "\\r");
     // text format中换行都是\n，把它们变成空格
