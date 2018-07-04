@@ -13,13 +13,16 @@ subprojects {
         // Nullable & NonNull
         compile 'com.google.code.findbugs:jsr305:3.0.0'
 
+        // test
+        testCompile 'junit:junit:4.12'
+
     }
 }
 project(':protoframework-core') {
     dependencies {
 
         // protobuf
-        compile 'com.google.protobuf:protobuf-java:3.0.0'
+        compile 'com.google.protobuf:protobuf-java:3.6.0'
 
         // util
         compile 'org.apache.commons:commons-lang3:3.4'
@@ -45,7 +48,7 @@ project(':protoframework-web') {
 project(':protoframework-grpc') {
     dependencies {
 
-        compile 'io.grpc:grpc-all:1.9.0'
+        compile 'io.grpc:grpc-all:1.13.1'
 
     }
 }
