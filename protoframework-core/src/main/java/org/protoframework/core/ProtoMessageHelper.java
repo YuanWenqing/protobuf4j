@@ -4,15 +4,18 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Message;
+import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.TextFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 处理Protobuf Message反射的辅助类
@@ -21,6 +24,28 @@ import java.util.Set;
  * @date: 2018/7/2
  */
 public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
+  @SuppressWarnings("rawtypes")
+  private static ConcurrentHashMap<String, ProtoMessageHelper> helperMap =
+      new ConcurrentHashMap<>();
+
+  @SuppressWarnings("unchecked")
+  public static <T extends Message> ProtoMessageHelper<T> getHelper(@Nonnull Class<T> cls) {
+    Preconditions.checkNotNull(cls);
+    if (!helperMap.contains(cls.getName())) {
+      ProtoMessageHelper<T> helper = new ProtoMessageHelper<>(cls);
+      helperMap.putIfAbsent(cls.getName(), helper);
+    }
+    return helperMap.get(cls.getName());
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends Message> ProtoMessageHelper<T> getHelper(
+      @Nonnull MessageOrBuilder messageOrBuilder) {
+    Preconditions.checkNotNull(messageOrBuilder);
+    return (ProtoMessageHelper<T>) getHelper(
+        messageOrBuilder.getDefaultInstanceForType().getClass());
+  }
+
   private static final String METHOD_GET_DESCRIPTOR = "getDescriptor";
   private static final String METHOD_NEW_BUILDER = "newBuilder";
 
