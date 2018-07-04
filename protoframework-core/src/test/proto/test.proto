@@ -1,0 +1,47 @@
+syntax = "proto3";
+package db.job;
+
+// 测试用的proto定义
+
+option java_package = "org.protoframework.core.proto.data";
+option java_outer_classname = "TestModel";
+
+
+message MsgA {
+  int32 int32 = 1;
+  int64 int64 = 2;
+  float float = 3;
+  double double = 4;
+  string string = 5;
+  bytes bytes = 6;
+  EnumA enuma = 7;
+  MsgB msgb = 8;
+
+  repeated int32 int32_arr = 11;
+  repeated int64 int64_arr = 12;
+  repeated float float_arr = 13;
+  repeated double double_arr = 14;
+  repeated string string_arr = 15;
+  repeated bytes bytes_arr = 16;
+  repeated EnumA enuma_arr = 17;
+  repeated MsgB msgb_arr = 18;
+
+  map<string, int32> int32_map = 21;
+  map<string, int64> int64_map = 22;
+  map<string, float> float_map = 23;
+  map<string, double> double_map = 24;
+  map<string, string> string_map = 25;
+  map<string, bytes> bytes_map = 26;
+  map<string, EnumA> enuma_map = 27;
+  map<string, MsgB> msgb_map = 28;
+}
+
+enum EnumA {
+  EA0 = 0;
+  EA1 = 1;
+  EA2 = 2;
+}
+
+message MsgB {
+  string id = 1;
+}

@@ -1,5 +1,6 @@
 .gradle
-/build/
+build
+gen
 out
 .idea
 

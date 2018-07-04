@@ -1,9 +1,19 @@
 
-apply from: "http://mlook.oss-cn-beijing.aliyuncs.com/open/look.gradle"
-// apply from : "../gradle/look.gradle"
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.6'
+    }
+}
 
 // project setting
 subprojects {
+    repositories {
+        mavenCentral()
+    }
+
     apply plugin: "java"
 
     ext.group = "org.protoframework"
@@ -19,6 +29,20 @@ subprojects {
     }
 }
 project(':protoframework-core') {
+    apply plugin: "com.google.protobuf"
+    protobuf {
+        generatedFilesBaseDir = "$projectDir/gen/"
+        generateProtoTasks {
+            ofSourceSet('test')
+        }
+    }
+    clean {
+        delete protobuf.generatedFilesBaseDir
+    }
+    sourceSets {
+        test.java.srcDir("${protobuf.generatedFilesBaseDir}/test/java")
+    }
+
     dependencies {
 
         // protobuf
