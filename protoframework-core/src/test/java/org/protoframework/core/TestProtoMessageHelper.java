@@ -127,6 +127,43 @@ public class TestProtoMessageHelper {
   }
 
   @Test
+  public void testRepeatedFieldValueType() {
+    assertEquals(Integer.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("int32_arr")));
+    assertEquals(Long.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("int64_arr")));
+    assertEquals(Float.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("float_arr")));
+    assertEquals(Double.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("double_arr")));
+    assertEquals(String.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("string_arr")));
+    assertEquals(ByteString.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("bytes_arr")));
+    assertEquals(TestModel.EnumA.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("enuma_arr")));
+    assertEquals(TestModel.MsgB.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("msgb_arr")));
+
+    assertEquals(MapEntry.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("int32_map")));
+    assertEquals(MapEntry.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("int64_map")));
+    assertEquals(MapEntry.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("float_map")));
+    assertEquals(MapEntry.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("double_map")));
+    assertEquals(MapEntry.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("string_map")));
+    assertEquals(MapEntry.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("bytes_map")));
+    assertEquals(MapEntry.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("enuma_map")));
+    assertEquals(MapEntry.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("msgb_map")));
+  }
+
+  @Test
   public void testFieldSet() {
     assertMsg(TestModel.MsgA.getDefaultInstance(), false);
     assertMsg(allSetMsgA, true);

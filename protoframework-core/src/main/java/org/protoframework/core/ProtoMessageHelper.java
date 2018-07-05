@@ -112,12 +112,17 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
   static Class<?> resolveBasicValueType(Descriptors.FieldDescriptor fd) {
     switch (fd.getJavaType()) {
       case INT:
+        return Integer.class;
       case LONG:
+        return Long.class;
       case FLOAT:
+        return Float.class;
       case DOUBLE:
+        return Double.class;
       case BOOLEAN:
+        return Boolean.class;
       case STRING:
-        return fd.getDefaultValue().getClass();
+        return String.class;
       case BYTE_STRING:
         return ByteString.class;
       default:
@@ -166,8 +171,8 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
       return method.getReturnType();
     } catch (Exception e) {
       throw new RuntimeException(
-          "fail to resolve type of enum field `" + fd.getFullName() + "`, method: " +
-              methodName, e);
+          "fail to resolve type of enum field `" + fd.getFullName() + "`, method: " + methodName,
+          e);
     }
   }
 
