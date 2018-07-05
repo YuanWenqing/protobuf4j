@@ -15,15 +15,17 @@ import java.lang.reflect.Method;
  * @author yuanwq
  */
 public class ProtoEnumCodec<T extends ProtocolMessageEnum> implements ICodec<T> {
-  Class<T> cls;
-  Method parseMethod;
+  private final Class<T> cls;
+  private final Method parseMethod;
+  private final T unrecognized;
 
   public ProtoEnumCodec(@Nonnull Class<T> cls) {
     Preconditions.checkNotNull(cls);
     this.cls = cls;
     try {
-      parseMethod = cls.getDeclaredMethod("valueOf", int.class);
-    } catch (NoSuchMethodException e) {
+      parseMethod = cls.getDeclaredMethod("forNumber", int.class);
+      unrecognized = (T) cls.getField("UNRECOGNIZED").get(null);
+    } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException e) {
       throw new RuntimeException(e);
     }
   }
@@ -38,7 +40,8 @@ public class ProtoEnumCodec<T extends ProtocolMessageEnum> implements ICodec<T> 
     if (data == null) return null;
     Integer num = nativeCodec().decode(data);
     try {
-      return (T) parseMethod.invoke(cls, num.intValue());
+      T ret = (T) parseMethod.invoke(cls, num.intValue());
+      return ret == null ? unrecognized : ret;
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
@@ -47,6 +50,9 @@ public class ProtoEnumCodec<T extends ProtocolMessageEnum> implements ICodec<T> 
   @Override
   public byte[] encode(@Nullable T v) {
     if (v == null) return null;
+    if ("UNRECOGNIZED".equals(String.valueOf(v))) {
+      return nativeCodec().encode(-1);
+    }
     return nativeCodec().encode(v.getNumber());
   }
 

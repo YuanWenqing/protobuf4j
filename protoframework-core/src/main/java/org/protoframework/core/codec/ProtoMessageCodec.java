@@ -12,9 +12,8 @@ import java.lang.reflect.Method;
  * Created by tuqc on 15-5-24.
  */
 public class ProtoMessageCodec<T extends GeneratedMessageV3> implements ICodec<T> {
-
-  Class<T> cls;
-  Method parseMethod;
+  private final Class<T> cls;
+  private final Method parseMethod;
 
   public ProtoMessageCodec(@Nonnull Class<T> cls) {
     Preconditions.checkNotNull(cls);

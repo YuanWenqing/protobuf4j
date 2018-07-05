@@ -1,8 +1,10 @@
 package org.protoframework.core.codec;
 
+import com.google.protobuf.ByteString;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
+import org.protoframework.core.proto.data.TestModel;
 
 import static org.junit.Assert.*;
 
@@ -65,4 +67,30 @@ public class TestCodec {
     }
   }
 
+  @Test
+  public void testEnum() {
+    ProtoEnumCodec<TestModel.EnumA> codec = Codecs.getProtoEnumCodec(TestModel.EnumA.class);
+    for (TestModel.EnumA value : TestModel.EnumA.values()) {
+      assertEquals(value, codec.decode(codec.encode(value)));
+    }
+  }
+
+  @Test
+  public void testMessage() {
+    ProtoMessageCodec<TestModel.MsgA> codec = Codecs.getProtoMessageCodec(TestModel.MsgA.class);
+    TestModel.MsgA allSetMsgA =
+        TestModel.MsgA.newBuilder().setInt32(1).setInt64(1).setFloat(1).setDouble(1).setBool(true)
+            .setString("1").setBytes(ByteString.copyFromUtf8("a")).setEnuma(TestModel.EnumA.EA1)
+            .setMsgb(TestModel.MsgB.newBuilder().setId("").build()).addInt32Arr(1).addInt64Arr(1)
+            .addFloatArr(1).addDoubleArr(1).addBoolArr(false).addStringArr("a")
+            .addBytesArr(ByteString.EMPTY).addEnumaArr(TestModel.EnumA.EA0)
+            .addMsgbArr(TestModel.MsgB.getDefaultInstance()).putInt32Map("", 1).putInt64Map("", 1)
+            .putFloatMap("", 1).putDoubleMap("", 1).putBoolMap(1, false).putStringMap("", "a")
+            .putBytesMap("", ByteString.EMPTY).putEnumaMap("", TestModel.EnumA.EA0)
+            .putMsgbMap("", TestModel.MsgB.getDefaultInstance()).build();
+    assertEquals(allSetMsgA, codec.decode(codec.encode(allSetMsgA)));
+
+    assertEquals(TestModel.MsgA.getDefaultInstance(),
+        codec.decode(codec.encode(TestModel.MsgA.getDefaultInstance())));
+  }
 }
