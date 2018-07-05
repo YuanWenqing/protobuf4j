@@ -46,7 +46,7 @@ public class ProtoEnumCodec<T extends ProtocolMessageEnum> implements ICodec<T> 
     if (data == null) return null;
     Integer num = nativeCodec().decode(data);
     try {
-      T ret = (T) parseMethod.invoke(cls, num.intValue());
+      T ret = (T) parseMethod.invoke(cls, num);
       return ret == null ? unrecognized : ret;
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new IOException(e);
