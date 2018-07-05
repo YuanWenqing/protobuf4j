@@ -1,5 +1,6 @@
 package org.protoframework.core.codec;
 
+import com.google.common.collect.Lists;
 import com.google.protobuf.ByteString;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -19,11 +20,11 @@ public class TestCodec {
   public void testCodecs() throws IOException {
     ICodec codec = Codecs.getCodec(TestModel.MsgA.class);
     assertTrue(codec instanceof ProtoMessageCodec);
-    assertEquals(TestModel.MsgA.class, ((ProtoMessageCodec) codec).getValueType());
+    assertEquals(TestModel.MsgA.class, codec.getValueType());
 
     codec = Codecs.getCodec(TestModel.EnumA.class);
     assertTrue(codec instanceof ProtoEnumCodec);
-    assertEquals(TestModel.EnumA.class, ((ProtoEnumCodec) codec).getValueType());
+    assertEquals(TestModel.EnumA.class, codec.getValueType());
 
     assertTrue(Codecs.getCodec(String.class) instanceof StringCodec);
     assertTrue(Codecs.getCodec(Integer.class) instanceof IntegerCodec);
@@ -31,8 +32,14 @@ public class TestCodec {
     assertTrue(Codecs.getCodec(Float.class) instanceof FloatCodec);
     assertTrue(Codecs.getCodec(Double.class) instanceof DoubleCodec);
     assertTrue(Codecs.getCodec(Boolean.class) instanceof BooleanCodec);
+    for (Class<?> cls : Lists
+        .newArrayList(Integer.class, Long.class, Float.class, Double.class, Boolean.class,
+            String.class, TestModel.MsgA.class, TestModel.EnumA.class)) {
+      assertEquals(cls, Codecs.getCodec(cls).getValueType());
+    }
 
     assertNull(Codecs.decode(Codecs.encode(null), Integer.class));
+    assertEquals("A", Codecs.decode(Codecs.encode("A"), String.class));
   }
 
   @Test
