@@ -18,6 +18,9 @@ subprojects {
 
     ext.group = "org.protoframework"
 
+    // build dir change to out
+    project.buildDir = "out"
+
     dependencies {
 
         // Nullable & NonNull

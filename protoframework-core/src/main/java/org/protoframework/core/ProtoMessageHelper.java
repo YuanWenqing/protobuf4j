@@ -2,10 +2,7 @@ package org.protoframework.core;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.protobuf.Descriptors;
-import com.google.protobuf.Message;
-import com.google.protobuf.MessageOrBuilder;
-import com.google.protobuf.TextFormat;
+import com.google.protobuf.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
@@ -77,29 +74,21 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
     this.field2type = field2typeBuilder.build();
   }
 
+  /**
+   * 获取字段的类型，repeated字段返回其集合类型
+   *
+   * @see #resolveRepeatedFieldValueType(Descriptors.FieldDescriptor)
+   * @see #resolveMapFieldKeyType(Descriptors.FieldDescriptor)
+   * @see #resolveMapFieldValueType(Descriptors.FieldDescriptor)
+   */
   private Class<?> resolveFieldType(Descriptors.FieldDescriptor fd) {
     if (fd.isMapField()) {
-      // first check map, for map field is also repeated
+      // first check map, because map field is also repeated
       return Map.class;
     } else if (fd.isRepeated()) {
       return List.class;
     }
-    return resolveFieldValueType(fd);
-  }
-
-  /**
-   * 获取字段的值类型，如果字段是集合类型，则获取到的是集合元素类型
-   */
-  public Class<?> resolveFieldValueType(Descriptors.FieldDescriptor fd) {
     switch (fd.getJavaType()) {
-      case INT:
-      case LONG:
-      case FLOAT:
-      case DOUBLE:
-      case BOOLEAN:
-      case STRING:
-      case BYTE_STRING:
-        return fd.getDefaultValue().getClass();
       case MESSAGE:
         return internalBuilder.newBuilderForField(fd).build().getClass();
       case ENUM:
@@ -115,8 +104,71 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
         }
         // 下面的方式取得的 enum field的类型依然是EnumValueDescriptor
         // this.mappedValueTypes.put(name, fd.getEnumType().findValueByNumber(0).getClass());
+      default:
+        return resolveBasicValueType(fd);
     }
-    throw new RuntimeException("never here");
+  }
+
+  static Class<?> resolveBasicValueType(Descriptors.FieldDescriptor fd) {
+    switch (fd.getJavaType()) {
+      case INT:
+      case LONG:
+      case FLOAT:
+      case DOUBLE:
+      case BOOLEAN:
+      case STRING:
+        return fd.getDefaultValue().getClass();
+      case BYTE_STRING:
+        return ByteString.class;
+      default:
+        throw new IllegalArgumentException(
+            "not a basic type field: " + fd.getFullName() + ", javaType=" + fd.getJavaType());
+    }
+  }
+
+  public Class<?> resolveRepeatedFieldValueType(Descriptors.FieldDescriptor fd) {
+    Preconditions.checkArgument(fd.isRepeated(), "not a repeated field: " + fd.getFullName());
+    if (fd.isMapField()) {
+      return MapEntry.class;
+    }
+    switch (fd.getJavaType()) {
+      case MESSAGE:
+        return internalBuilder.newBuilderForField(fd).build().getClass();
+      case ENUM:
+        // 通过反射取返回值类型的方式取enum field的类型
+        String methodName = "get" + StringUtils.capitalize(fd.getJsonName());
+        try {
+          Method method = internalBuilder.getClass().getMethod(methodName, int.class);
+          return method.getReturnType();
+        } catch (Exception e) {
+          throw new RuntimeException(
+              "fail to resolve type of enum field `" + fd.getFullName() + "`, method: " +
+                  methodName, e);
+        }
+      default:
+        return resolveBasicValueType(fd);
+    }
+  }
+
+  public Class<?> resolveMapFieldKeyType(Descriptors.FieldDescriptor fd) {
+    Preconditions.checkArgument(fd.isMapField(), "not a map field: " + fd.getFullName());
+    Descriptors.FieldDescriptor keyFd = fd.getMessageType().findFieldByName("key");
+    // actually only integral or string type
+    return resolveBasicValueType(keyFd);
+  }
+
+  public Class<?> resolveMapFieldValueType(Descriptors.FieldDescriptor fd) {
+    Preconditions.checkArgument(fd.isMapField(), "not a map field: " + fd.getFullName());
+    MapEntry entry = (MapEntry) internalBuilder.newBuilderForField(fd).build();
+    String methodName = "getValue";
+    try {
+      Method method = entry.getClass().getMethod(methodName, int.class);
+      return method.getReturnType();
+    } catch (Exception e) {
+      throw new RuntimeException(
+          "fail to resolve type of enum field `" + fd.getFullName() + "`, method: " +
+              methodName, e);
+    }
   }
 
   private Object invokeStaticMethodUnchecked(String method) {
@@ -130,6 +182,11 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
   @SuppressWarnings("unchecked")
   public <R extends Message.Builder> R newBuilder() {
     return (R) invokeStaticMethodUnchecked(METHOD_NEW_BUILDER);
+  }
+
+  public Message.Builder newBuilderForField(String fieldName) {
+    Descriptors.FieldDescriptor fd = checkField(fieldName);
+    return newBuilderForField(fd);
   }
 
   public Message.Builder newBuilderForField(Descriptors.FieldDescriptor fd) {

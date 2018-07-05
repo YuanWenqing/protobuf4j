@@ -23,8 +23,11 @@ public interface IBeanHelper<T> {
 
   /**
    * bean是否为空
+   * <p>
+   * bean为空=所有字段未set
    *
    * @return true=null or equals to default instance
+   * @see #isFieldSet(T, String)
    */
   boolean isEmpty(T bean);
 
