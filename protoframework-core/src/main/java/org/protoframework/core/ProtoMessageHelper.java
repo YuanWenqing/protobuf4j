@@ -164,15 +164,19 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
 
   public Class<?> resolveMapFieldValueType(Descriptors.FieldDescriptor fd) {
     Preconditions.checkArgument(fd.isMapField(), "not a map field: " + fd.getFullName());
-    MapEntry entry = (MapEntry) internalBuilder.newBuilderForField(fd).build();
-    String methodName = "getValue";
-    try {
-      Method method = entry.getClass().getMethod(methodName, int.class);
-      return method.getReturnType();
-    } catch (Exception e) {
-      throw new RuntimeException(
-          "fail to resolve type of enum field `" + fd.getFullName() + "`, method: " + methodName,
-          e);
+    Descriptors.FieldDescriptor valueFd = fd.getMessageType().findFieldByName("value");
+    switch (valueFd.getJavaType()) {
+      case MESSAGE:
+      case ENUM:
+        String methodName = "put" + StringUtils.capitalize(fd.getJsonName());
+        for (Method method : internalBuilder.getClass().getMethods()) {
+          if (method.getName().equals(methodName)) {
+            return method.getParameterTypes()[1];
+          }
+        }
+        throw new RuntimeException("never here: " + fd);
+      default:
+        return resolveBasicValueType(valueFd);
     }
   }
 

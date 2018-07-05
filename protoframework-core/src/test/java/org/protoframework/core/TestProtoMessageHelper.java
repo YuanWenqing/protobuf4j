@@ -164,6 +164,29 @@ public class TestProtoMessageHelper {
   }
 
   @Test
+  public void testMapFieldKeyValueType() {
+    assertEquals(String.class,
+        helper.resolveMapFieldKeyType(helper.getFieldDescriptor("int32_map")));
+
+    assertEquals(Integer.class,
+        helper.resolveMapFieldValueType(helper.getFieldDescriptor("int32_map")));
+    assertEquals(Long.class,
+        helper.resolveMapFieldValueType(helper.getFieldDescriptor("int64_map")));
+    assertEquals(Float.class,
+        helper.resolveMapFieldValueType(helper.getFieldDescriptor("float_map")));
+    assertEquals(Double.class,
+        helper.resolveMapFieldValueType(helper.getFieldDescriptor("double_map")));
+    assertEquals(String.class,
+        helper.resolveMapFieldValueType(helper.getFieldDescriptor("string_map")));
+    assertEquals(ByteString.class,
+        helper.resolveMapFieldValueType(helper.getFieldDescriptor("bytes_map")));
+    assertEquals(TestModel.EnumA.class,
+        helper.resolveMapFieldValueType(helper.getFieldDescriptor("enuma_map")));
+    assertEquals(TestModel.MsgB.class,
+        helper.resolveMapFieldValueType(helper.getFieldDescriptor("msgb_map")));
+  }
+
+  @Test
   public void testFieldSet() {
     assertMsg(TestModel.MsgA.getDefaultInstance(), false);
     assertMsg(allSetMsgA, true);
