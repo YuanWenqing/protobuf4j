@@ -24,14 +24,14 @@ public class TestProtoMessageHelper {
   public void setup() {
     helper = ProtoMessageHelper.getHelper(TestModel.MsgA.class);
     allSetMsgA =
-        TestModel.MsgA.newBuilder().setInt32(1).setInt64(1).setFloat(1).setDouble(1).setString("1")
-            .setBytes(ByteString.copyFromUtf8("a")).setEnuma(TestModel.EnumA.EA1)
+        TestModel.MsgA.newBuilder().setInt32(1).setInt64(1).setFloat(1).setDouble(1).setBool(true)
+            .setString("1").setBytes(ByteString.copyFromUtf8("a")).setEnuma(TestModel.EnumA.EA1)
             .setMsgb(TestModel.MsgB.newBuilder().setId("").build()).addInt32Arr(1).addInt64Arr(1)
-            .addFloatArr(1).addDoubleArr(1).addStringArr("a").addBytesArr(ByteString.EMPTY)
-            .addEnumaArr(TestModel.EnumA.EA0).addMsgbArr(TestModel.MsgB.getDefaultInstance())
-            .putInt32Map("", 1).putInt64Map("", 1).putFloatMap("", 1).putDoubleMap("", 1)
-            .putStringMap("", "a").putBytesMap("", ByteString.EMPTY)
-            .putEnumaMap("", TestModel.EnumA.EA0)
+            .addFloatArr(1).addDoubleArr(1).addBoolArr(false).addStringArr("a")
+            .addBytesArr(ByteString.EMPTY).addEnumaArr(TestModel.EnumA.EA0)
+            .addMsgbArr(TestModel.MsgB.getDefaultInstance()).putInt32Map("", 1).putInt64Map("", 1)
+            .putFloatMap("", 1).putDoubleMap("", 1).putBoolMap(1, false).putStringMap("", "a")
+            .putBytesMap("", ByteString.EMPTY).putEnumaMap("", TestModel.EnumA.EA0)
             .putMsgbMap("", TestModel.MsgB.getDefaultInstance()).build();
   }
 
@@ -82,6 +82,8 @@ public class TestProtoMessageHelper {
     assertEquals(Float.class, helper.getFieldType("float"));
     assertTrue(helper.hasField("double"));
     assertEquals(Double.class, helper.getFieldType("double"));
+    assertTrue(helper.hasField("bool"));
+    assertEquals(Boolean.class, helper.getFieldType("bool"));
     assertTrue(helper.hasField("string"));
     assertEquals(String.class, helper.getFieldType("string"));
     assertTrue(helper.hasField("bytes"));
@@ -99,6 +101,8 @@ public class TestProtoMessageHelper {
     assertEquals(List.class, helper.getFieldType("float_arr"));
     assertTrue(helper.hasField("double_arr"));
     assertEquals(List.class, helper.getFieldType("double_arr"));
+    assertTrue(helper.hasField("bool_arr"));
+    assertEquals(List.class, helper.getFieldType("bool_arr"));
     assertTrue(helper.hasField("string_arr"));
     assertEquals(List.class, helper.getFieldType("string_arr"));
     assertTrue(helper.hasField("bytes_arr"));
@@ -116,6 +120,8 @@ public class TestProtoMessageHelper {
     assertEquals(Map.class, helper.getFieldType("float_map"));
     assertTrue(helper.hasField("double_map"));
     assertEquals(Map.class, helper.getFieldType("double_map"));
+    assertTrue(helper.hasField("bool_map"));
+    assertEquals(Map.class, helper.getFieldType("bool_map"));
     assertTrue(helper.hasField("string_map"));
     assertEquals(Map.class, helper.getFieldType("string_map"));
     assertTrue(helper.hasField("bytes_map"));
@@ -136,6 +142,8 @@ public class TestProtoMessageHelper {
         helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("float_arr")));
     assertEquals(Double.class,
         helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("double_arr")));
+    assertEquals(Boolean.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("bool_arr")));
     assertEquals(String.class,
         helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("string_arr")));
     assertEquals(ByteString.class,
@@ -154,6 +162,8 @@ public class TestProtoMessageHelper {
     assertEquals(MapEntry.class,
         helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("double_map")));
     assertEquals(MapEntry.class,
+        helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("bool_map")));
+    assertEquals(MapEntry.class,
         helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("string_map")));
     assertEquals(MapEntry.class,
         helper.resolveRepeatedFieldValueType(helper.getFieldDescriptor("bytes_map")));
@@ -167,6 +177,8 @@ public class TestProtoMessageHelper {
   public void testMapFieldKeyValueType() {
     assertEquals(String.class,
         helper.resolveMapFieldKeyType(helper.getFieldDescriptor("int32_map")));
+    assertEquals(Integer.class,
+        helper.resolveMapFieldKeyType(helper.getFieldDescriptor("bool_map")));
 
     assertEquals(Integer.class,
         helper.resolveMapFieldValueType(helper.getFieldDescriptor("int32_map")));
@@ -176,6 +188,8 @@ public class TestProtoMessageHelper {
         helper.resolveMapFieldValueType(helper.getFieldDescriptor("float_map")));
     assertEquals(Double.class,
         helper.resolveMapFieldValueType(helper.getFieldDescriptor("double_map")));
+    assertEquals(Boolean.class,
+        helper.resolveMapFieldValueType(helper.getFieldDescriptor("bool_map")));
     assertEquals(String.class,
         helper.resolveMapFieldValueType(helper.getFieldDescriptor("string_map")));
     assertEquals(ByteString.class,
@@ -189,6 +203,8 @@ public class TestProtoMessageHelper {
   @Test
   public void testFieldSet() {
     assertMsg(TestModel.MsgA.getDefaultInstance(), false);
+    
+    assertTrue(helper.isFieldSet(allSetMsgA, "bool"));
     assertMsg(allSetMsgA, true);
   }
 

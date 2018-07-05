@@ -12,28 +12,31 @@ message MsgA {
   int64 int64 = 2;
   float float = 3;
   double double = 4;
-  string string = 5;
-  bytes bytes = 6;
-  EnumA enuma = 7;
-  MsgB msgb = 8;
+  bool bool = 5;
+  string string = 6;
+  bytes bytes = 7;
+  EnumA enuma = 8;
+  MsgB msgb = 9;
 
   repeated int32 int32_arr = 11;
   repeated int64 int64_arr = 12;
   repeated float float_arr = 13;
   repeated double double_arr = 14;
-  repeated string string_arr = 15;
-  repeated bytes bytes_arr = 16;
-  repeated EnumA enuma_arr = 17;
-  repeated MsgB msgb_arr = 18;
+  repeated bool bool_arr = 15;
+  repeated string string_arr = 16;
+  repeated bytes bytes_arr = 17;
+  repeated EnumA enuma_arr = 18;
+  repeated MsgB msgb_arr = 19;
 
   map<string, int32> int32_map = 21;
   map<string, int64> int64_map = 22;
   map<string, float> float_map = 23;
   map<string, double> double_map = 24;
-  map<string, string> string_map = 25;
-  map<string, bytes> bytes_map = 26;
-  map<string, EnumA> enuma_map = 27;
-  map<string, MsgB> msgb_map = 28;
+  map<int32, bool> bool_map = 25;
+  map<string, string> string_map = 26;
+  map<string, bytes> bytes_map = 27;
+  map<string, EnumA> enuma_map = 28;
+  map<string, MsgB> msgb_map = 29;
 }
 
 enum EnumA {
