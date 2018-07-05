@@ -17,8 +17,8 @@ import static org.junit.Assert.*;
  * @date: 2018/7/4
  */
 public class TestProtoMessageHelper {
-  ProtoMessageHelper<TestModel.MsgA> helper;
-  TestModel.MsgA allSetMsgA;
+  private ProtoMessageHelper<TestModel.MsgA> helper;
+  private TestModel.MsgA allSetMsgA;
 
   @Before
   public void setup() {
@@ -203,7 +203,7 @@ public class TestProtoMessageHelper {
   @Test
   public void testFieldSet() {
     assertMsg(TestModel.MsgA.getDefaultInstance(), false);
-    
+
     assertTrue(helper.isFieldSet(allSetMsgA, "bool"));
     assertMsg(allSetMsgA, true);
   }
@@ -234,6 +234,7 @@ public class TestProtoMessageHelper {
         helper.getFieldValue(msga, "int32_map"));
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void testSetFieldValue() {
     TestModel.MsgA msgA = TestModel.MsgA.getDefaultInstance();
