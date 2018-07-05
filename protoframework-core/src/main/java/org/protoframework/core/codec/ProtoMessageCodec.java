@@ -26,6 +26,7 @@ public class ProtoMessageCodec<T extends GeneratedMessageV3> implements ICodec<T
     }
   }
 
+  @Override
   public Class<T> getValueType() {
     return cls;
   }

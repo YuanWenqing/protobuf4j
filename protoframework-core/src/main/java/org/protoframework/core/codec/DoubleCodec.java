@@ -12,6 +12,11 @@ public class DoubleCodec implements ICodec<Double> {
   private DoubleCodec() {
   }
 
+  @Override
+  public Class<Double> getValueType() {
+    return Double.class;
+  }
+
   private StringCodec nativeCodec() {
     return StringCodec.INSTANCE;
   }

@@ -11,6 +11,11 @@ public class IntegerCodec implements ICodec<Integer> {
   private IntegerCodec() {
   }
 
+  @Override
+  public Class<Integer> getValueType() {
+    return Integer.class;
+  }
+
   private StringCodec nativeCodec() {
     return StringCodec.INSTANCE;
   }

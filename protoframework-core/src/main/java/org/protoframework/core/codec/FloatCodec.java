@@ -12,6 +12,11 @@ public class FloatCodec implements ICodec<Float> {
   private FloatCodec() {
   }
 
+  @Override
+  public Class<Float> getValueType() {
+    return Float.class;
+  }
+
   private StringCodec nativeCodec() {
     return StringCodec.INSTANCE;
   }

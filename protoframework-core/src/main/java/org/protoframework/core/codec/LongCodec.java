@@ -11,6 +11,11 @@ public class LongCodec implements ICodec<Long> {
   private LongCodec() {
   }
 
+  @Override
+  public Class<Long> getValueType() {
+    return Long.class;
+  }
+
   private StringCodec nativeCodec() {
     return StringCodec.INSTANCE;
   }

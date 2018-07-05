@@ -14,6 +14,11 @@ public class StringCodec implements ICodec<String> {
   }
 
   @Override
+  public Class<String> getValueType() {
+    return String.class;
+  }
+
+  @Override
   public String decode(@Nullable byte[] data) {
     if (data == null) return null;
     return new String(data, Charsets.UTF_8);

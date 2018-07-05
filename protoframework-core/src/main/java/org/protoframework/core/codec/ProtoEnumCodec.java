@@ -31,6 +31,7 @@ public class ProtoEnumCodec<T extends ProtocolMessageEnum> implements ICodec<T> 
     }
   }
 
+  @Override
   public Class<T> getValueType() {
     return cls;
   }
