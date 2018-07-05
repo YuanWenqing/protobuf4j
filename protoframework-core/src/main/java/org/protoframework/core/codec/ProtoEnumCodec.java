@@ -8,6 +8,7 @@ import com.google.protobuf.ProtocolMessageEnum;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -30,20 +31,24 @@ public class ProtoEnumCodec<T extends ProtocolMessageEnum> implements ICodec<T> 
     }
   }
 
+  public Class<T> getValueType() {
+    return cls;
+  }
+
   private ICodec<Integer> nativeCodec() {
     return IntegerCodec.INSTANCE;
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public T decode(@Nullable byte[] data) {
+  public T decode(@Nullable byte[] data) throws IOException {
     if (data == null) return null;
     Integer num = nativeCodec().decode(data);
     try {
       T ret = (T) parseMethod.invoke(cls, num.intValue());
       return ret == null ? unrecognized : ret;
     } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new RuntimeException(e);
+      throw new IOException(e);
     }
   }
 

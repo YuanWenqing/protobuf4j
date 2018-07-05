@@ -7,6 +7,7 @@ import com.google.protobuf.ProtocolMessageEnum;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -56,6 +57,10 @@ public abstract class Codecs {
       return (ICodec<T>) LongCodec.INSTANCE;
     } else if (cls.equals(Integer.class)) {
       return (ICodec<T>) IntegerCodec.INSTANCE;
+    } else if (cls.equals(Float.class)) {
+      return (ICodec<T>) FloatCodec.INSTANCE;
+    } else if (cls.equals(Double.class)) {
+      return (ICodec<T>) DoubleCodec.INSTANCE;
     } else if (cls.equals(Boolean.class)) {
       return (ICodec<T>) BooleanCodec.INSTANCE;
     }
@@ -74,7 +79,7 @@ public abstract class Codecs {
     return codec.encode(v);
   }
 
-  public static <T> T decode(@Nullable byte[] data, @Nonnull Class<T> clazz) {
+  public static <T> T decode(@Nullable byte[] data, @Nonnull Class<T> clazz) throws IOException {
     Preconditions.checkNotNull(clazz);
     if (data == null) {
       return null;

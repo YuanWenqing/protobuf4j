@@ -5,6 +5,7 @@ import com.google.protobuf.GeneratedMessageV3;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -25,14 +26,18 @@ public class ProtoMessageCodec<T extends GeneratedMessageV3> implements ICodec<T
     }
   }
 
+  public Class<T> getValueType() {
+    return cls;
+  }
+
   @SuppressWarnings("unchecked")
   @Override
-  public T decode(@Nullable byte[] data) {
+  public T decode(@Nullable byte[] data) throws IOException {
     if (data == null) return null;
     try {
       return (T) parseMethod.invoke(cls, data);
     } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new RuntimeException(e);
+      throw new IOException(e);
     }
   }
 

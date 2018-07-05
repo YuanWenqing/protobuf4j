@@ -6,6 +6,8 @@ import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 import org.protoframework.core.proto.data.TestModel;
 
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 /**
@@ -14,23 +16,49 @@ import static org.junit.Assert.*;
  */
 public class TestCodec {
   @Test
-  public void testBoolean() {
+  public void testCodecs() throws IOException {
+    ICodec codec = Codecs.getCodec(TestModel.MsgA.class);
+    assertTrue(codec instanceof ProtoMessageCodec);
+    assertEquals(TestModel.MsgA.class, ((ProtoMessageCodec) codec).getValueType());
+
+    codec = Codecs.getCodec(TestModel.EnumA.class);
+    assertTrue(codec instanceof ProtoEnumCodec);
+    assertEquals(TestModel.EnumA.class, ((ProtoEnumCodec) codec).getValueType());
+
+    assertTrue(Codecs.getCodec(String.class) instanceof StringCodec);
+    assertTrue(Codecs.getCodec(Integer.class) instanceof IntegerCodec);
+    assertTrue(Codecs.getCodec(Long.class) instanceof LongCodec);
+    assertTrue(Codecs.getCodec(Float.class) instanceof FloatCodec);
+    assertTrue(Codecs.getCodec(Double.class) instanceof DoubleCodec);
+    assertTrue(Codecs.getCodec(Boolean.class) instanceof BooleanCodec);
+
+    assertNull(Codecs.decode(Codecs.encode(null), Integer.class));
+  }
+
+  @Test
+  public void testBoolean() throws IOException {
+    ICodec<Boolean> codec = BooleanCodec.INSTANCE;
+    assertNull(codec.decode(codec.encode(null)));
     assertEquals(true, BooleanCodec.INSTANCE.decode(BooleanCodec.INSTANCE.encode(true)));
     assertEquals(false, BooleanCodec.INSTANCE.decode(BooleanCodec.INSTANCE.encode(false)));
   }
 
   @Test
-  public void testInteger() {
+  public void testInteger() throws IOException {
+    ICodec<Integer> codec = IntegerCodec.INSTANCE;
+    assertNull(codec.decode(codec.encode(null)));
     for (int i = 0; i < 1000; i++) {
       Integer value = RandomUtils.nextInt(0, Integer.MAX_VALUE);
-      assertEquals(value, IntegerCodec.INSTANCE.decode(IntegerCodec.INSTANCE.encode(value)));
+      assertEquals(value, codec.decode(codec.encode(value)));
       value = 0 - value;
-      assertEquals(value, IntegerCodec.INSTANCE.decode(IntegerCodec.INSTANCE.encode(value)));
+      assertEquals(value, codec.decode(codec.encode(value)));
     }
   }
 
   @Test
-  public void testLong() {
+  public void testLong() throws IOException {
+    ICodec<Long> codec = LongCodec.INSTANCE;
+    assertNull(codec.decode(codec.encode(null)));
     for (int i = 0; i < 1000; i++) {
       Long value = RandomUtils.nextLong(0, Long.MAX_VALUE);
       assertEquals(value, LongCodec.INSTANCE.decode(LongCodec.INSTANCE.encode(value)));
@@ -40,7 +68,9 @@ public class TestCodec {
   }
 
   @Test
-  public void testFloat() {
+  public void testFloat() throws IOException {
+    ICodec<Float> codec = FloatCodec.INSTANCE;
+    assertNull(codec.decode(codec.encode(null)));
     for (int i = 0; i < 1000; i++) {
       Float value = RandomUtils.nextFloat(0, Float.MAX_VALUE);
       assertEquals(value, FloatCodec.INSTANCE.decode(FloatCodec.INSTANCE.encode(value)));
@@ -50,7 +80,9 @@ public class TestCodec {
   }
 
   @Test
-  public void testDouble() {
+  public void testDouble() throws IOException {
+    ICodec<Double> codec = DoubleCodec.INSTANCE;
+    assertNull(codec.decode(codec.encode(null)));
     for (int i = 0; i < 1000; i++) {
       Double value = RandomUtils.nextDouble(0, Double.MAX_VALUE);
       assertEquals(value, DoubleCodec.INSTANCE.decode(DoubleCodec.INSTANCE.encode(value)));
@@ -60,7 +92,9 @@ public class TestCodec {
   }
 
   @Test
-  public void testString() {
+  public void testString() throws IOException {
+    ICodec<String> codec = StringCodec.INSTANCE;
+    assertNull(codec.decode(codec.encode(null)));
     for (int i = 0; i < 1000; i++) {
       String value = RandomStringUtils.random(100);
       assertEquals(value, StringCodec.INSTANCE.decode(StringCodec.INSTANCE.encode(value)));
@@ -68,16 +102,20 @@ public class TestCodec {
   }
 
   @Test
-  public void testEnum() {
+  public void testEnum() throws IOException {
     ProtoEnumCodec<TestModel.EnumA> codec = Codecs.getProtoEnumCodec(TestModel.EnumA.class);
+    assertNull(codec.decode(codec.encode(null)));
     for (TestModel.EnumA value : TestModel.EnumA.values()) {
       assertEquals(value, codec.decode(codec.encode(value)));
     }
   }
 
   @Test
-  public void testMessage() {
+  public void testMessage() throws IOException {
     ProtoMessageCodec<TestModel.MsgA> codec = Codecs.getProtoMessageCodec(TestModel.MsgA.class);
+
+    assertNull(codec.decode(codec.encode(null)));
+
     TestModel.MsgA allSetMsgA =
         TestModel.MsgA.newBuilder().setInt32(1).setInt64(1).setFloat(1).setDouble(1).setBool(true)
             .setString("1").setBytes(ByteString.copyFromUtf8("a")).setEnuma(TestModel.EnumA.EA1)

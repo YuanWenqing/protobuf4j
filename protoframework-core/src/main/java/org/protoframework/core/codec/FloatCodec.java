@@ -12,7 +12,7 @@ public class FloatCodec implements ICodec<Float> {
   private FloatCodec() {
   }
 
-  private ICodec<String> nativeCodec() {
+  private StringCodec nativeCodec() {
     return StringCodec.INSTANCE;
   }
 

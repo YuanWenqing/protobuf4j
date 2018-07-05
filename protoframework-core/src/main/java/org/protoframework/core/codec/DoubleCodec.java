@@ -12,7 +12,7 @@ public class DoubleCodec implements ICodec<Double> {
   private DoubleCodec() {
   }
 
-  private ICodec<String> nativeCodec() {
+  private StringCodec nativeCodec() {
     return StringCodec.INSTANCE;
   }
 

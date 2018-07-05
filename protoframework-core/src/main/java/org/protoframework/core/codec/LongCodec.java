@@ -11,7 +11,7 @@ public class LongCodec implements ICodec<Long> {
   private LongCodec() {
   }
 
-  private ICodec<String> nativeCodec() {
+  private StringCodec nativeCodec() {
     return StringCodec.INSTANCE;
   }
 
