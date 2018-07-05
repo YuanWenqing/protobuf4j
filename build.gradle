@@ -57,12 +57,7 @@ project(':protoframework-core') {
 
     }
 }
-project(':protoframework-sql') {
-    dependencies {
-        
-    }
-}
-project(':protoframework-dao') {
+project(':protoframework-data') {
     dependencies {
         
     }
