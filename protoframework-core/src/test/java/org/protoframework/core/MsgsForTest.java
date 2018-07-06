@@ -9,6 +9,8 @@ import org.protoframework.core.proto.data.TestModel;
  */
 public class MsgsForTest {
 
+  public static TestModel.MsgA emtpyMsgA = TestModel.MsgA.getDefaultInstance();
+
   public static TestModel.MsgA allSetMsgA =
       TestModel.MsgA.newBuilder().setInt32(1).setInt64(1).setFloat(1).setDouble(1).setBool(true)
           .setString("1").setBytes(ByteString.copyFromUtf8("a")).setEnuma(TestModel.EnumA.EA1)

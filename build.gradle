@@ -55,6 +55,8 @@ project(':protoframework-core') {
         compile 'org.apache.commons:commons-lang3:3.4'
         compile 'com.google.guava:guava:18.0'
 
+        // json
+        compile 'com.hubspot.jackson:jackson-datatype-protobuf:0.9.9-jackson2.9-proto3'
     }
 }
 project(':protoframework-data') {
