@@ -20,6 +20,7 @@ public class ProtoEnumCodec<T extends ProtocolMessageEnum> implements ICodec<T> 
   private final Method parseMethod;
   private final T unrecognized;
 
+  @SuppressWarnings("unchecked")
   public ProtoEnumCodec(@Nonnull Class<T> cls) {
     Preconditions.checkNotNull(cls);
     this.cls = cls;

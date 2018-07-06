@@ -18,21 +18,11 @@ import static org.junit.Assert.*;
  */
 public class TestProtoMessageHelper {
   private ProtoMessageHelper<TestModel.MsgA> helper;
-  private TestModel.MsgA allSetMsgA;
+  private TestModel.MsgA codecsgA;
 
   @Before
   public void setup() {
     helper = ProtoMessageHelper.getHelper(TestModel.MsgA.class);
-    allSetMsgA =
-        TestModel.MsgA.newBuilder().setInt32(1).setInt64(1).setFloat(1).setDouble(1).setBool(true)
-            .setString("1").setBytes(ByteString.copyFromUtf8("a")).setEnuma(TestModel.EnumA.EA1)
-            .setMsgb(TestModel.MsgB.newBuilder().setId("").build()).addInt32Arr(1).addInt64Arr(1)
-            .addFloatArr(1).addDoubleArr(1).addBoolArr(false).addStringArr("a")
-            .addBytesArr(ByteString.EMPTY).addEnumaArr(TestModel.EnumA.EA0)
-            .addMsgbArr(TestModel.MsgB.getDefaultInstance()).putInt32Map("", 1).putInt64Map("", 1)
-            .putFloatMap("", 1).putDoubleMap("", 1).putBoolMap(1, false).putStringMap("", "a")
-            .putBytesMap("", ByteString.EMPTY).putEnumaMap("", TestModel.EnumA.EA0)
-            .putMsgbMap("", TestModel.MsgB.getDefaultInstance()).build();
   }
 
   @Test
@@ -204,8 +194,8 @@ public class TestProtoMessageHelper {
   public void testFieldSet() {
     assertMsg(TestModel.MsgA.getDefaultInstance(), false);
 
-    assertTrue(helper.isFieldSet(allSetMsgA, "bool"));
-    assertMsg(allSetMsgA, true);
+    assertTrue(helper.isFieldSet(MsgsForTest.allSetMsgA, "bool"));
+    assertMsg(MsgsForTest.allSetMsgA, true);
   }
 
   private void assertMsg(TestModel.MsgA msga, boolean expect) {
@@ -226,7 +216,7 @@ public class TestProtoMessageHelper {
     assertEquals(Lists.newArrayList(), helper.getFieldValue(msga, "int32_arr"));
     assertEquals(Lists.newArrayList(), helper.getFieldValue(msga, "int32_map"));
 
-    msga = allSetMsgA;
+    msga = MsgsForTest.allSetMsgA;
     assertEquals(1, helper.getFieldValue(msga, "int32"));
     assertEquals(Lists.newArrayList(1), helper.getFieldValue(msga, "int32_arr"));
     assertTrue(helper.getFieldValue(msga, "int32_map") instanceof List);
@@ -261,7 +251,7 @@ public class TestProtoMessageHelper {
   public void testToString() {
     System.out.println("null: " + helper.toString(null));
     System.out.println("empty: " + helper.toString(TestModel.MsgA.getDefaultInstance()));
-    System.out.println("allSetMsgA: " + helper.toString(allSetMsgA));
+    System.out.println("MsgsForTest.allSetMsgA: " + helper.toString(MsgsForTest.allSetMsgA));
   }
 
 }
