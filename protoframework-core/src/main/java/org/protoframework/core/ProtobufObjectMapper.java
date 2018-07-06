@@ -19,7 +19,7 @@ public abstract class ProtobufObjectMapper extends ObjectMapper {
 
   protected abstract void config();
 
-  public static final ProtobufObjectMapper SNAKE_ALWAYS = new ProtobufObjectMapper() {
+  public static final ProtobufObjectMapper DEFAULT = new ProtobufObjectMapper() {
     @Override
     protected void config() {
       this.registerModule(new ProtobufModule());
@@ -35,5 +35,4 @@ public abstract class ProtobufObjectMapper extends ObjectMapper {
     }
   };
 
-  public static final ProtobufObjectMapper DEFAULT = SNAKE_ALWAYS;
 }
