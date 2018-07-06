@@ -12,19 +12,16 @@ import com.hubspot.jackson.datatype.protobuf.ProtobufModule;
  * author: yuanwq
  * date: 2018/7/6
  */
-public class ProtobufObjectMapper extends ObjectMapper {
+public abstract class ProtobufObjectMapper extends ObjectMapper {
   public ProtobufObjectMapper() {
     config();
   }
 
-  protected void config() {
-  }
+  protected abstract void config();
 
-  public static final ProtobufObjectMapper DEFAULT = new ProtobufObjectMapper() {
+  public static final ProtobufObjectMapper SNAKE_ALWAYS = new ProtobufObjectMapper() {
     @Override
     protected void config() {
-      super.config();
-
       this.registerModule(new ProtobufModule());
       this.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
       this.setSerializationInclusion(JsonInclude.Include.ALWAYS);
@@ -37,4 +34,6 @@ public class ProtobufObjectMapper extends ObjectMapper {
       return super.configOverride(type);
     }
   };
+
+  public static final ProtobufObjectMapper DEFAULT = SNAKE_ALWAYS;
 }
