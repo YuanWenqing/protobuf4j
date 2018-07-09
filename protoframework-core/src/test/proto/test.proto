@@ -41,8 +41,8 @@ message MsgA {
 
 enum EnumA {
   EA0 = 0;
-  EA1 = 1;
-  EA2 = 2;
+  EA1 = 2;
+  EA2 = 4;
 }
 
 message MsgB {

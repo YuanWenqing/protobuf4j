@@ -4,11 +4,12 @@
 package org.protoframework.core.spring;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.core.ProtoMessageHelper;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.core.convert.converter.ConditionalConverter;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 
@@ -17,15 +18,16 @@ import java.io.IOException;
 /**
  * @author yuanwq
  */
-public class ProtoMessageConverter implements ConverterFactory<String, GeneratedMessageV3> {
+public class ProtoMessageConverter
+    implements ConverterFactory<String, Message>, ConditionalConverter {
   private ObjectMapper objectMapper;
 
-  public void setObjectMapper(ObjectMapper ObjectMapper) {
+  public void setObjectMapper(ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
   }
 
   @Override
-  public <T extends GeneratedMessageV3> Converter<String, T> getConverter(Class<T> targetType) {
+  public <T extends Message> Converter<String, T> getConverter(Class<T> targetType) {
     return source -> {
       if (StringUtils.isBlank(source)) {
         return ProtoMessageHelper.getHelper(targetType).defaultValue();
@@ -39,4 +41,8 @@ public class ProtoMessageConverter implements ConverterFactory<String, Generated
     };
   }
 
+  @Override
+  public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
+    return Message.class.isAssignableFrom(targetType.getType());
+  }
 }

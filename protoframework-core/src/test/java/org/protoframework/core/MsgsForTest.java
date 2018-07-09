@@ -16,9 +16,9 @@ public class MsgsForTest {
           .setString("1").setBytes(ByteString.copyFromUtf8("a")).setEnuma(TestModel.EnumA.EA1)
           .setMsgb(TestModel.MsgB.newBuilder().setId("").build()).addInt32Arr(1).addInt64Arr(1)
           .addFloatArr(1).addDoubleArr(1).addBoolArr(false).addStringArr("a")
-          .addBytesArr(ByteString.EMPTY).addEnumaArr(TestModel.EnumA.EA0)
+          .addBytesArr(ByteString.EMPTY).addEnumaArr(TestModel.EnumA.EA1)
           .addMsgbArr(TestModel.MsgB.getDefaultInstance()).putInt32Map("", 1).putInt64Map("", 1)
           .putFloatMap("", 1).putDoubleMap("", 1).putBoolMap(1, false).putStringMap("", "a")
-          .putBytesMap("", ByteString.EMPTY).putEnumaMap("", TestModel.EnumA.EA0)
+          .putBytesMap("", ByteString.EMPTY).putEnumaMap("", TestModel.EnumA.EA2)
           .putMsgbMap("", TestModel.MsgB.getDefaultInstance()).build();
 }
