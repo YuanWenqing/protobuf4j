@@ -64,11 +64,6 @@ project(':protoframework-data') {
         
     }
 }
-project(':protoframework-web') {
-    dependencies {
-        
-    }
-}
 project(':protoframework-grpc') {
     dependencies {
 
