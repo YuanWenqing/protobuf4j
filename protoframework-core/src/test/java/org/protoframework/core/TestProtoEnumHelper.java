@@ -33,6 +33,7 @@ public class TestProtoEnumHelper {
     assertEquals(TestModel.EnumA.getDescriptor(), helper.getDescriptor());
     assertEquals(TestModel.EnumA.UNRECOGNIZED, helper.getUnrecognizedValue());
 
+    assertEquals("null", helper.toString(null));
     assertEquals("EA0[0]", helper.toString(TestModel.EnumA.EA0));
     assertEquals("EA1[1]", helper.toString(TestModel.EnumA.EA1));
     assertEquals("UNRECOGNIZED[-1]", helper.toString(TestModel.EnumA.UNRECOGNIZED));
@@ -40,6 +41,9 @@ public class TestProtoEnumHelper {
 
   @Test
   public void testFindValue() {
+    assertTrue(helper.hasField("EA0"));
+    assertFalse(helper.hasField("EA10"));
+
     for (TestModel.EnumA enumA : TestModel.EnumA.values()) {
       if (enumA == TestModel.EnumA.UNRECOGNIZED) {
         continue;

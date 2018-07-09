@@ -51,6 +51,10 @@ project(':protoframework-core') {
         // protobuf
         compile 'com.google.protobuf:protobuf-java:3.6.0'
 
+        // spring
+        compile 'org.springframework:spring-core:4.3.18.RELEASE'
+//        compile 'org.springframework:spring-beans:4.3.18.RELEASE'
+
         // util
         compile 'org.apache.commons:commons-lang3:3.4'
         compile 'com.google.guava:guava:18.0'
