@@ -27,7 +27,7 @@ public class TestProtoEnumHelper {
 
     assertTrue(helper.isEmpty(null));
     assertTrue(helper.isEmpty(TestModel.EnumA.EA0));
-    assertFalse(helper.isEmpty(TestModel.EnumA.EA1));
+    assertFalse(helper.isEmpty(TestModel.EnumA.EA2));
     assertFalse(helper.isEmpty(TestModel.EnumA.UNRECOGNIZED));
 
     assertEquals(TestModel.EnumA.getDescriptor(), helper.getDescriptor());
@@ -35,7 +35,7 @@ public class TestProtoEnumHelper {
 
     assertEquals("null", helper.toString(null));
     assertEquals("EA0[0]", helper.toString(TestModel.EnumA.EA0));
-    assertEquals("EA1[2]", helper.toString(TestModel.EnumA.EA1));
+    assertEquals("EA2[2]", helper.toString(TestModel.EnumA.EA2));
     assertEquals("UNRECOGNIZED[-1]", helper.toString(TestModel.EnumA.UNRECOGNIZED));
   }
 
