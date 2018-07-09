@@ -78,8 +78,8 @@ public class TestProtoConverter {
       }
       assertEquals(enumA,
           converter.getConverter(TestModel.EnumA.class).convert(String.valueOf(enumA.getNumber())));
+      assertEquals(enumA, converter.getConverter(TestModel.EnumA.class).convert(enumA.name()));
     }
-
     try {
       converter.getConverter(TestModel.EnumA.class).convert("a");
       fail();
