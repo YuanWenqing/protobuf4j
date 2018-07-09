@@ -33,8 +33,7 @@ public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelp
   }
 
   @SuppressWarnings("unchecked")
-  public static <T extends ProtocolMessageEnum> ProtoEnumHelper<T> getHelper(
-      @Nonnull ProtocolMessageEnum enumValue) {
+  public static <T extends ProtocolMessageEnum> ProtoEnumHelper<T> getHelper(@Nonnull T enumValue) {
     Preconditions.checkNotNull(enumValue);
     return (ProtoEnumHelper<T>) getHelper(enumValue.getClass());
   }
@@ -42,6 +41,7 @@ public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelp
   private final Class<T> cls;
   private final Descriptors.EnumDescriptor descriptor;
   private final Function<Integer, T> forNumberFunc;
+  private final T unrecognized;
 
   @SuppressWarnings("unchecked")
   public ProtoEnumHelper(Class<T> cls) {
@@ -50,6 +50,11 @@ public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelp
     Internal.EnumLiteMap<T> enumLiteMap =
         (Internal.EnumLiteMap<T>) invokeStaticMethodUnchecked("internalGetValueMap");
     this.forNumberFunc = enumLiteMap::findValueByNumber;
+    try {
+      this.unrecognized = (T) this.cls.getField("UNRECOGNIZED").get(null);
+    } catch (IllegalAccessException | NoSuchFieldException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private Object invokeStaticMethodUnchecked(String method) {
@@ -62,6 +67,10 @@ public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelp
 
   public Descriptors.EnumDescriptor getDescriptor() {
     return descriptor;
+  }
+
+  public T getUnrecognizedValue() {
+    return unrecognized;
   }
 
   public T byName(String name) {
@@ -88,7 +97,13 @@ public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelp
 
   @Override
   public boolean isEmpty(T enumValue) {
-    return enumValue == null || enumValue.getNumber() == 0;
+    if (enumValue == null) {
+      return true;
+    }
+    if (this.unrecognized.equals(enumValue)) {
+      return false;
+    }
+    return enumValue.getNumber() == 0;
   }
 
   @Override
@@ -129,7 +144,12 @@ public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelp
 
   @Override
   public String toString(T enumValue) {
-    return enumValue == null ? "null" :
-        String.format("%s[%d]", enumValue.getValueDescriptor().getName(), enumValue.getNumber());
+    if (enumValue == null) {
+      return "null";
+    }
+    if (this.unrecognized.equals(enumValue)) {
+      return "UNRECOGNIZED[-1]";
+    }
+    return String.format("%s[%d]", enumValue.getValueDescriptor().getName(), enumValue.getNumber());
   }
 }
