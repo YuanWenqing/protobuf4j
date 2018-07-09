@@ -35,4 +35,16 @@ public class TestObjectMapper {
     assertEquals(MsgsForTest.allSetMsgA,
         mapper.readValue(mapper.writeValueAsBytes(MsgsForTest.allSetMsgA), TestModel.MsgA.class));
   }
+
+  @Test
+  public void testEnum() throws IOException {
+    for (TestModel.EnumA enumA : TestModel.EnumA.values()) {
+      if (enumA == TestModel.EnumA.UNRECOGNIZED) {
+        continue;
+      }
+      String number = String.valueOf(enumA.getNumber());
+      assertEquals(number, mapper.writeValueAsString(enumA));
+      assertEquals(enumA, mapper.readValue(number, TestModel.EnumA.class));
+    }
+  }
 }
