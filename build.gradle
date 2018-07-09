@@ -1,0 +1,77 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.6'
+    }
+}
+
+// project setting
+subprojects {
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin: "java"
+
+    ext.group = "org.protoframework"
+
+    // build dir change to out
+    project.buildDir = "out"
+
+    dependencies {
+
+        // Nullable & NonNull
+        compile 'com.google.code.findbugs:jsr305:3.0.0'
+
+        // test
+        testCompile 'junit:junit:4.12'
+
+    }
+}
+project(':protoframework-core') {
+    apply plugin: "com.google.protobuf"
+    protobuf {
+        generatedFilesBaseDir = "$projectDir/gen/"
+        generateProtoTasks {
+            ofSourceSet('test')
+        }
+    }
+    clean {
+        delete protobuf.generatedFilesBaseDir
+    }
+    sourceSets {
+        test.java.srcDir("${protobuf.generatedFilesBaseDir}/test/java")
+    }
+
+    dependencies {
+
+        // protobuf
+        compile 'com.google.protobuf:protobuf-java:3.6.0'
+
+        // spring
+        compile 'org.springframework:spring-core:4.3.18.RELEASE'
+//        compile 'org.springframework:spring-beans:4.3.18.RELEASE'
+
+        // util
+        compile 'org.apache.commons:commons-lang3:3.4'
+        compile 'com.google.guava:guava:18.0'
+
+        // json
+        compile 'com.hubspot.jackson:jackson-datatype-protobuf:0.9.9-jackson2.9-proto3'
+    }
+}
+project(':protoframework-data') {
+    dependencies {
+        
+    }
+}
+project(':protoframework-grpc') {
+    dependencies {
+
+        compile 'io.grpc:grpc-all:1.13.1'
+
+    }
+}

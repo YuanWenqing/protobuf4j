@@ -1,0 +1,6 @@
+rootProject.name = "protoframework"
+
+include 'protoframework-core'
+include 'protoframework-data'
+include 'protoframework-grpc'
+
