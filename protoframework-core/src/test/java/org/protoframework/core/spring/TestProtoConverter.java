@@ -81,6 +81,12 @@ public class TestProtoConverter {
       assertEquals(enumA, converter.getConverter(TestModel.EnumA.class).convert(enumA.name()));
     }
     try {
+      converter.getConverter(TestModel.EnumA.class).convert("10000");
+      fail();
+    } catch (ConversionFailedException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
       converter.getConverter(TestModel.EnumA.class).convert("a");
       fail();
     } catch (ConversionFailedException e) {

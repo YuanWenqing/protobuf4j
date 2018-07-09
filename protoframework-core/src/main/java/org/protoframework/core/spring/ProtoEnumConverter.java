@@ -23,17 +23,19 @@ public class ProtoEnumConverter
       }
       ProtoEnumHelper<T> helper = ProtoEnumHelper.getHelper(targetType);
       source = StringUtils.strip(source);
-      try {
-        int num = Integer.parseInt(source);
-        return helper.byNumber(num);
-      } catch (NumberFormatException e) {
-        T value = helper.byName(source);
-        if (value == null) {
-          throw new ConversionFailedException(TypeDescriptor.forObject(source),
-              TypeDescriptor.valueOf(targetType), source, null);
-        }
-        return value;
+      T value = null;
+      if (StringUtils.isNumeric(source)) {
+        // not support negative number
+        value = helper.byNumber(Integer.parseInt(source));
       }
+      if (value == null) {
+        value = helper.byName(source);
+      }
+      if (value == null) {
+        throw new ConversionFailedException(TypeDescriptor.forObject(source),
+            TypeDescriptor.valueOf(targetType), source, null);
+      }
+      return value;
     };
   }
 
