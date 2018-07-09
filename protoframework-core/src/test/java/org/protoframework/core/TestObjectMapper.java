@@ -43,8 +43,10 @@ public class TestObjectMapper {
         continue;
       }
       String number = String.valueOf(enumA.getNumber());
+      String name = enumA.name();
       assertEquals(number, mapper.writeValueAsString(enumA));
       assertEquals(enumA, mapper.readValue(number, TestModel.EnumA.class));
+      assertEquals(enumA, mapper.readValue(name, TestModel.EnumA.class));
     }
   }
 }
