@@ -9,8 +9,7 @@ import java.util.Objects;
  *
  * @param <T></T> 操作符类型
  */
-public interface IBinaryExpr<T extends ISqlOperation<? extends IBinaryExpr<T>>>
-    extends IExpression {
+public interface IBinaryExpr<T extends ISqlOperation> extends IExpression {
   /**
    * 左表达式
    */

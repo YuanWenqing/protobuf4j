@@ -10,9 +10,14 @@ import javax.annotation.Nonnull;
  *
  * @param <T> 处理的表达式类型
  */
-public interface ISqlOperation<T extends IBinaryExpr<? extends ISqlOperation<T>>> {
+public interface ISqlOperation<T extends IBinaryExpr> {
   String WRAP_LEFT = "(";
   String WRAP_RIGHT = ")";
+
+  /**
+   * 构造sql语句中的操作符形式，两边包括必要的空格
+   */
+  String getOp();
 
   default void toSqlTemplate(@Nonnull T expr, @Nonnull StringBuilder sb) {
     boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
@@ -53,10 +58,5 @@ public interface ISqlOperation<T extends IBinaryExpr<? extends ISqlOperation<T>>
       sb.append(WRAP_RIGHT);
     }
   }
-
-  /**
-   * 构造sql语句中的操作符形式，两边包括必要的空格
-   */
-  String getOp();
 
 }
