@@ -14,7 +14,7 @@ public enum RelationalOp implements ISqlOperation<RelationalExpr> {
   GTE(">="),
   LT("<"),
   LTE("<="),
-  IS_NULL(" IS NULL", true) {
+  IS_NULL(" IS NULL") {
     @Override
     public void toSqlTemplate(@Nonnull RelationalExpr expr, @Nonnull StringBuilder sb) {
       boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
@@ -78,23 +78,13 @@ public enum RelationalOp implements ISqlOperation<RelationalExpr> {
   NIN(" NOT IN ");
 
   private final String op;
-  private boolean unary = false;
 
   RelationalOp(String op) {
     this.op = op;
   }
 
-  RelationalOp(String op, boolean unary) {
-    this.op = op;
-    this.unary = unary;
-  }
-
   @Override
   public String getOp() {
     return op;
-  }
-
-  public boolean isUnary() {
-    return unary;
   }
 }
