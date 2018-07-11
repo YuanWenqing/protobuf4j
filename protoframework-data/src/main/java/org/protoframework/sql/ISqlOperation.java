@@ -55,7 +55,7 @@ public interface ISqlOperation<T extends IBinaryExpr<? extends ISqlOperation<T>>
   }
 
   /**
-   * 构造sql语句中的操作符形式，两边包括必需的空格
+   * 构造sql语句中的操作符形式，两边包括必要的空格
    */
   String getOp();
 
