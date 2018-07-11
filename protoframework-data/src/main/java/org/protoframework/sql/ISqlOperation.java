@@ -15,7 +15,7 @@ public interface ISqlOperation<T extends IBinaryExpr> {
   String WRAP_RIGHT = ")";
 
   /**
-   * 构造sql语句中的操作符形式，两边包括必要的空格
+   * 构造sql语句中的运算符形式，两边包括必要的空格
    */
   String getOp();
 
