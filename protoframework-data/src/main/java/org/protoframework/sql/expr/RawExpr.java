@@ -2,9 +2,12 @@ package org.protoframework.sql.expr;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
+import org.protoframework.sql.IExpression;
+import org.protoframework.sql.ISqlOperation;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,6 +19,10 @@ public class RawExpr implements IExpression {
 
   private final String rawSqlExpr;
   private final List<Object> values;
+
+  public RawExpr(@Nonnull String rawSqlExpr) {
+    this(rawSqlExpr, Collections.emptyList());
+  }
 
   public RawExpr(@Nonnull String rawSqlExpr, @Nonnull Collection<?> values) {
     this.rawSqlExpr = rawSqlExpr;
