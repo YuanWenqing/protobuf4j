@@ -14,15 +14,19 @@ import java.util.List;
  * date: 2018/7/12
  */
 public class GroupByClause implements ISqlStatement {
-  private final List<IExpression> groupExprs = Lists.newArrayList();
+  private final List<GroupByExpr> groupByExprs = Lists.newArrayList();
 
-  public List<IExpression> getGroupExprs() {
-    return Collections.unmodifiableList(groupExprs);
+  public List<GroupByExpr> getGroupByExprs() {
+    return Collections.unmodifiableList(groupByExprs);
+  }
+
+  public GroupByClause by(GroupByExpr groupByExpr) {
+    this.groupByExprs.add(groupByExpr);
+    return this;
   }
 
   public GroupByClause by(IExpression expr) {
-    this.groupExprs.add(expr);
-    return this;
+    return by(new GroupByExpr(expr));
   }
 
   public GroupByClause by(String column) {
@@ -31,12 +35,12 @@ public class GroupByClause implements ISqlStatement {
 
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    if (groupExprs.isEmpty()) {
+    if (groupByExprs.isEmpty()) {
       return sb;
     }
     sb.append("GROUP BY ");
     boolean first = true;
-    for (IExpression expr : groupExprs) {
+    for (GroupByExpr expr : groupByExprs) {
       if (first) {
         first = false;
       } else {
@@ -49,12 +53,12 @@ public class GroupByClause implements ISqlStatement {
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    if (groupExprs.isEmpty()) {
+    if (groupByExprs.isEmpty()) {
       return sb;
     }
     sb.append("GROUP BY ");
     boolean first = true;
-    for (IExpression expr : groupExprs) {
+    for (GroupByExpr expr : groupByExprs) {
       if (first) {
         first = false;
       } else {
@@ -67,7 +71,7 @@ public class GroupByClause implements ISqlStatement {
 
   @Override
   public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    for (IExpression expr : groupExprs) {
+    for (GroupByExpr expr : groupByExprs) {
       expr.collectSqlValue(collectedValues);
     }
     return collectedValues;
