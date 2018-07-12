@@ -7,6 +7,7 @@ import org.protoframework.sql.ISqlStatement;
 import org.protoframework.sql.expr.TableColumn;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,6 +18,10 @@ public class SelectClause implements ISqlStatement {
   private final List<SelectExpr> selectExprs = Lists.newArrayList();
 
   public SelectClause() {
+  }
+
+  public List<SelectExpr> getSelectExprs() {
+    return Collections.unmodifiableList(selectExprs);
   }
 
   public SelectClause select(SelectExpr selectExpr) {
