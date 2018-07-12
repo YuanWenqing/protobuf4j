@@ -56,6 +56,7 @@ public class RawExpr implements IExpression {
 
   @Override
   public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
+    // TODO: value conversion
     collectedValues.addAll(values);
     return collectedValues;
   }

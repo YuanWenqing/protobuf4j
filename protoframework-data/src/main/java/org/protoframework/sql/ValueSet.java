@@ -38,8 +38,9 @@ public class ValueSet implements IExpression {
 
   @Override
   public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    // TODO: impl 2018/7/11
-    return null;
+    // TODO: value conversion
+    collectedValues.addAll(values);
+    return collectedValues;
   }
 
   @Override

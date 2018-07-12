@@ -12,7 +12,7 @@ import java.util.List;
 public class ConstValue implements IExpression, ISqlStatement {
   private final Object value;
 
-  public ConstValue(Object value) {
+  public ConstValue(@Nonnull Object value) {
     this.value = value;
   }
 
@@ -42,6 +42,7 @@ public class ConstValue implements IExpression, ISqlStatement {
 
   @Override
   public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
+    // TODO: value conversion
     collectedValues.add(value);
     return collectedValues;
   }
