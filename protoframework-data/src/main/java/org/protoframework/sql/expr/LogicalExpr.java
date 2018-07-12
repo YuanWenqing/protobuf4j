@@ -1,20 +1,23 @@
-package org.protoframework.sql;
+package org.protoframework.sql.expr;
+
+import org.protoframework.sql.IBinaryExpr;
+import org.protoframework.sql.IExpression;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * 关系表达式：{@code = != < <= > >=}
+ * 逻辑表达式：AND OR XOR
  * <p>
  * author: yuanwq
  * date: 2018/7/11
  */
-public class RelationalExpr implements IBinaryExpr<RelationalOp> {
+public class LogicalExpr implements IBinaryExpr<LogicalOp> {
   private final IExpression left;
-  private final RelationalOp op;
+  private final LogicalOp op;
   private final IExpression right;
 
-  public RelationalExpr(IExpression left, @Nonnull RelationalOp op, IExpression right) {
+  public LogicalExpr(IExpression left, @Nonnull LogicalOp op, IExpression right) {
     this.left = left;
     this.op = op;
     this.right = right;
@@ -31,7 +34,7 @@ public class RelationalExpr implements IBinaryExpr<RelationalOp> {
   }
 
   @Override
-  public RelationalOp getOp() {
+  public LogicalOp getOp() {
     return op;
   }
 

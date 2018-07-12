@@ -1,4 +1,6 @@
-package org.protoframework.sql;
+package org.protoframework.sql.expr;
+
+import org.protoframework.sql.ISqlOperation;
 
 import javax.annotation.Nonnull;
 

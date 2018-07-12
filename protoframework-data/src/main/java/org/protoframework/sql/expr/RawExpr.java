@@ -1,4 +1,4 @@
-package org.protoframework.sql;
+package org.protoframework.sql.expr;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;

@@ -1,4 +1,7 @@
-package org.protoframework.sql;
+package org.protoframework.sql.expr;
+
+import org.protoframework.sql.IBinaryExpr;
+import org.protoframework.sql.IExpression;
 
 import javax.annotation.Nonnull;
 import java.util.List;

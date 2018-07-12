@@ -1,7 +1,9 @@
-package org.protoframework.sql;
+package org.protoframework.sql.expr;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
+import org.protoframework.sql.IExpression;
+import org.protoframework.sql.ISqlOperation;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
