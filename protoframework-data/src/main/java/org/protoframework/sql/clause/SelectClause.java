@@ -17,9 +17,6 @@ import java.util.List;
 public class SelectClause implements ISqlStatement {
   private final List<SelectExpr> selectExprs = Lists.newArrayList();
 
-  public SelectClause() {
-  }
-
   public List<SelectExpr> getSelectExprs() {
     return Collections.unmodifiableList(selectExprs);
   }

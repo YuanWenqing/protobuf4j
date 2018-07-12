@@ -86,13 +86,17 @@ public abstract class LimitClause implements ISqlStatement {
     }
   }
 
+  public static Builder newBuilder(int limit) {
+    return new Builder(limit);
+  }
+
   public static class Builder {
     private int limit;
     private Integer defaultLimit;
     private Integer defaultOffset;
     private Integer defaultPageNo;
 
-    public Builder(int limit) {
+    private Builder(int limit) {
       this.limit = limit;
     }
 
