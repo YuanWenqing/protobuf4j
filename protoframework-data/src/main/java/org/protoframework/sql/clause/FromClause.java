@@ -40,4 +40,9 @@ public class FromClause implements ISqlStatement {
     tableRef.collectSqlValue(collectedValues);
     return collectedValues;
   }
+
+  @Override
+  public String toString() {
+    return toSolidSql(new StringBuilder()).toString();
+  }
 }

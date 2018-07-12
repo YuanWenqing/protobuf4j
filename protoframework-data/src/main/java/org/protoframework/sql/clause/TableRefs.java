@@ -51,5 +51,10 @@ public abstract class TableRefs {
     public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
       return collectedValues;
     }
+
+    @Override
+    public String toString() {
+      return tableName;
+    }
   }
 }

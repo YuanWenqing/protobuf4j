@@ -48,6 +48,11 @@ public abstract class LimitClause implements ISqlStatement {
     return collectedValues;
   }
 
+  @Override
+  public String toString() {
+    return toSolidSql(new StringBuilder()).toString();
+  }
+
   private static class OffsetLimit extends LimitClause {
     private final int offset;
 

@@ -96,4 +96,9 @@ public class WhereClause implements ISqlStatement {
     }
     return collectedValues;
   }
+
+  @Override
+  public String toString() {
+    return toSolidSql(new StringBuilder()).toString();
+  }
 }
