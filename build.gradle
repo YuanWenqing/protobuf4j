@@ -65,7 +65,12 @@ project(':protoframework-core') {
 }
 project(':protoframework-data') {
     dependencies {
-        
+        // db
+        compile 'org.springframework:spring-jdbc:4.3.18.RELEASE'
+
+        // util
+        compile 'org.apache.commons:commons-lang3:3.4'
+        compile 'com.google.guava:guava:18.0'
     }
 }
 project(':protoframework-grpc') {
