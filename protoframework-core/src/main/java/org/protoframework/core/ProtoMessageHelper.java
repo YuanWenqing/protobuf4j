@@ -188,6 +188,10 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
     }
   }
 
+  public Descriptors.Descriptor getDescriptor() {
+    return descriptor;
+  }
+
   @SuppressWarnings("unchecked")
   public <R extends Message.Builder> R newBuilder() {
     return (R) invokeStaticMethodUnchecked(METHOD_NEW_BUILDER);
