@@ -286,16 +286,18 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
 
   @Override
   public String toString(T msg) {
+    String text;
     if (msg == null) {
-      return "null";
+      text = "null";
+    } else {
+      // TextFormat.shortDebugString 中文是类似"\350\212\261\345"这样的编码，无法可视化
+      // 所以，我们用下面这种方式，略tricky
+      text = TextFormat.printToUnicodeString(msg);
+      // 把内容中的\r转义，以免在进行文件读取一行时因为\r分行导致出错
+      text = text.replace("\r", "\\r");
+      // text format中换行都是\n，把它们变成空格
+      text = text.replace("\n", " ");
     }
-    // TextFormat.shortDebugString 中文是类似"\350\212\261\345"这样的编码，无法可视化
-    // 所以，我们用下面这种方式，略tricky
-    String line = TextFormat.printToUnicodeString(msg);
-    // 把内容中的\r转义，以免在进行文件读取一行时因为\r分行导致出错
-    line = line.replace("\r", "\\r");
-    // text format中换行都是\n，把它们变成空格
-    line = line.replace("\n", " ");
-    return line;
+    return String.format("%s{%s}", descriptor.getFullName(), text);
   }
 }

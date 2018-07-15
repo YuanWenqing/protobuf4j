@@ -33,10 +33,10 @@ public class TestProtoEnumHelper {
     assertEquals(TestModel.EnumA.getDescriptor(), helper.getDescriptor());
     assertEquals(TestModel.EnumA.UNRECOGNIZED, helper.getUnrecognizedValue());
 
-    assertEquals("null", helper.toString(null));
-    assertEquals("EA0[0]", helper.toString(TestModel.EnumA.EA0));
-    assertEquals("EA2[2]", helper.toString(TestModel.EnumA.EA2));
-    assertEquals("UNRECOGNIZED[-1]", helper.toString(TestModel.EnumA.UNRECOGNIZED));
+    assertEquals("test.EnumA{null}", helper.toString(null));
+    assertEquals("test.EnumA{EA0[0]}", helper.toString(TestModel.EnumA.EA0));
+    assertEquals("test.EnumA{EA2[2]}", helper.toString(TestModel.EnumA.EA2));
+    assertEquals("test.EnumA{UNRECOGNIZED[-1]}", helper.toString(TestModel.EnumA.UNRECOGNIZED));
   }
 
   @Test
