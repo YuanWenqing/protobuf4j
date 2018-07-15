@@ -15,6 +15,7 @@ import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.protoframework.core.ProtoMessageHelper;
+import org.protoframework.sql.DeleteSql;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.SelectSql;
 import org.protoframework.sql.clause.*;
@@ -53,6 +54,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
    * 访问的数据表名
    */
   protected final String tableName;
+  protected final FromClause fromClause;
   protected final ProtoMessageHelper<T> messageHelper;
   protected final RowMapper<T> messageMapper;
 
@@ -84,6 +86,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.tableName = tableName;
     this.messageHelper = ProtoMessageHelper.getHelper(messageType);
     this.messageMapper = new ProtoMessageRowMapper<>(messageType);
+    this.fromClause = FromClause.from(tableName);
 
     this.daoLogger = LoggerFactory
         .getLogger(getClass().getName() + "#" + messageHelper.getDescriptor().getFullName());
@@ -329,15 +332,12 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   @Override
   public List<T> selectAll(@Nonnull WhereClause where) {
     SelectClause select = new SelectClause().select(SelectExpr.STAR);
-    FromClause from = new FromClause(TableRefs.of(tableName));
-    SelectSql sql = new SelectSql(select, from, where);
+    SelectSql sql = new SelectSql(select, fromClause, where);
     return doSelect(sql, messageMapper);
   }
 
-  /**
-   * Warn 实例化的dao中的方法不建议直接使用该方法
-   */
-  protected <V> List<V> doSelect(@Nonnull SelectSql selectSql, RowMapper<V> mapper) {
+  @Override
+  public <V> List<V> doSelect(@Nonnull SelectSql selectSql, RowMapper<V> mapper) {
     String sqlTemplate = selectSql.toSqlTemplate(new StringBuilder()).toString();
     List<Object> sqlValues = selectSql.collectSqlValue(Lists.newArrayList());
     timer.restart();
@@ -346,10 +346,31 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
           .query(DaoUtil.makeStatementCreator(sqlTemplate, sqlValues), mapper);
     } finally {
       sqlLogger.select()
-          .info("cost={}: {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
+          .info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
               sqlValues);
     }
   }
 
+  ////////////////////////////// delete //////////////////////////////
+
+  @Override
+  public int delete(IExpression cond) {
+    DeleteSql deleteSql = new DeleteSql(fromClause, new WhereClause().setCond(cond));
+    return doDelete(deleteSql);
+  }
+
+  @Override
+  public int doDelete(DeleteSql deleteSql) {
+    String sqlTemplate = deleteSql.toSqlTemplate(new StringBuilder()).toString();
+    List<Object> sqlValues = deleteSql.collectSqlValue(Lists.newArrayList());
+    timer.restart();
+    try {
+      return this.getJdbcTemplate().update(DaoUtil.makeStatementCreator(sqlTemplate, sqlValues));
+    } finally {
+      sqlLogger.delete()
+          .info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
+              sqlValues);
+    }
+  }
 
 }

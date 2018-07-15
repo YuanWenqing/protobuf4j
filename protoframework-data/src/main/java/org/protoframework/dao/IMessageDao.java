@@ -1,9 +1,12 @@
 package org.protoframework.dao;
 
 import com.google.protobuf.Message;
+import org.protoframework.sql.DeleteSql;
 import org.protoframework.sql.IExpression;
+import org.protoframework.sql.SelectSql;
 import org.protoframework.sql.clause.SetClause;
 import org.protoframework.sql.clause.WhereClause;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
@@ -84,6 +87,11 @@ public interface IMessageDao<T extends Message> {
   List<T> selectAll(@Nonnull WhereClause where);
 
   /**
+   * select方法
+   */
+  <V> List<V> doSelect(SelectSql selectSql, RowMapper<V> rowMapper);
+
+  /**
    * 获取表上的一个遍历器
    *
    * @param batch 分批取数据时每批数据的条数
@@ -107,8 +115,15 @@ public interface IMessageDao<T extends Message> {
 
   /**
    * 根据条件删除数据
+   *
+   * @return 删除的数据条数
    */
   int delete(IExpression cond);
+
+  /**
+   * @return 删除的数据条数
+   */
+  int doDelete(DeleteSql deleteSql);
 
   /**
    * 根据条件更新字段
