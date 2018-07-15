@@ -2,29 +2,22 @@ package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.ITableRef;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/12
+ * @author: yuanwq
+ * @date: 2018/7/12
  */
 public abstract class TableRefs {
   public static ITableRef of(String tableName) {
     return new SimpleTable(tableName);
   }
 
-  /**
-   * @param valueCls 表中数据的类型
-   */
-  public static ITableRef of(Class<?> valueCls) {
-    // TODO: use SqlConverter to convert table name
-    return null;
-  }
-
-  private static class SimpleTable implements ITableRef {
+  private static class SimpleTable extends AbstractSqlStatement implements ITableRef {
     private final String tableName;
 
     public SimpleTable(String tableName) {
@@ -52,9 +45,5 @@ public abstract class TableRefs {
       return collectedValues;
     }
 
-    @Override
-    public String toString() {
-      return tableName;
-    }
   }
 }

@@ -14,8 +14,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * author: yuanwq
- * date: 2018/7/9
+ * @author: yuanwq
+ * @date: 2018/7/9
  */
 public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelper<T> {
   @SuppressWarnings("rawtypes")
@@ -145,11 +145,13 @@ public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelp
   @Override
   public String toString(T enumValue) {
     if (enumValue == null) {
-      return "null";
+      return String.format("%s{null}", descriptor.getFullName());
     }
     if (this.unrecognized.equals(enumValue)) {
-      return "UNRECOGNIZED[-1]";
+      return String.format("%s{UNRECOGNIZED[-1]}", descriptor.getFullName());
     }
-    return String.format("%s[%d]", enumValue.getValueDescriptor().getName(), enumValue.getNumber());
+    return String
+        .format("%s{%s[%d]}", descriptor.getFullName(), enumValue.getValueDescriptor().getName(),
+            enumValue.getNumber());
   }
 }

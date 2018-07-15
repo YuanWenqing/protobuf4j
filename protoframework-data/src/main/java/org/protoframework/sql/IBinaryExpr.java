@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  *
  * @param <T></T> 运算符类型
  */

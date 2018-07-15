@@ -188,13 +188,17 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
     }
   }
 
+  public Descriptors.Descriptor getDescriptor() {
+    return descriptor;
+  }
+
   @SuppressWarnings("unchecked")
   public <R extends Message.Builder> R newBuilder() {
     return (R) invokeStaticMethodUnchecked(METHOD_NEW_BUILDER);
   }
 
   public Message.Builder newBuilderForField(String fieldName) {
-    Descriptors.FieldDescriptor fd = checkField(fieldName);
+    Descriptors.FieldDescriptor fd = checkFieldDescriptor(fieldName);
     return newBuilderForField(fd);
   }
 
@@ -250,7 +254,7 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
     return field2type;
   }
 
-  private Descriptors.FieldDescriptor checkField(String fieldName) {
+  public Descriptors.FieldDescriptor checkFieldDescriptor(String fieldName) {
     Descriptors.FieldDescriptor fd = getFieldDescriptor(fieldName);
     if (fd == null) {
       throw new RuntimeException("no field named as `" + fieldName + "` in " + this.cls);
@@ -260,7 +264,7 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
 
   @Override
   public boolean isFieldSet(T msg, String fieldName) {
-    Descriptors.FieldDescriptor fd = checkField(fieldName);
+    Descriptors.FieldDescriptor fd = checkFieldDescriptor(fieldName);
     if (fd.isRepeated()) {
       return !((Collection<?>) msg.getField(fd)).isEmpty();
     }
@@ -269,29 +273,31 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
 
   @Override
   public Object getFieldValue(T msg, String fieldName) {
-    Descriptors.FieldDescriptor fd = checkField(fieldName);
+    Descriptors.FieldDescriptor fd = checkFieldDescriptor(fieldName);
     return msg.getField(fd);
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public T setFieldValue(T msg, String fieldName, Object fieldValue) {
-    Descriptors.FieldDescriptor fd = checkField(fieldName);
+    Descriptors.FieldDescriptor fd = checkFieldDescriptor(fieldName);
     return (T) msg.toBuilder().setField(fd, fieldValue).build();
   }
 
   @Override
   public String toString(T msg) {
+    String text;
     if (msg == null) {
-      return "null";
+      text = "null";
+    } else {
+      // TextFormat.shortDebugString 中文是类似"\350\212\261\345"这样的编码，无法可视化
+      // 所以，我们用下面这种方式，略tricky
+      text = TextFormat.printToUnicodeString(msg);
+      // 把内容中的\r转义，以免在进行文件读取一行时因为\r分行导致出错
+      text = text.replace("\r", "\\r");
+      // text format中换行都是\n，把它们变成空格
+      text = text.replace("\n", " ");
     }
-    // TextFormat.shortDebugString 中文是类似"\350\212\261\345"这样的编码，无法可视化
-    // 所以，我们用下面这种方式，略tricky
-    String line = TextFormat.printToUnicodeString(msg);
-    // 把内容中的\r转义，以免在进行文件读取一行时因为\r分行导致出错
-    line = line.replace("\r", "\\r");
-    // text format中换行都是\n，把它们变成空格
-    line = line.replace("\n", " ");
-    return line;
+    return String.format("%s{%s}", descriptor.getFullName(), text);
   }
 }

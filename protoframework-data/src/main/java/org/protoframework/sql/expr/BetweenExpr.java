@@ -1,5 +1,6 @@
 package org.protoframework.sql.expr;
 
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlOperation;
 
@@ -7,10 +8,10 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
-public class BetweenExpr implements IExpression {
+public class BetweenExpr extends AbstractSqlStatement implements IExpression {
   private final IExpression min;
   private final IExpression max;
 
@@ -81,11 +82,6 @@ public class BetweenExpr implements IExpression {
     min.collectSqlValue(collectedValues);
     max.collectSqlValue(collectedValues);
     return collectedValues;
-  }
-
-  @Override
-  public String toString() {
-    return toSolidSql(new StringBuilder()).toString();
   }
 
 }

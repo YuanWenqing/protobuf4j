@@ -2,6 +2,7 @@ package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlStatement;
 import org.protoframework.sql.expr.TableColumn;
@@ -11,14 +12,18 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/12
+ * @author: yuanwq
+ * @date: 2018/7/12
  */
-public class SelectClause implements ISqlStatement {
+public class SelectClause extends AbstractSqlStatement implements ISqlStatement {
   private final List<SelectExpr> selectExprs = Lists.newArrayList();
 
   public List<SelectExpr> getSelectExprs() {
     return Collections.unmodifiableList(selectExprs);
+  }
+
+  public boolean isEmpty() {
+    return selectExprs.isEmpty();
   }
 
   public SelectClause select(SelectExpr selectExpr) {
@@ -73,8 +78,4 @@ public class SelectClause implements ISqlStatement {
     return collectedValues;
   }
 
-  @Override
-  public String toString() {
-    return toSolidSql(new StringBuilder()).toString();
-  }
 }

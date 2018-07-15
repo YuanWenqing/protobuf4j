@@ -1,5 +1,6 @@
 package org.protoframework.sql.expr;
 
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlOperation;
 
@@ -9,10 +10,10 @@ import java.util.List;
 /**
  * 表列
  * <p>
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
-public class TableColumn implements IExpression {
+public class TableColumn extends AbstractSqlStatement implements IExpression {
   private final String column;
 
   public TableColumn(String column) {
@@ -43,8 +44,4 @@ public class TableColumn implements IExpression {
     return collectedValues;
   }
 
-  @Override
-  public String toString() {
-    return column;
-  }
 }

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package db.job;
+package test;
 
 // 测试用的proto定义
 

@@ -2,24 +2,18 @@ package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlStatement;
-import org.protoframework.sql.expr.RawExpr;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
-public class SelectExpr implements ISqlStatement {
-  public static final SelectExpr STAR = new SelectExpr(new RawExpr("*")) {
-    @Override
-    public SelectExpr setAlias(String alias) {
-      throw new UnsupportedOperationException("cannot set alias for STAR `*`");
-    }
-  };
+public class SelectExpr extends AbstractSqlStatement implements ISqlStatement {
 
   private final IExpression expression;
   private String alias;
@@ -67,8 +61,4 @@ public class SelectExpr implements ISqlStatement {
     return collectedValues;
   }
 
-  @Override
-  public String toString() {
-    return toSolidSql(new StringBuilder()).toString();
-  }
 }

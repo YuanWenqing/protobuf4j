@@ -1,5 +1,6 @@
 package org.protoframework.sql.expr;
 
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlOperation;
 
@@ -9,10 +10,10 @@ import java.util.List;
 /**
  * 常量：字符串 数值 等
  * <p>
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
-public class ConstValue implements IExpression {
+public class ConstValue extends AbstractSqlStatement implements IExpression {
   private final Object value;
 
   public ConstValue(@Nonnull Object value) {
@@ -50,8 +51,4 @@ public class ConstValue implements IExpression {
     return collectedValues;
   }
 
-  @Override
-  public String toString() {
-    return String.valueOf(value);
-  }
 }

@@ -1,20 +1,27 @@
 package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.ISqlStatement;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/12
+ * 分页子句：{@code LIMIT <limit> OFFSET <offset>}
+ * <p>
+ * @author: yuanwq
+ * @date: 2018/7/12
  */
-public abstract class LimitClause implements ISqlStatement {
+public abstract class PaginationClause extends AbstractSqlStatement implements ISqlStatement {
   protected final int limit;
 
-  public LimitClause(int limit) {
+  public PaginationClause(int limit) {
     this.limit = limit;
+  }
+
+  public static Builder newBuilder(int limit) {
+    return new Builder(limit);
   }
 
   public int getLimit() {
@@ -23,7 +30,7 @@ public abstract class LimitClause implements ISqlStatement {
 
   public abstract int getOffset();
 
-  public abstract LimitClause next();
+  public abstract PaginationClause next();
 
   public int totalPages(int totalItems) {
     if (limit == 0 || totalItems <= 0) {
@@ -48,12 +55,7 @@ public abstract class LimitClause implements ISqlStatement {
     return collectedValues;
   }
 
-  @Override
-  public String toString() {
-    return toSolidSql(new StringBuilder()).toString();
-  }
-
-  private static class OffsetLimit extends LimitClause {
+  private static class OffsetLimit extends PaginationClause {
     private final int offset;
 
     public OffsetLimit(int limit, int offset) {
@@ -67,12 +69,12 @@ public abstract class LimitClause implements ISqlStatement {
     }
 
     @Override
-    public LimitClause next() {
+    public PaginationClause next() {
       return new OffsetLimit(limit, offset + limit);
     }
   }
 
-  private static class PageNoLimit extends LimitClause {
+  private static class PageNoLimit extends PaginationClause {
     private final int pageNo;
 
     public PageNoLimit(int limit, int pageNo) {
@@ -86,13 +88,9 @@ public abstract class LimitClause implements ISqlStatement {
     }
 
     @Override
-    public LimitClause next() {
+    public PaginationClause next() {
       return new PageNoLimit(limit, pageNo + 1);
     }
-  }
-
-  public static Builder newBuilder(int limit) {
-    return new Builder(limit);
   }
 
   public static class Builder {
@@ -129,7 +127,11 @@ public abstract class LimitClause implements ISqlStatement {
       return this;
     }
 
-    public LimitClause buildByOffset(int offset) {
+    public PaginationClause build() {
+      return buildByOffset(0);
+    }
+
+    public PaginationClause buildByOffset(int offset) {
       if (defaultLimit != null && limit < 0) {
         limit = defaultLimit.intValue();
       }
@@ -141,7 +143,7 @@ public abstract class LimitClause implements ISqlStatement {
       return new OffsetLimit(limit, offset);
     }
 
-    public LimitClause buildByPageNo(int pageNo) {
+    public PaginationClause buildByPageNo(int pageNo) {
       if (defaultLimit != null && limit < 0) {
         limit = defaultLimit.intValue();
       }

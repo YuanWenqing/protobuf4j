@@ -5,8 +5,8 @@ import javax.annotation.Nonnull;
 /**
  * 访问者模式解耦具体表达式的sql语句构造逻辑
  * <p>
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  *
  * @param <T> 处理的表达式类型
  */

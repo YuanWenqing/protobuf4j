@@ -2,6 +2,7 @@ package org.protoframework.sql.expr;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlOperation;
 
@@ -11,10 +12,10 @@ import java.util.List;
 
 /**
  * 值集合
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
-public class ValueSet implements IExpression {
+public class ValueSet extends AbstractSqlStatement implements IExpression {
   private final List<Object> values;
 
   public ValueSet(@Nonnull Collection<?> values) {
@@ -45,8 +46,4 @@ public class ValueSet implements IExpression {
     return collectedValues;
   }
 
-  @Override
-  public String toString() {
-    return String.valueOf(values);
-  }
 }

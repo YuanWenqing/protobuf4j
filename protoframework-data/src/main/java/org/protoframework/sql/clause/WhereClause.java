@@ -1,5 +1,6 @@
 package org.protoframework.sql.clause;
 
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlStatement;
 
@@ -7,20 +8,22 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/12
+ * @author: yuanwq
+ * @date: 2018/7/12
  */
-public class WhereClause implements ISqlStatement {
+public class WhereClause extends AbstractSqlStatement implements ISqlStatement {
   private IExpression cond;
   private OrderByClause orderBy;
-  private LimitClause limit;
+  private GroupByClause groupBy;
+  private PaginationClause pagination;
 
   public IExpression getCond() {
     return cond;
   }
 
-  public void setCond(IExpression cond) {
+  public WhereClause setCond(IExpression cond) {
     this.cond = cond;
+    return this;
   }
 
   public OrderByClause getOrderBy() {
@@ -32,13 +35,25 @@ public class WhereClause implements ISqlStatement {
     return this;
   }
 
-  public LimitClause getLimit() {
-    return limit;
+  public void setGroupBy(GroupByClause groupBy) {
+    this.groupBy = groupBy;
   }
 
-  public WhereClause setLimit(LimitClause limit) {
-    this.limit = limit;
+  public GroupByClause getGroupBy() {
+    return groupBy;
+  }
+
+  public PaginationClause getPagination() {
+    return pagination;
+  }
+
+  public WhereClause setPagination(PaginationClause pagination) {
+    this.pagination = pagination;
     return this;
+  }
+
+  public WhereClause limit(int limit) {
+    return setPagination(PaginationClause.newBuilder(limit).build());
   }
 
   @Override
@@ -53,11 +68,17 @@ public class WhereClause implements ISqlStatement {
       }
       orderBy.toSqlTemplate(sb);
     }
-    if (limit != null) {
+    if (groupBy != null) {
       if (!sb.toString().endsWith(" ")) {
         sb.append(" ");
       }
-      limit.toSqlTemplate(sb);
+      groupBy.toSqlTemplate(sb);
+    }
+    if (pagination != null) {
+      if (!sb.toString().endsWith(" ")) {
+        sb.append(" ");
+      }
+      pagination.toSqlTemplate(sb);
     }
     return sb;
   }
@@ -74,11 +95,17 @@ public class WhereClause implements ISqlStatement {
       }
       orderBy.toSolidSql(sb);
     }
-    if (limit != null) {
+    if (groupBy != null) {
       if (!sb.toString().endsWith(" ")) {
         sb.append(" ");
       }
-      limit.toSolidSql(sb);
+      groupBy.toSolidSql(sb);
+    }
+    if (pagination != null) {
+      if (!sb.toString().endsWith(" ")) {
+        sb.append(" ");
+      }
+      pagination.toSolidSql(sb);
     }
     return sb;
   }
@@ -91,14 +118,10 @@ public class WhereClause implements ISqlStatement {
     if (orderBy != null) {
       orderBy.collectSqlValue(collectedValues);
     }
-    if (limit != null) {
-      limit.collectSqlValue(collectedValues);
+    if (pagination != null) {
+      pagination.collectSqlValue(collectedValues);
     }
     return collectedValues;
   }
 
-  @Override
-  public String toString() {
-    return toSolidSql(new StringBuilder()).toString();
-  }
 }

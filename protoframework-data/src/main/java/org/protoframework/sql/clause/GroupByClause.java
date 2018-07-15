@@ -1,6 +1,7 @@
 package org.protoframework.sql.clause;
 
 import com.google.common.collect.Lists;
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlStatement;
 import org.protoframework.sql.expr.TableColumn;
@@ -10,10 +11,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/12
+ * @author: yuanwq
+ * @date: 2018/7/12
  */
-public class GroupByClause implements ISqlStatement {
+public class GroupByClause extends AbstractSqlStatement implements ISqlStatement {
   private final List<GroupByExpr> groupByExprs = Lists.newArrayList();
 
   public List<GroupByExpr> getGroupByExprs() {
@@ -77,8 +78,4 @@ public class GroupByClause implements ISqlStatement {
     return collectedValues;
   }
 
-  @Override
-  public String toString() {
-    return toSolidSql(new StringBuilder()).toString();
-  }
 }

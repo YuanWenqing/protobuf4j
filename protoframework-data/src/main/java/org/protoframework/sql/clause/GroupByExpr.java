@@ -1,5 +1,6 @@
 package org.protoframework.sql.clause;
 
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.Direction;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlStatement;
@@ -9,10 +10,10 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/12
+ * @author: yuanwq
+ * @date: 2018/7/12
  */
-public class GroupByExpr implements ISqlStatement {
+public class GroupByExpr extends AbstractSqlStatement implements ISqlStatement {
   private final IExpression expr;
   private final Direction direction;
 
@@ -56,8 +57,4 @@ public class GroupByExpr implements ISqlStatement {
     return expr.collectSqlValue(collectedValues);
   }
 
-  @Override
-  public String toString() {
-    return toSolidSql(new StringBuilder()).toString();
-  }
 }
