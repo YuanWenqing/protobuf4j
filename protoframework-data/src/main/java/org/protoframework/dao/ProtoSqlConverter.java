@@ -5,20 +5,26 @@ package org.protoframework.dao;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType;
 import com.google.protobuf.Internal;
 import com.google.protobuf.MapEntry;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.EntityArrays;
 import org.apache.commons.lang3.text.translate.LookupTranslator;
 import org.protoframework.core.ProtoMessageHelper;
 import org.springframework.dao.TypeMismatchDataAccessException;
 
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  */
@@ -58,17 +64,18 @@ public class ProtoSqlConverter implements ISqlConverter<Message> {
 
   protected Object toSqlValue(FieldDescriptor fd, Object value) {
     if (fd.isMapField()) {
-      return map2str(fd, value);
+      // check map first, for map field is also repeated
+      return encodeMapToString(fd, value);
     } else if (fd.isRepeated()) {
-      return list2str(fd, value);
-    } else if (isTimestamp(fd)) {
+      return encodeListToString(fd, value);
+    } else if (isTimestampField(fd)) {
       return toSqlTimestamp(value);
     } else {
       return toSqlValue(fd.getJavaType(), value);
     }
   }
 
-  protected boolean isTimestamp(FieldDescriptor fd) {
+  protected boolean isTimestampField(FieldDescriptor fd) {
     return JavaType.LONG.equals(fd.getJavaType()) && fd.getName().endsWith("_time");
   }
 
@@ -94,7 +101,7 @@ public class ProtoSqlConverter implements ISqlConverter<Message> {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  protected String map2str(FieldDescriptor fd, Object value) {
+  protected String encodeMapToString(FieldDescriptor fd, Object value) {
     FieldDescriptor keyFd = fd.getMessageType().findFieldByName("key");
     FieldDescriptor valFd = fd.getMessageType().findFieldByName("value");
     if (value instanceof Map) {
@@ -125,7 +132,7 @@ public class ProtoSqlConverter implements ISqlConverter<Message> {
             value.getClass().getName());
   }
 
-  protected String list2str(FieldDescriptor fd, Object value) {
+  protected String encodeListToString(FieldDescriptor fd, Object value) {
     if (value instanceof Iterable) {
       StringBuilder sb = new StringBuilder();
       Iterable<?> list = (Iterable<?>) value;
@@ -191,8 +198,108 @@ public class ProtoSqlConverter implements ISqlConverter<Message> {
   @Override
   public <B extends Message> Object fromSqlValue(Class<B> messageClass, String field,
       Object sqlValue) {
-    // TODO:
-    return null;
+    ProtoMessageHelper<B> helper = ProtoMessageHelper.getHelper(messageClass);
+    FieldDescriptor fd = helper.checkFieldDescriptor(field);
+    if (fd.isMapField()) {
+      // check map first, for map field is also repeated
+      return parseMapFromString(helper, fd, sqlValue);
+    } else if (fd.isRepeated()) {
+      return parseListFromString(fd, sqlValue);
+    } else if (fd.getJavaType().equals(JavaType.BOOLEAN)) {
+      return parseInt(sqlValue) != 0;
+    } else if (fd.getJavaType().equals(JavaType.ENUM)) {
+      // EnumValueDescriptor
+      return fd.getEnumType().findValueByNumber(parseInt(sqlValue));
+    } else if (isTimestampField(fd)) {
+      // 处理时间，把Timestamp映射成long
+      Timestamp ts = (Timestamp) sqlValue;
+      return ts.getTime();
+    } else {
+      return sqlValue;
+    }
+  }
+
+  protected int parseInt(Object sqlValue) {
+    if (sqlValue.getClass().equals(int.class) || sqlValue.getClass().equals(Integer.class)) {
+      return (int) sqlValue;
+    } else {
+      throw new TypeMismatchDataAccessException(
+          "should be an int value, sqlValue=" + sqlValue + ", type=" + sqlValue.getClass());
+    }
+  }
+
+  /**
+   * @return a list of {@link MapEntry}, because setter of a map field only accept value of this kind
+   */
+  protected List<MapEntry<?, ?>> parseMapFromString(ProtoMessageHelper<?> helper,
+      FieldDescriptor fd, Object value) {
+    if (value == null) {
+      return Collections.emptyList();
+    }
+    if (!(value instanceof String)) {
+      throw new TypeMismatchDataAccessException(
+          "value to parse must be string for a map field: " + fd.getFullName() + ", value=" +
+              value + ", valCls=" + value.getClass());
+    }
+    String text = (String) value;
+    if (StringUtils.isBlank(text)) {
+      return Collections.emptyList();
+    }
+    FieldDescriptor keyFd = fd.getMessageType().findFieldByName("key");
+    FieldDescriptor valFd = fd.getMessageType().findFieldByName("value");
+    List<MapEntry<?, ?>> mapEntries = Lists.newArrayList();
+    Map<String, String> map = MAP_SPLITTER.split(text);
+    for (Map.Entry<String, String> entry : map.entrySet()) {
+      Object k = lookupTransform(keyFd).apply(MAP_VALUE_UNESCAPE.translate(entry.getKey()));
+      Object v = lookupTransform(valFd).apply(MAP_VALUE_UNESCAPE.translate(entry.getValue()));
+      MapEntry.Builder<?, ?> entryBuilder = (MapEntry.Builder<?, ?>) helper.newBuilderForField(fd);
+      entryBuilder.setField(keyFd, k).setField(valFd, v);
+      mapEntries.add(entryBuilder.build());
+    }
+    return mapEntries;
+  }
+
+  protected List<?> parseListFromString(FieldDescriptor fd, Object value) {
+    if (value == null) {
+      return Collections.emptyList();
+    }
+    if (!(value instanceof String)) {
+      throw new TypeMismatchDataAccessException(
+          "value to parse must be string for a repeated field: " + fd.getFullName() + ", value=" +
+              value + ", valCls=" + value.getClass());
+    }
+    String text = (String) value;
+    if (StringUtils.isBlank(text)) {
+      return Collections.emptyList();
+    }
+    // 忽略最后一个分隔符
+    if (text.endsWith(LIST_SEP)) text = text.substring(0, text.length() - LIST_SEP.length());
+    List<String> list = LIST_SPLITTER.splitToList(text);
+    return list.stream().map(LIST_VALUE_UNESCAPE::translate).map(lookupTransform(fd))
+        .collect(Collectors.toList());
+  }
+
+  private Function<String, Object> lookupTransform(FieldDescriptor fd) {
+    switch (fd.getJavaType()) {
+      case BOOLEAN:
+        return text -> (Integer.parseInt(Objects.requireNonNull(text)) != 0);
+      case ENUM:
+        return text -> fd.getEnumType()
+            .findValueByNumber(Integer.parseInt(Objects.requireNonNull(text)));
+      case INT:
+        return Integer::parseInt;
+      case LONG:
+        return Long::parseLong;
+      case FLOAT:
+        return Float::parseFloat;
+      case DOUBLE:
+        return Double::parseDouble;
+      case STRING:
+        return text -> text;
+      default:
+        throw new TypeMismatchDataAccessException(
+            "not support java type: " + fd.getJavaType() + ", field=" + fd.getFullName());
+    }
   }
 
 }
