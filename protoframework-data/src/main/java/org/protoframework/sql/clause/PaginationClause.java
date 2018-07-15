@@ -1,6 +1,7 @@
 package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.ISqlStatement;
 
 import javax.annotation.Nonnull;
@@ -12,11 +13,15 @@ import java.util.List;
  * author: yuanwq
  * date: 2018/7/12
  */
-public abstract class PaginationClause implements ISqlStatement {
+public abstract class PaginationClause extends AbstractSqlStatement implements ISqlStatement {
   protected final int limit;
 
   public PaginationClause(int limit) {
     this.limit = limit;
+  }
+
+  public static Builder newBuilder(int limit) {
+    return new Builder(limit);
   }
 
   public int getLimit() {
@@ -48,11 +53,6 @@ public abstract class PaginationClause implements ISqlStatement {
   @Override
   public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
     return collectedValues;
-  }
-
-  @Override
-  public String toString() {
-    return toSolidSql(new StringBuilder()).toString();
   }
 
   private static class OffsetLimit extends PaginationClause {
@@ -91,10 +91,6 @@ public abstract class PaginationClause implements ISqlStatement {
     public PaginationClause next() {
       return new PageNoLimit(limit, pageNo + 1);
     }
-  }
-
-  public static Builder newBuilder(int limit) {
-    return new Builder(limit);
   }
 
   public static class Builder {

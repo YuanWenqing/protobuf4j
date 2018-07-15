@@ -1,5 +1,6 @@
 package org.protoframework.sql.clause;
 
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlStatement;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * author: yuanwq
  * date: 2018/7/12
  */
-public class WhereClause implements ISqlStatement {
+public class WhereClause extends AbstractSqlStatement implements ISqlStatement {
   private IExpression cond;
   private OrderByClause orderBy;
   private PaginationClause pagination;
@@ -102,8 +103,4 @@ public class WhereClause implements ISqlStatement {
     return collectedValues;
   }
 
-  @Override
-  public String toString() {
-    return toSolidSql(new StringBuilder()).toString();
-  }
 }

@@ -32,11 +32,7 @@ public interface ISqlStatement {
   List<Object> collectSqlValue(@Nonnull List<Object> collectedValues);
 
   /**
-   * 显示声明，要求实现类重写{@code toString}，建议实现方式
-   *
-   * <pre>
-   *   toSolidSql(new StringBuilder()).toString();
-   * </pre>
+   * 显示声明，要求实现类重写{@code toString}
    */
   String toString();
 }

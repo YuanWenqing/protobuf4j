@@ -1,5 +1,6 @@
 package org.protoframework.sql.expr;
 
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IBinaryExpr;
 import org.protoframework.sql.IExpression;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * author: yuanwq
  * date: 2018/7/11
  */
-public class ArithmeticExpr implements IBinaryExpr<ArithmeticOp> {
+public class ArithmeticExpr extends AbstractSqlStatement implements IBinaryExpr<ArithmeticOp> {
   private final IExpression left;
   private final ArithmeticOp op;
   private final IExpression right;
@@ -57,8 +58,4 @@ public class ArithmeticExpr implements IBinaryExpr<ArithmeticOp> {
     return collectedValues;
   }
 
-  @Override
-  public String toString() {
-    return toSolidSql(new StringBuilder()).toString();
-  }
 }

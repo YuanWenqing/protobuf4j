@@ -11,7 +11,7 @@ import java.util.List;
  * author: yuanwq
  * date: 2018/7/15
  */
-public class DeleteSql implements ISqlStatement {
+public class DeleteSql extends AbstractSqlStatement implements ISqlStatement {
   private final FromClause from;
   private WhereClause where;
 

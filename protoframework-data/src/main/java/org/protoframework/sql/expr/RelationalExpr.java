@@ -1,5 +1,6 @@
 package org.protoframework.sql.expr;
 
+import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IBinaryExpr;
 import org.protoframework.sql.IExpression;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * author: yuanwq
  * date: 2018/7/11
  */
-public class RelationalExpr implements IBinaryExpr<RelationalOp> {
+public class RelationalExpr extends AbstractSqlStatement implements IBinaryExpr<RelationalOp> {
   private final IExpression left;
   private final RelationalOp op;
   private final IExpression right;
@@ -57,8 +58,4 @@ public class RelationalExpr implements IBinaryExpr<RelationalOp> {
     return collectedValues;
   }
 
-  @Override
-  public String toString() {
-    return toSolidSql(new StringBuilder()).toString();
-  }
 }

@@ -12,7 +12,7 @@ import java.util.List;
  * author: yuanwq
  * date: 2018/7/15
  */
-public class SelectSql implements ISqlStatement {
+public class SelectSql extends AbstractSqlStatement implements ISqlStatement {
   private final SelectClause select;
   private final FromClause from;
   private WhereClause where;

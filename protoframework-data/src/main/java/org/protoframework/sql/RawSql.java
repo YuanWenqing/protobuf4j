@@ -13,7 +13,7 @@ import java.util.List;
  * author: yuanwq
  * date: 2018/7/11
  */
-public class RawSql implements ISqlStatement {
+public class RawSql extends AbstractSqlStatement implements ISqlStatement {
 
   private final String sql;
   private final List<Object> values;
@@ -60,8 +60,4 @@ public class RawSql implements ISqlStatement {
     return collectedValues;
   }
 
-  @Override
-  public String toString() {
-    return toSolidSql(new StringBuilder()).toString();
-  }
 }
