@@ -6,6 +6,7 @@ import org.protoframework.sql.clause.WhereClause;
 import org.springframework.jdbc.core.RowMapper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,14 +54,14 @@ public interface IMessageDao<T> {
   /**
    * 根据条件查找一条数据
    */
-  T selectOne(IExpression cond);
+  T selectOne(@Nullable IExpression cond);
 
   /**
    * 根据where子句查找一条数据
    *
    * @param where 遍历条件、排序和分页配置
    */
-  T selectOne(WhereClause where);
+  T selectOne(@Nonnull WhereClause where);
 
   /**
    * 返回表中的所有数据
@@ -74,7 +75,7 @@ public interface IMessageDao<T> {
    * <p>
    * 注意：条件需要制定的范围小一些，不要一次取太多！
    */
-  List<T> selectAll(IExpression cond);
+  List<T> selectAll(@Nullable IExpression cond);
 
   /**
    * 根据where子句返回所有数据
@@ -86,7 +87,7 @@ public interface IMessageDao<T> {
   /**
    * select方法
    */
-  <V> List<V> doSelect(SelectSql selectSql, RowMapper<V> rowMapper);
+  <V> List<V> doSelect(@Nonnull SelectSql selectSql, @Nonnull RowMapper<V> rowMapper);
 
   /**
    * 获取表上的一个遍历器
@@ -98,15 +99,15 @@ public interface IMessageDao<T> {
   /**
    * 根据条件，获取表上的一个遍历器
    *
-   * @param cond  遍历条件
+   * @param cond  遍历条件，null表示全表
    * @param batch 分批取数据时每批数据的条数
    */
-  Iterator<T> iterator(IExpression cond, int batch);
+  Iterator<T> iterator(@Nullable IExpression cond, int batch);
 
   /**
    * 根据条件和排序，获取表上的一个遍历器
    *
-   * @param where 遍历条件、排序和分页配置
+   * @param where 遍历条件、排序和分页配置，必须配置好分页子句
    */
   Iterator<T> iterator(@Nonnull WhereClause where);
 
@@ -115,12 +116,12 @@ public interface IMessageDao<T> {
    *
    * @return 删除的数据条数
    */
-  int delete(IExpression cond);
+  int delete(@Nullable IExpression cond);
 
   /**
    * @return 删除的数据条数
    */
-  int doDelete(DeleteSql deleteSql);
+  int doDelete(@Nonnull DeleteSql deleteSql);
 
   /**
    * 根据条件，更新新旧数据的变动字段
@@ -134,47 +135,83 @@ public interface IMessageDao<T> {
    *
    * @return 更新的数据条数
    */
-  int update(SetClause setClause);
+  default int update(@Nonnull SetClause setClause) {
+    return update(setClause, null);
+  }
 
   /**
    * 根据条件更新字段
    *
    * @return 更新的数据条数
    */
-  int update(SetClause setClause, IExpression cond);
+  int update(@Nonnull SetClause setClause, @Nullable IExpression cond);
 
   /**
    * @return 更新的数据条数
    */
-  int doUpdate(UpdateSql updateSql);
+  int doUpdate(@Nonnull UpdateSql updateSql);
 
   /**
    * @return 影响的数据条数
    */
-  int doSql(RawSql rawSql);
+  int doSql(@Nonnull RawSql rawSql);
 
   /**
    * 根据条件count
+   *
+   * @param cond null表示全表
    */
-  int count(IExpression cond);
+  int count(@Nullable IExpression cond);
 
   /**
-   * 返回整个表的数据总条数
+   * 根据条件，对指定列{@code column}求和
+   *
+   * @param cond null表示全表
    */
-  int countAll();
+  long sum(String column, @Nullable IExpression cond);
 
   /**
-   * 根据条件，对指定列求和
+   * 根据条件对表达式{@code expr}求和
+   *
+   * @param cond null表示全表
    */
-  long sum(String field, IExpression cond);
+  long sum(@Nonnull IExpression expr, @Nullable IExpression cond);
 
   /**
-   * 对字段{@code groupField}进行分组聚合计数
+   * 根据条件，求指定列{@code column}最大值
+   *
+   * @param cond null表示全表
    */
-  <GK> Map<GK, Integer> groupCount(String groupField);
+  <V> V max(String column, @Nullable IExpression cond);
 
   /**
-   * 根据条件对字段{@code groupField}进行分组聚合计数
+   * 根据条件，求表达式{@code expr}最大值
+   *
+   * @param cond null表示全表
    */
-  <GK> Map<GK, Integer> groupCount(String groupField, IExpression cond);
+  <V> V max(@Nonnull IExpression expr, @Nullable IExpression cond, @Nonnull RowMapper<V> mapper);
+
+  /**
+   * 根据条件，求指定列{@code column}最小值
+   *
+   * @param cond null表示全表
+   */
+  <V> V min(String column, @Nullable IExpression cond);
+
+  /**
+   * 根据条件，求表达式{@code expr}最小值
+   *
+   * @param cond null表示全表
+   */
+  <V> V min(@Nonnull IExpression expr, @Nullable IExpression cond, @Nonnull RowMapper<V> mapper);
+
+  /**
+   * 对字段{@code groupColumn}进行分组聚合计数
+   */
+  <GK> Map<GK, Integer> groupCount(String groupColumn);
+
+  /**
+   * 根据条件对字段{@code groupColumn}进行分组聚合计数
+   */
+  <GK> Map<GK, Integer> groupCount(String groupColumn, @Nullable IExpression cond);
 }

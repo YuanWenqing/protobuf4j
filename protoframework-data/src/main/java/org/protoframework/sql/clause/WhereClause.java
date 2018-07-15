@@ -14,6 +14,7 @@ import java.util.List;
 public class WhereClause extends AbstractSqlStatement implements ISqlStatement {
   private IExpression cond;
   private OrderByClause orderBy;
+  private GroupByClause groupBy;
   private PaginationClause pagination;
 
   public IExpression getCond() {
@@ -32,6 +33,14 @@ public class WhereClause extends AbstractSqlStatement implements ISqlStatement {
   public WhereClause setOrderBy(OrderByClause orderBy) {
     this.orderBy = orderBy;
     return this;
+  }
+
+  public void setGroupBy(GroupByClause groupBy) {
+    this.groupBy = groupBy;
+  }
+
+  public GroupByClause getGroupBy() {
+    return groupBy;
   }
 
   public PaginationClause getPagination() {
@@ -59,6 +68,12 @@ public class WhereClause extends AbstractSqlStatement implements ISqlStatement {
       }
       orderBy.toSqlTemplate(sb);
     }
+    if (groupBy != null) {
+      if (!sb.toString().endsWith(" ")) {
+        sb.append(" ");
+      }
+      groupBy.toSqlTemplate(sb);
+    }
     if (pagination != null) {
       if (!sb.toString().endsWith(" ")) {
         sb.append(" ");
@@ -79,6 +94,12 @@ public class WhereClause extends AbstractSqlStatement implements ISqlStatement {
         sb.append(" ");
       }
       orderBy.toSolidSql(sb);
+    }
+    if (groupBy != null) {
+      if (!sb.toString().endsWith(" ")) {
+        sb.append(" ");
+      }
+      groupBy.toSolidSql(sb);
     }
     if (pagination != null) {
       if (!sb.toString().endsWith(" ")) {

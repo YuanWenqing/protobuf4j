@@ -4,15 +4,17 @@ package org.protoframework.dao;
  * Created by tuqc on 15-3-17.
  */
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.protoframework.core.ProtoMessageHelper;
 import org.protoframework.sql.*;
 import org.protoframework.sql.clause.*;
+import org.protoframework.sql.expr.RawExpr;
 import org.protoframework.util.ThreadLocalTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +26,12 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import javax.annotation.Nonnull;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import javax.annotation.Nullable;
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.Preconditions.*;
 
 /**
  * We make a convention that methods to search multiple beans in the inherited DAO Classes should be
@@ -124,8 +126,15 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       logger.info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
           sqlValues);
     }
-
   }
+
+  ////////////////////////////// raw sql //////////////////////////////
+
+  @Override
+  public int doSql(RawSql rawSql) {
+    return execSqlAndLog(rawSql, sqlLogger.raw());
+  }
+
   ////////////////////////////// insert //////////////////////////////
 
   /**
@@ -133,12 +142,14 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
    */
   @Override
   public boolean insert(@Nonnull T message) {
+    checkNotNull(message);
     int rows = doInsert(SQL_INSERT_TEMPLATE, message, null);
     return rows > 0;
   }
 
   @Override
   public Number insertReturnKey(@Nonnull T message) {
+    checkNotNull(message);
     KeyHolder keyHolder = new GeneratedKeyHolder();
     int rows = doInsert(SQL_INSERT_TEMPLATE, message, keyHolder);
     if (rows == 0) {
@@ -153,6 +164,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
    */
   @Override
   public boolean insertIgnore(@Nonnull T message) {
+    checkNotNull(message);
     int rows = doInsert(SQL_INSERT_IGNORE_TEMPLATE, message, null);
     return rows > 0;
   }
@@ -273,8 +285,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   @Override
   public Iterator<T> iterator(@Nonnull WhereClause where) {
-    Preconditions.checkNotNull(where);
-    Preconditions.checkNotNull(where.getPagination(), "no pagination");
+    checkNotNull(where);
+    checkNotNull(where.getPagination(), "no pagination");
     if (where.getPagination().getLimit() <= 0) {
       return Collections.emptyIterator();
     }
@@ -318,6 +330,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   @Override
   public T selectOne(WhereClause where) {
+    checkNotNull(where);
     if (where.getPagination() == null) {
       where.limit(1);
     }
@@ -340,13 +353,15 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   @Override
   public List<T> selectAll(@Nonnull WhereClause where) {
-    SelectClause select = new SelectClause().select(SelectExpr.STAR);
+    checkNotNull(where);
+    SelectClause select = new SelectClause().select(SqlUtil.SELECT_STAR);
     SelectSql sql = new SelectSql(select, fromClause, where);
     return doSelect(sql, messageMapper);
   }
 
   @Override
   public <V> List<V> doSelect(@Nonnull SelectSql selectSql, RowMapper<V> mapper) {
+    checkNotNull(selectSql);
     String sqlTemplate = selectSql.toSqlTemplate(new StringBuilder()).toString();
     List<Object> sqlValues = selectSql.collectSqlValue(Lists.newArrayList());
     timer.restart();
@@ -370,6 +385,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   @Override
   public int doDelete(DeleteSql deleteSql) {
+    checkNotNull(deleteSql);
     return execSqlAndLog(deleteSql, sqlLogger.delete());
   }
 
@@ -378,9 +394,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   @Override
   public int updateItem(T newItem, T oldItem, IExpression cond) {
     SetClause setClause = makeSetClause(newItem, oldItem);
-    WhereClause where = new WhereClause().setCond(cond);
-    UpdateSql updateSql = new UpdateSql(fromClause.getTableRef(), setClause, where);
-    return doUpdate(updateSql);
+    return update(setClause, cond);
   }
 
   private SetClause makeSetClause(T newItem, T oldItem) {
@@ -396,16 +410,154 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   }
 
   @Override
-  public int doUpdate(UpdateSql updateSql) {
+  public int update(@Nonnull SetClause setClause, @Nullable IExpression cond) {
+    WhereClause where = new WhereClause().setCond(cond);
+    UpdateSql updateSql = new UpdateSql(fromClause.getTableRef(), setClause, where);
+    return doUpdate(updateSql);
+  }
+
+  @Override
+  public int doUpdate(@Nonnull UpdateSql updateSql) {
     if (updateSql.getSet().isEmpty()) {
       return 0;
     }
     return execSqlAndLog(updateSql, sqlLogger.update());
   }
 
-  @Override
-  public int doSql(RawSql rawSql) {
-    return execSqlAndLog(rawSql, sqlLogger.raw());
+  ////////////////////////////// aggregate ////////////////////////////
+
+  protected <V> V doSelectFirst(SelectSql selectSql, RowMapper<V> mapper) {
+    checkNotNull(selectSql);
+    List<V> ret = doSelect(selectSql, mapper);
+    if (ret == null || ret.isEmpty()) {
+      return null;
+    }
+    return ret.get(0);
   }
 
+  @Override
+  public int count(@Nullable IExpression cond) {
+    return count(SqlUtil.SELECT_COUNT, cond);
+  }
+
+  protected int count(@Nonnull SelectExpr countExpr, @Nullable IExpression cond) {
+    checkNotNull(countExpr);
+    SelectClause select = new SelectClause().select(countExpr);
+    WhereClause where = new WhereClause().setCond(cond);
+    SelectSql selectSql = new SelectSql(select, fromClause, where);
+    Integer ret = doSelectFirst(selectSql, DaoUtil.getSingleColumnMapper(Integer.class));
+    return ret == null ? 0 : ret;
+  }
+
+  @Override
+  public long sum(String column, IExpression cond) {
+    checkArgument(StringUtils.isNotBlank(column));
+    return sum(new RawExpr(column), cond);
+  }
+
+  @Override
+  public long sum(@Nonnull IExpression expr, @Nullable IExpression cond) {
+    checkNotNull(expr);
+    IExpression sumExpr = SqlUtil.aggregateWrap("SUM", expr);
+    SelectClause select = new SelectClause().select(sumExpr);
+    WhereClause where = new WhereClause().setCond(cond);
+    SelectSql selectSql = new SelectSql(select, fromClause, where);
+    Long ret = doSelectFirst(selectSql, DaoUtil.getSingleColumnMapper(Long.class));
+    return ret == null ? 0 : ret;
+  }
+
+  @Override
+  public <V> V max(String column, @Nullable IExpression cond) {
+    checkArgument(StringUtils.isNotBlank(column));
+    return max(new RawExpr(column), cond, getSingleColumnMapper(column));
+  }
+
+  @Override
+  public <V> V max(@Nonnull IExpression expr, @Nullable IExpression cond,
+      @Nonnull RowMapper<V> mapper) {
+    checkNotNull(expr);
+    IExpression maxExpr = SqlUtil.aggregateWrap("MAX", expr);
+    SelectClause select = new SelectClause().select(maxExpr);
+    WhereClause where = new WhereClause().setCond(cond);
+    SelectSql selectSql = new SelectSql(select, fromClause, where);
+    return doSelectFirst(selectSql, mapper);
+  }
+
+  protected <V> RowMapper<V> getSingleColumnMapper(String column) {
+    FieldDescriptor fd = messageHelper.checkFieldDescriptor(column);
+    // 与ProtoMessageRowMapper类似的方式处理我们约定的字段类型
+    return new ProtobufSingleColumnMapper<>(fd);
+  }
+
+  @Override
+  public <V> V min(String column, @Nullable IExpression cond) {
+    checkArgument(StringUtils.isNotBlank(column));
+    return min(new RawExpr(column), cond, getSingleColumnMapper(column));
+  }
+
+  @Override
+  public <V> V min(@Nonnull IExpression expr, @Nullable IExpression cond,
+      @Nonnull RowMapper<V> mapper) {
+    checkNotNull(expr);
+    IExpression minExpr = SqlUtil.aggregateWrap("MIN", expr);
+    SelectClause select = new SelectClause().select(minExpr);
+    WhereClause where = new WhereClause().setCond(cond);
+    SelectSql selectSql = new SelectSql(select, fromClause, where);
+    return doSelectFirst(selectSql, mapper);
+  }
+
+  @Override
+  public <GK> Map<GK, Integer> groupCount(String groupColumn) {
+    return groupCount(groupColumn, null);
+  }
+
+  @Override
+  public <GK> Map<GK, Integer> groupCount(String groupColumn, IExpression cond) {
+    SelectClause select = new SelectClause();
+    select.select(groupColumn);
+    select.select(SqlUtil.SELECT_COUNT);
+    WhereClause where = new WhereClause().setCond(cond);
+    where.setGroupBy(new GroupByClause().by(groupColumn));
+    SelectSql selectSql = new SelectSql(select, fromClause, where);
+    RowMapper<Pair<GK, Integer>> mapper = getGroupCountMapper(groupColumn);
+    List<Pair<GK, Integer>> ret = doSelect(selectSql, mapper);
+    if (ret == null || ret.isEmpty()) {
+      return Collections.emptyMap();
+    }
+    Map<GK, Integer> map = Maps.newLinkedHashMap();
+    for (Pair<GK, Integer> pair : ret) {
+      if (pair.getKey() == null) {
+        continue;
+      }
+      map.put(pair.getKey(), pair.getValue());
+    }
+    return map;
+  }
+
+  protected <GK> RowMapper<Pair<GK, Integer>> getGroupCountMapper(String column) {
+    FieldDescriptor fd = messageHelper.checkFieldDescriptor(column);
+    // 与ProtobufRowMapper类似的方式处理我们约定的字段类型
+    return new GroupCountMapper<>(fd);
+  }
+
+  static class GroupCountMapper<K> implements RowMapper<Pair<K, Integer>> {
+    final FieldDescriptor fd;
+
+    public GroupCountMapper(FieldDescriptor fd) {
+      this.fd = fd;
+    }
+
+    @Override
+    public Pair<K, Integer> mapRow(ResultSet rs, int rowNum) throws SQLException {
+      Object obj = ProtoMessageRowMapper.getColumnValue(rs, 1, fd);
+      K k;
+      if (obj == null) {
+        k = null;
+      } else {
+        k = (K) ProtoSqls.mapValue(fd, obj);
+      }
+      int count = rs.getInt(2);
+      return Pair.of(k, count);
+    }
+  }
 }

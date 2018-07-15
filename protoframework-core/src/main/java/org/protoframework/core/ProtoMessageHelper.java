@@ -198,7 +198,7 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
   }
 
   public Message.Builder newBuilderForField(String fieldName) {
-    Descriptors.FieldDescriptor fd = checkField(fieldName);
+    Descriptors.FieldDescriptor fd = checkFieldDescriptor(fieldName);
     return newBuilderForField(fd);
   }
 
@@ -254,7 +254,7 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
     return field2type;
   }
 
-  private Descriptors.FieldDescriptor checkField(String fieldName) {
+  public Descriptors.FieldDescriptor checkFieldDescriptor(String fieldName) {
     Descriptors.FieldDescriptor fd = getFieldDescriptor(fieldName);
     if (fd == null) {
       throw new RuntimeException("no field named as `" + fieldName + "` in " + this.cls);
@@ -264,7 +264,7 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
 
   @Override
   public boolean isFieldSet(T msg, String fieldName) {
-    Descriptors.FieldDescriptor fd = checkField(fieldName);
+    Descriptors.FieldDescriptor fd = checkFieldDescriptor(fieldName);
     if (fd.isRepeated()) {
       return !((Collection<?>) msg.getField(fd)).isEmpty();
     }
@@ -273,14 +273,14 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
 
   @Override
   public Object getFieldValue(T msg, String fieldName) {
-    Descriptors.FieldDescriptor fd = checkField(fieldName);
+    Descriptors.FieldDescriptor fd = checkFieldDescriptor(fieldName);
     return msg.getField(fd);
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public T setFieldValue(T msg, String fieldName, Object fieldValue) {
-    Descriptors.FieldDescriptor fd = checkField(fieldName);
+    Descriptors.FieldDescriptor fd = checkFieldDescriptor(fieldName);
     return (T) msg.toBuilder().setField(fd, fieldValue).build();
   }
 
