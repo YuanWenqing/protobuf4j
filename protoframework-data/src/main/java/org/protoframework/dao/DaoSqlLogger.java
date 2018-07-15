@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DaoSqlLogger {
   private final String name;
+  private final Logger raw;
   private final Logger insert;
   private final Logger delete;
   private final Logger select;
@@ -17,6 +18,7 @@ public class DaoSqlLogger {
   public DaoSqlLogger(String name) {
     this.name = name;
     String prefix = "dao.sql." + name + ".";
+    this.raw = LoggerFactory.getLogger(prefix + "raw");
     this.insert = LoggerFactory.getLogger(prefix + "insert");
     this.delete = LoggerFactory.getLogger(prefix + "delete");
     this.select = LoggerFactory.getLogger(prefix + "select");
@@ -42,4 +44,9 @@ public class DaoSqlLogger {
   public Logger update() {
     return update;
   }
+
+  public Logger raw() {
+    return raw;
+  }
+
 }

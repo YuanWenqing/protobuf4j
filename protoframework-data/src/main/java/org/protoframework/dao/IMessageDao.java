@@ -1,9 +1,6 @@
 package org.protoframework.dao;
 
-import org.protoframework.sql.DeleteSql;
-import org.protoframework.sql.IExpression;
-import org.protoframework.sql.SelectSql;
-import org.protoframework.sql.UpdateSql;
+import org.protoframework.sql.*;
 import org.protoframework.sql.clause.SetClause;
 import org.protoframework.sql.clause.WhereClause;
 import org.springframework.jdbc.core.RowMapper;
@@ -150,6 +147,11 @@ public interface IMessageDao<T> {
    * @return 更新的数据条数
    */
   int doUpdate(UpdateSql updateSql);
+
+  /**
+   * @return 影响的数据条数
+   */
+  int doSql(RawSql rawSql);
 
   /**
    * 根据条件count

@@ -11,10 +11,7 @@ import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.core.ProtoMessageHelper;
-import org.protoframework.sql.DeleteSql;
-import org.protoframework.sql.IExpression;
-import org.protoframework.sql.SelectSql;
-import org.protoframework.sql.UpdateSql;
+import org.protoframework.sql.*;
 import org.protoframework.sql.clause.*;
 import org.protoframework.util.ThreadLocalTimer;
 import org.slf4j.Logger;
@@ -117,6 +114,18 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     return jdbcTemplate;
   }
 
+  private int execSqlAndLog(ISqlStatement sqlStatement, Logger logger) {
+    String sqlTemplate = sqlStatement.toSqlTemplate(new StringBuilder()).toString();
+    List<Object> sqlValues = sqlStatement.collectSqlValue(Lists.newArrayList());
+    timer.restart();
+    try {
+      return this.getJdbcTemplate().update(DaoUtil.makeStatementCreator(sqlTemplate, sqlValues));
+    } finally {
+      logger.info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
+          sqlValues);
+    }
+
+  }
   ////////////////////////////// insert //////////////////////////////
 
   /**
@@ -361,16 +370,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   @Override
   public int doDelete(DeleteSql deleteSql) {
-    String sqlTemplate = deleteSql.toSqlTemplate(new StringBuilder()).toString();
-    List<Object> sqlValues = deleteSql.collectSqlValue(Lists.newArrayList());
-    timer.restart();
-    try {
-      return this.getJdbcTemplate().update(DaoUtil.makeStatementCreator(sqlTemplate, sqlValues));
-    } finally {
-      sqlLogger.delete()
-          .info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-              sqlValues);
-    }
+    return execSqlAndLog(deleteSql, sqlLogger.delete());
   }
 
   ////////////////////////////// update //////////////////////////////
@@ -400,16 +400,12 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     if (updateSql.getSet().isEmpty()) {
       return 0;
     }
-    String sqlTemplate = updateSql.toSqlTemplate(new StringBuilder()).toString();
-    List<Object> sqlValues = updateSql.collectSqlValue(Lists.newArrayList());
-    timer.restart();
-    try {
-      return this.getJdbcTemplate().update(DaoUtil.makeStatementCreator(sqlTemplate, sqlValues));
-    } finally {
-      sqlLogger.update()
-          .info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-              sqlValues);
-    }
+    return execSqlAndLog(updateSql, sqlLogger.update());
+  }
+
+  @Override
+  public int doSql(RawSql rawSql) {
+    return execSqlAndLog(rawSql, sqlLogger.raw());
   }
 
 }
