@@ -4,11 +4,20 @@ package org.protoframework.dao;
  * Created by tuqc on 15-3-17.
  */
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.protoframework.core.ProtoMessageHelper;
+import org.protoframework.sql.IExpression;
+import org.protoframework.sql.clause.SetClause;
+import org.protoframework.sql.clause.WhereClause;
 import org.protoframework.util.ThreadLocalTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +27,9 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.util.CollectionUtils;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -236,5 +243,54 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       ps.setObject(j++, value);
     }
   }
+
+  ////////////////////////////// iterator //////////////////////////////
+
+  @Override
+  public Iterator<T> iterator(int batch) {
+    return iterator(new WhereClause().limit(batch));
+  }
+
+  @Override
+  public Iterator<T> iterator(IExpression cond, int batch) {
+    return iterator(new WhereClause().setCond(cond).limit(batch));
+  }
+
+  @Override
+  public Iterator<T> iterator(WhereClause where) {
+    Preconditions.checkNotNull(where.getPagination(), "no limit clause for paging");
+    if (where.getPagination().getLimit() <= 0) {
+      return Collections.emptyIterator();
+    }
+    return new Iterator<T>() {
+      Iterator<T> delegate;
+
+      {
+        setupNextIteration();
+      }
+
+      private void setupNextIteration() {
+        delegate = ProtoMessageDao.this.selectAll(where);
+        where.setPagination(where.getPagination().next());
+      }
+
+      @Override
+      public boolean hasNext() {
+        if (delegate == null) return false;
+        if (delegate.hasNext()) return true;
+        setupNextIteration();
+        if (delegate.hasNext()) return true;
+        delegate = null;
+        return false;
+      }
+
+      @Override
+      public T next() {
+        if (!hasNext()) return null;
+        return delegate.next();
+      }
+    };
+  }
+
 
 }
