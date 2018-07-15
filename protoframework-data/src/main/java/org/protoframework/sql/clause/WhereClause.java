@@ -19,8 +19,9 @@ public class WhereClause implements ISqlStatement {
     return cond;
   }
 
-  public void setCond(IExpression cond) {
+  public WhereClause setCond(IExpression cond) {
     this.cond = cond;
+    return this;
   }
 
   public OrderByClause getOrderBy() {
