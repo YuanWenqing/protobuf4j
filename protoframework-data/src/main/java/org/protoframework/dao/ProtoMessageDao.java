@@ -556,7 +556,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       if (obj == null) {
         k = null;
       } else {
-        k = (K) sqlConverter.fromSqlValue(messageType, fd.getName(), obj);
+        k = (K) sqlConverter.fromSqlValue(messageHelper, fd, obj);
       }
       int count = rs.getInt(2);
       return Pair.of(k, count);

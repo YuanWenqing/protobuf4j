@@ -12,8 +12,6 @@ package org.protoframework.dao;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
 import org.protoframework.core.ProtoMessageHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,7 +20,6 @@ import org.springframework.jdbc.support.JdbcUtils;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,13 +29,12 @@ import java.util.Set;
  * @author yuanwq
  */
 public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
-  protected static final Logger logger = LoggerFactory.getLogger(ProtoMessageRowMapper.class);
-
   /**
    * The class we are mapping to
    */
   private final Class<T> mappedClass;
   private final ProtoMessageHelper<T> messageHelper;
+  private final ProtoSqlConverter sqlConverter;
   /**
    * Whether we're strictly validating
    */
@@ -47,6 +43,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
   public ProtoMessageRowMapper(Class<T> mappedClass) {
     this.mappedClass = mappedClass;
     this.messageHelper = ProtoMessageHelper.getHelper(mappedClass);
+    this.sqlConverter = (ProtoSqlConverter) SqlConverterRegistry.findSqlConverter(mappedClass);
   }
 
   public ProtoMessageRowMapper(Class<T> mappedClass, boolean checkFullyPopulated) {
@@ -102,7 +99,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
         try {
           value = getColumnValue(rs, index, fd);
           if (value == null) continue;
-          value = ProtoSqls.mapValue(fd, value);
+          value = sqlConverter.fromSqlValue(messageHelper, fd, value);
           builder.setField(fd, value);
           if (checkFullyPopulated) {
             populatedProperties.add(fd.getName());
@@ -140,37 +137,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    * @see JdbcUtils#getResultSetValue(ResultSet, int, Class)
    */
   public Object getColumnValue(ResultSet rs, int index, FieldDescriptor fd) throws SQLException {
-    return JdbcUtils.getResultSetValue(rs, index, getFieldTypeClass(fd));
-  }
-
-  public Class<?> getFieldTypeClass(FieldDescriptor fd) {
-    // map/list 使用string拼接
-    if (fd.isMapField() || fd.isRepeated()) return String.class;
-    switch (fd.getJavaType()) {
-      case BOOLEAN:
-        return int.class;
-      case STRING:
-        return String.class;
-      case DOUBLE:
-        return double.class;
-      case FLOAT:
-        return float.class;
-      case INT:
-        return int.class;
-      case LONG:
-        // 特殊处理时间field
-        if (ProtobufHelper.isTimestampField(fd)) {
-          return Timestamp.class;
-        }
-        return long.class;
-      case ENUM:
-        return int.class;
-      case MESSAGE:
-      case BYTE_STRING:
-      default:
-        throw new UnsupportedOperationException(
-            "Not support " + fd.getJavaType() + " of " + fd.getFullName());
-    }
+    return JdbcUtils.getResultSetValue(rs, index, sqlConverter.resolveSqlValueType(fd));
   }
 
 }

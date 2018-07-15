@@ -75,7 +75,7 @@ public class ProtoSqlConverter implements ISqlConverter<Message> {
     }
   }
 
-  protected boolean isTimestampField(FieldDescriptor fd) {
+  public boolean isTimestampField(FieldDescriptor fd) {
     return JavaType.LONG.equals(fd.getJavaType()) && fd.getName().endsWith("_time");
   }
 
@@ -200,6 +200,11 @@ public class ProtoSqlConverter implements ISqlConverter<Message> {
       Object sqlValue) {
     ProtoMessageHelper<B> helper = ProtoMessageHelper.getHelper(messageClass);
     FieldDescriptor fd = helper.checkFieldDescriptor(field);
+    return fromSqlValue(helper, fd, sqlValue);
+  }
+
+  public <B extends Message> Object fromSqlValue(ProtoMessageHelper<B> helper, FieldDescriptor fd,
+      Object sqlValue) {
     if (fd.isMapField()) {
       // check map first, for map field is also repeated
       return parseMapFromString(helper, fd, sqlValue);
@@ -299,6 +304,36 @@ public class ProtoSqlConverter implements ISqlConverter<Message> {
       default:
         throw new TypeMismatchDataAccessException(
             "not support java type: " + fd.getJavaType() + ", field=" + fd.getFullName());
+    }
+  }
+
+  public Class<?> resolveSqlValueType(FieldDescriptor fd) {
+    // map/list 使用string拼接
+    if (fd.isMapField() || fd.isRepeated()) return String.class;
+    switch (fd.getJavaType()) {
+      case BOOLEAN:
+        return int.class;
+      case STRING:
+        return String.class;
+      case DOUBLE:
+        return double.class;
+      case FLOAT:
+        return float.class;
+      case INT:
+        return int.class;
+      case LONG:
+        // 特殊处理时间field
+        if (isTimestampField(fd)) {
+          return Timestamp.class;
+        }
+        return long.class;
+      case ENUM:
+        return int.class;
+      case MESSAGE:
+      case BYTE_STRING:
+      default:
+        throw new TypeMismatchDataAccessException(
+            "Not support " + fd.getJavaType() + " of " + fd.getFullName());
     }
   }
 
