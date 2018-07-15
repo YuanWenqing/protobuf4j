@@ -16,8 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.protoframework.core.ProtoMessageHelper;
 import org.protoframework.sql.IExpression;
-import org.protoframework.sql.clause.SetClause;
-import org.protoframework.sql.clause.WhereClause;
+import org.protoframework.sql.SelectSql;
+import org.protoframework.sql.clause.*;
 import org.protoframework.util.ThreadLocalTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +27,8 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Nonnull;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -69,7 +69,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   protected ISqlConvention sqlConvention;
 
-  protected static final String SQL_SELECT_TEMPLATE = "SELECT %s FROM %s %s";
   protected static final String SQL_INSERT_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s);";
   protected static final String SQL_INSERT_IGNORE_TEMPLATE =
       "INSERT IGNORE INTO %s (%s) VALUES (%s);";
@@ -121,13 +120,13 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
    * 插入记录
    */
   @Override
-  public boolean insert(final T message) {
+  public boolean insert(@Nonnull T message) {
     int rows = doInsert(SQL_INSERT_TEMPLATE, message, null);
     return rows > 0;
   }
 
   @Override
-  public Number insertReturnKey(final T message) {
+  public Number insertReturnKey(@Nonnull T message) {
     KeyHolder keyHolder = new GeneratedKeyHolder();
     int rows = doInsert(SQL_INSERT_TEMPLATE, message, keyHolder);
     if (rows == 0) {
@@ -141,7 +140,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
    * 插入记录。如果记录不存在，插入；如果记录已经存在，什么也不做，直接返回。
    */
   @Override
-  public boolean insertIgnore(final T message) {
+  public boolean insertIgnore(@Nonnull T message) {
     int rows = doInsert(SQL_INSERT_IGNORE_TEMPLATE, message, null);
     return rows > 0;
   }
@@ -165,9 +164,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
         return getJdbcTemplate().update(creator, keyHolder);
       }
     } finally {
-      sqlLogger.insert()
-          .info("Insert SQL(cost={}): {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sql,
-              messageHelper.toString(message));
+      sqlLogger.insert().info("cost={}, {}, message: {}", timer.stop(TimeUnit.MILLISECONDS), sql,
+          messageHelper.toString(message));
     }
   }
 
@@ -201,19 +199,24 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     Set<String> used = getInsertFields(messages);
     final String sql = String.format(sqlTemplate, this.tableName, StringUtils.join(used, ","),
         StringUtils.repeat("?", ",", used.size()));
-    int[] rows = this.getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
-      @Override
-      public void setValues(PreparedStatement ps, int i) throws SQLException {
-        T message = messages.get(i);
-        setValuesInner(ps, message, used);
-      }
+    try {
+      return this.getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
+        @Override
+        public void setValues(PreparedStatement ps, int i) throws SQLException {
+          T message = messages.get(i);
+          setValuesInner(ps, message, used);
+        }
 
-      @Override
-      public int getBatchSize() {
-        return messages.size();
-      }
-    });
-    return rows;
+        @Override
+        public int getBatchSize() {
+          return messages.size();
+        }
+      });
+    } finally {
+      sqlLogger.insert()
+          .info("cost={}, {}, multi messages: {}", timer.stop(TimeUnit.MILLISECONDS), sql,
+              Lists.transform(messages, messageHelper::toString));
+    }
   }
 
   private LinkedHashSet<String> getInsertFields(T message) {
@@ -257,8 +260,9 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   }
 
   @Override
-  public Iterator<T> iterator(WhereClause where) {
-    Preconditions.checkNotNull(where.getPagination(), "no limit clause for paging");
+  public Iterator<T> iterator(@Nonnull WhereClause where) {
+    Preconditions.checkNotNull(where);
+    Preconditions.checkNotNull(where.getPagination(), "no pagination");
     if (where.getPagination().getLimit() <= 0) {
       return Collections.emptyIterator();
     }
@@ -270,7 +274,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       }
 
       private void setupNextIteration() {
-        delegate = ProtoMessageDao.this.selectAll(where);
+        delegate = ProtoMessageDao.this.selectAll(where).iterator();
         where.setPagination(where.getPagination().next());
       }
 
@@ -290,6 +294,61 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
         return delegate.next();
       }
     };
+  }
+
+  ////////////////////////////// select //////////////////////////////
+
+  @Override
+  public T selectOne(IExpression cond) {
+    WhereClause where = new WhereClause().setCond(cond).limit(1);
+    return selectOne(where);
+  }
+
+  @Override
+  public T selectOne(WhereClause where) {
+    if (where.getPagination() == null) {
+      where.limit(1);
+    }
+    List<T> messages = selectAll(where);
+    if (messages.isEmpty()) {
+      return null;
+    }
+    return messages.get(0);
+  }
+
+  @Override
+  public List<T> selectAll() {
+    return selectAll(new WhereClause());
+  }
+
+  @Override
+  public List<T> selectAll(IExpression cond) {
+    return selectAll(new WhereClause().setCond(cond));
+  }
+
+  @Override
+  public List<T> selectAll(@Nonnull WhereClause where) {
+    SelectClause select = new SelectClause().select(SelectExpr.STAR);
+    FromClause from = new FromClause(TableRefs.of(tableName));
+    SelectSql sql = new SelectSql(select, from, where);
+    return doSelect(sql, messageMapper);
+  }
+
+  /**
+   * Warn 实例化的dao中的方法不建议直接使用该方法
+   */
+  protected <V> List<V> doSelect(@Nonnull SelectSql selectSql, RowMapper<V> mapper) {
+    String sqlTemplate = selectSql.toSqlTemplate(new StringBuilder()).toString();
+    List<Object> sqlValues = selectSql.collectSqlValue(Lists.newArrayList());
+    timer.restart();
+    try {
+      return this.getJdbcTemplate()
+          .query(DaoUtil.makeStatementCreator(sqlTemplate, sqlValues), mapper);
+    } finally {
+      sqlLogger.select()
+          .info("cost={}: {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
+              sqlValues);
+    }
   }
 
 
