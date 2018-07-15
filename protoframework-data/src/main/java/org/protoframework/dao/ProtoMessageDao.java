@@ -487,7 +487,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   protected <V> RowMapper<V> getSingleColumnMapper(String column) {
     FieldDescriptor fd = messageHelper.checkFieldDescriptor(column);
     // 与ProtoMessageRowMapper类似的方式处理我们约定的字段类型
-    return new ProtoFieldRowMapper<>(fd);
+    return new ProtoFieldRowMapper<>(messageHelper, fd);
   }
 
   @Override
