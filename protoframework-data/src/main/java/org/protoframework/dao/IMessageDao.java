@@ -5,6 +5,7 @@ import org.protoframework.sql.IExpression;
 import org.protoframework.sql.clause.SetClause;
 import org.protoframework.sql.clause.WhereClause;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,21 +20,21 @@ public interface IMessageDao<T extends Message> {
    *
    * @return 是否成功
    */
-  boolean insert(T message);
+  boolean insert(@Nonnull T message);
 
   /**
    * 新增一条数据并返回主键
    *
    * @return 主键
    */
-  Number insertReturnKey(T message);
+  Number insertReturnKey(@Nonnull T message);
 
   /**
    * 新增一条数据，唯一键冲突时会忽略，导致新增失败
    *
    * @return 是否成功
    */
-  boolean insertIgnore(T message);
+  boolean insertIgnore(@Nonnull T message);
 
   /**
    * 批量新增多条数据
@@ -80,7 +81,7 @@ public interface IMessageDao<T extends Message> {
    *
    * @param where 遍历条件、排序和分页配置
    */
-  List<T> selectAll(WhereClause where);
+  List<T> selectAll(@Nonnull WhereClause where);
 
   /**
    * 获取表上的一个遍历器
@@ -102,7 +103,7 @@ public interface IMessageDao<T extends Message> {
    *
    * @param where 遍历条件、排序和分页配置
    */
-  Iterator<T> iterator(WhereClause where);
+  Iterator<T> iterator(@Nonnull WhereClause where);
 
   /**
    * 根据条件删除数据
