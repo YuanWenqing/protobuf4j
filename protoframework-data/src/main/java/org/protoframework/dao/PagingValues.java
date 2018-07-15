@@ -3,8 +3,10 @@ package org.protoframework.dao;
 import java.util.List;
 
 /**
- * @author: yuanwq
- * @date: 2018/1/9
+ * 分页结果
+ * <p>
+ * author: yuanwq
+ * date: 2018/1/9
  */
 public class PagingValues<T> {
 

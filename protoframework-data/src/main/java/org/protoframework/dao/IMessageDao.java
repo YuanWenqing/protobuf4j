@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by zqs on 2017/2/27. 接口抽取
+ * 基本的接口
  */
 public interface IMessageDao<T> {
 

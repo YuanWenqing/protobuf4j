@@ -34,13 +34,11 @@ import java.util.concurrent.TimeUnit;
 import static com.google.common.base.Preconditions.*;
 
 /**
- * We make a convention that methods to search multiple beans in the inherited DAO Classes should be
- * named starting with 'list', like listXXXsByYYY(..), instead of 'find' naming in this abstract DAO
- * Class. We reserve the word 'find' for naming more general methods.<br>
- * 所有子类必须有一个public static final String TABLE_NAME = "...";
+ * 处理Protobuf Message的DAO
+ * <p>
+ * author yuanwq
  *
  * @param <T> 访问的数据表的数据元素类型
- * @author yuanwq
  */
 public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   protected static final ThreadLocalTimer timer = new ThreadLocalTimer();
@@ -486,7 +484,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   protected <V> RowMapper<V> getSingleColumnMapper(String column) {
     FieldDescriptor fd = messageHelper.checkFieldDescriptor(column);
     // 与ProtoMessageRowMapper类似的方式处理我们约定的字段类型
-    return new ProtobufSingleColumnMapper<>(fd);
+    return new ProtoFieldRowMapper<>(fd);
   }
 
   @Override
