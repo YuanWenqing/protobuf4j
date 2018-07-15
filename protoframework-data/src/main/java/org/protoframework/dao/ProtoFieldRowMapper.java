@@ -12,11 +12,12 @@ import java.sql.SQLException;
 /**
  * 将数据库值映射处理为Protobuf Message的字段值
  * <p>
+ *
  * @author yuanwq
  */
 public class ProtoFieldRowMapper<F> implements RowMapper<F> {
 
-  final FieldDescriptor fd;
+  private final FieldDescriptor fd;
 
   public ProtoFieldRowMapper(FieldDescriptor fd) {
     if (fd.getJavaType().equals(FieldDescriptor.JavaType.ENUM)) {
