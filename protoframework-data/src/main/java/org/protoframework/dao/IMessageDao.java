@@ -1,9 +1,9 @@
 package org.protoframework.dao;
 
-import com.google.protobuf.Message;
 import org.protoframework.sql.DeleteSql;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.SelectSql;
+import org.protoframework.sql.UpdateSql;
 import org.protoframework.sql.clause.SetClause;
 import org.protoframework.sql.clause.WhereClause;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Created by zqs on 2017/2/27. 接口抽取
  */
-public interface IMessageDao<T extends Message> {
+public interface IMessageDao<T> {
 
   /**
    * 新增一条数据
@@ -126,14 +126,30 @@ public interface IMessageDao<T extends Message> {
   int doDelete(DeleteSql deleteSql);
 
   /**
+   * 根据条件，更新新旧数据的变动字段
+   *
+   * @return 更新的数据条数
+   */
+  int updateItem(T newItem, T oldItem, IExpression cond);
+
+  /**
    * 根据条件更新字段
+   *
+   * @return 更新的数据条数
    */
   int update(SetClause setClause);
 
   /**
    * 根据条件更新字段
+   *
+   * @return 更新的数据条数
    */
   int update(SetClause setClause, IExpression cond);
+
+  /**
+   * @return 更新的数据条数
+   */
+  int doUpdate(UpdateSql updateSql);
 
   /**
    * 根据条件count

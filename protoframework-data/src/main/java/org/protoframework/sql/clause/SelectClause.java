@@ -21,6 +21,10 @@ public class SelectClause implements ISqlStatement {
     return Collections.unmodifiableList(selectExprs);
   }
 
+  public boolean isEmpty() {
+    return selectExprs.isEmpty();
+  }
+
   public SelectClause select(SelectExpr selectExpr) {
     this.selectExprs.add(selectExpr);
     return this;

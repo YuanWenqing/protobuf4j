@@ -5,19 +5,16 @@ package org.protoframework.dao;
  */
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.protoframework.core.ProtoMessageHelper;
 import org.protoframework.sql.DeleteSql;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.SelectSql;
+import org.protoframework.sql.UpdateSql;
 import org.protoframework.sql.clause.*;
 import org.protoframework.util.ThreadLocalTimer;
 import org.slf4j.Logger;
@@ -30,7 +27,10 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import javax.annotation.Nonnull;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -368,6 +368,45 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       return this.getJdbcTemplate().update(DaoUtil.makeStatementCreator(sqlTemplate, sqlValues));
     } finally {
       sqlLogger.delete()
+          .info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
+              sqlValues);
+    }
+  }
+
+  ////////////////////////////// update //////////////////////////////
+
+  @Override
+  public int updateItem(T newItem, T oldItem, IExpression cond) {
+    SetClause setClause = makeSetClause(newItem, oldItem);
+    WhereClause where = new WhereClause().setCond(cond);
+    UpdateSql updateSql = new UpdateSql(fromClause.getTableRef(), setClause, where);
+    return doUpdate(updateSql);
+  }
+
+  private SetClause makeSetClause(T newItem, T oldItem) {
+    SetClause setClause = new SetClause();
+    for (FieldDescriptor fd : messageHelper.getFieldDescriptorList()) {
+      Object oldValue = messageHelper.getFieldValue(oldItem, fd.getName());
+      Object newValue = messageHelper.getFieldValue(newItem, fd.getName());
+      if (!Objects.equals(oldValue, newValue)) {
+        setClause.setColumn(fd.getName(), newValue);
+      }
+    }
+    return setClause;
+  }
+
+  @Override
+  public int doUpdate(UpdateSql updateSql) {
+    if (updateSql.getSet().isEmpty()) {
+      return 0;
+    }
+    String sqlTemplate = updateSql.toSqlTemplate(new StringBuilder()).toString();
+    List<Object> sqlValues = updateSql.collectSqlValue(Lists.newArrayList());
+    timer.restart();
+    try {
+      return this.getJdbcTemplate().update(DaoUtil.makeStatementCreator(sqlTemplate, sqlValues));
+    } finally {
+      sqlLogger.update()
           .info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
               sqlValues);
     }
