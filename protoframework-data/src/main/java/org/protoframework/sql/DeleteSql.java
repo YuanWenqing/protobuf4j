@@ -43,6 +43,7 @@ public class DeleteSql implements ISqlStatement {
     sb.append("DELETE ");
     from.toSqlTemplate(sb);
     if (where != null) {
+      sb.append(" ");
       where.toSqlTemplate(sb);
     }
     return sb;
@@ -53,6 +54,7 @@ public class DeleteSql implements ISqlStatement {
     sb.append("DELETE ");
     from.toSolidSql(sb);
     if (where != null) {
+      sb.append(" ");
       where.toSolidSql(sb);
     }
     return sb;

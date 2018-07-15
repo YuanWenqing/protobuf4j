@@ -49,8 +49,10 @@ public class SelectSql implements ISqlStatement {
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
     select.toSqlTemplate(sb);
+    sb.append(" ");
     from.toSqlTemplate(sb);
     if (where != null) {
+      sb.append(" ");
       where.toSqlTemplate(sb);
     }
     return sb;
@@ -59,8 +61,10 @@ public class SelectSql implements ISqlStatement {
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
     select.toSolidSql(sb);
+    sb.append(" ");
     from.toSolidSql(sb);
     if (where != null) {
+      sb.append(" ");
       where.toSolidSql(sb);
     }
     return sb;
