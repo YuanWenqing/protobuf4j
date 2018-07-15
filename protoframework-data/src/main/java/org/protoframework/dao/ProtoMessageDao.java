@@ -66,7 +66,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   protected JdbcTemplate jdbcTemplate;
 
-  protected ISqlConvention sqlConvention;
+  protected ISqlConverter sqlConvention;
 
   protected static final String SQL_INSERT_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s);";
   protected static final String SQL_INSERT_IGNORE_TEMPLATE =
