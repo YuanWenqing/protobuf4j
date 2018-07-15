@@ -36,9 +36,9 @@ import static com.google.common.base.Preconditions.*;
 /**
  * 处理Protobuf Message的DAO
  * <p>
- * @author yuanwq
  *
  * @param <T> 访问的数据表的数据元素类型
+ * @author yuanwq
  */
 public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   protected static final ThreadLocalTimer timer = new ThreadLocalTimer();
@@ -53,7 +53,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   protected final String tableName;
   protected final FromClause fromClause;
   protected final ProtoMessageHelper<T> messageHelper;
-  protected final RowMapper<T> messageMapper;
+  protected final ProtoMessageRowMapper<T> messageMapper;
+  protected final ProtoSqlConverter sqlConverter;
 
   /**
    * 记录dao日志的logger
@@ -66,24 +67,27 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   protected JdbcTemplate jdbcTemplate;
 
-  protected ISqlConverter sqlConvention;
-
   protected static final String SQL_INSERT_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s);";
   protected static final String SQL_INSERT_IGNORE_TEMPLATE =
       "INSERT IGNORE INTO %s (%s) VALUES (%s);";
-  protected static final String SQL_UPDATE_TEMPLATE = "UPDATE %s %s %s;";
-  protected static final String SQL_DELETE_TEMPLATE = "DELETE FROM %s %s";
 
-  public ProtoMessageDao(Class<T> messageType) {
-    this(messageType, ProtoSqls.tableName(messageType));
+  public ProtoMessageDao(@Nonnull Class<T> messageType) {
+    this(messageType, defaultTableName(messageType));
   }
 
-  private ProtoMessageDao(Class<T> messageType, String tableName) {
-    this.messageType = messageType;
+  protected static <T extends Message> String defaultTableName(Class<T> messageType) {
+    return SqlConverterRegistry.findSqlConverter(messageType).tableName(messageType);
+  }
+
+  private ProtoMessageDao(@Nonnull Class<T> messageType, @Nonnull String tableName) {
+    this.messageType = checkNotNull(messageType);
+    checkArgument(StringUtils.isNotBlank(tableName));
     this.tableName = tableName;
+    this.fromClause = FromClause.from(tableName);
     this.messageHelper = ProtoMessageHelper.getHelper(messageType);
     this.messageMapper = new ProtoMessageRowMapper<>(messageType);
-    this.fromClause = FromClause.from(tableName);
+    this.sqlConverter = (ProtoSqlConverter) SqlConverterRegistry.findSqlConverter(messageType);
+    checkNotNull(this.sqlConverter, "no available sqlConverter for " + messageType.getName());
 
     this.daoLogger = LoggerFactory
         .getLogger(getClass().getName() + "#" + messageHelper.getDescriptor().getFullName());
@@ -263,8 +267,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     for (String name : fields) {
       FieldDescriptor fd = messageHelper.getFieldDescriptor(name);
       Object value = messageHelper.getFieldValue(message, name);
-      // TODO: 转换value
-      value = ProtoSqls.sqlValue(fd, value);
+      value = sqlConverter.toSqlValue(fd, value);
       ps.setObject(j++, value);
     }
   }
@@ -538,7 +541,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     return new GroupCountMapper<>(fd);
   }
 
-  static class GroupCountMapper<K> implements RowMapper<Pair<K, Integer>> {
+  @SuppressWarnings("unchecked")
+  class GroupCountMapper<K> implements RowMapper<Pair<K, Integer>> {
     final FieldDescriptor fd;
 
     public GroupCountMapper(FieldDescriptor fd) {
@@ -547,12 +551,12 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
     @Override
     public Pair<K, Integer> mapRow(ResultSet rs, int rowNum) throws SQLException {
-      Object obj = ProtoMessageRowMapper.getColumnValue(rs, 1, fd);
+      Object obj = messageMapper.getColumnValue(rs, 1, fd);
       K k;
       if (obj == null) {
         k = null;
       } else {
-        k = (K) ProtoSqls.mapValue(fd, obj);
+        k = (K) sqlConverter.fromSqlValue(messageType, fd.getName(), obj);
       }
       int count = rs.getInt(2);
       return Pair.of(k, count);
