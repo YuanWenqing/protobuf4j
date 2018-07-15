@@ -16,14 +16,6 @@ public abstract class TableRefs {
     return new SimpleTable(tableName);
   }
 
-  /**
-   * @param valueCls 表中数据的类型
-   */
-  public static ITableRef of(Class<?> valueCls) {
-    // TODO: use SqlConverter to convert table name
-    return null;
-  }
-
   private static class SimpleTable implements ITableRef {
     private final String tableName;
 

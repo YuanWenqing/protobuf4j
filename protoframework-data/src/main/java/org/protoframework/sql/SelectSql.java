@@ -24,7 +24,7 @@ public class SelectSql implements ISqlStatement {
     this.from = from;
   }
 
-  public SelectSql(SelectClause select, FromClause from, WhereClause where) {
+  public SelectSql(@Nonnull SelectClause select, @Nonnull FromClause from, WhereClause where) {
     this(select, from);
     this.setWhere(where);
   }

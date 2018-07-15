@@ -1,5 +1,6 @@
 package org.protoframework.sql.clause;
 
+import com.google.common.base.Preconditions;
 import org.protoframework.sql.ISqlStatement;
 import org.protoframework.sql.ITableRef;
 
@@ -11,9 +12,14 @@ import java.util.List;
  * date: 2018/7/12
  */
 public class FromClause implements ISqlStatement {
+  public static FromClause from(String tableName) {
+    return new FromClause(TableRefs.of(tableName));
+  }
+
   private final ITableRef tableRef;
 
-  public FromClause(ITableRef tableRef) {
+  public FromClause(@Nonnull ITableRef tableRef) {
+    Preconditions.checkNotNull(tableRef);
     this.tableRef = tableRef;
   }
 

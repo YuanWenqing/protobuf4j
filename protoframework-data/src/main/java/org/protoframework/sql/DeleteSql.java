@@ -20,9 +20,9 @@ public class DeleteSql implements ISqlStatement {
     this.from = from;
   }
 
-  public DeleteSql(FromClause from, WhereClause where) {
+  public DeleteSql(@Nonnull FromClause from, WhereClause where) {
     this(from);
-    this.setWhere(where);
+    setWhere(where);
   }
 
   public FromClause getFrom() {
