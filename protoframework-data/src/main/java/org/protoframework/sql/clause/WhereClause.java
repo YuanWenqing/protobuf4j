@@ -13,7 +13,7 @@ import java.util.List;
 public class WhereClause implements ISqlStatement {
   private IExpression cond;
   private OrderByClause orderBy;
-  private LimitClause limit;
+  private PaginationClause pagination;
 
   public IExpression getCond() {
     return cond;
@@ -32,13 +32,17 @@ public class WhereClause implements ISqlStatement {
     return this;
   }
 
-  public LimitClause getLimit() {
-    return limit;
+  public PaginationClause getPagination() {
+    return pagination;
   }
 
-  public WhereClause setLimit(LimitClause limit) {
-    this.limit = limit;
+  public WhereClause setPagination(PaginationClause pagination) {
+    this.pagination = pagination;
     return this;
+  }
+
+  public WhereClause limit(int limit) {
+    return setPagination(PaginationClause.newBuilder(limit).build());
   }
 
   @Override
@@ -53,11 +57,11 @@ public class WhereClause implements ISqlStatement {
       }
       orderBy.toSqlTemplate(sb);
     }
-    if (limit != null) {
+    if (pagination != null) {
       if (!sb.toString().endsWith(" ")) {
         sb.append(" ");
       }
-      limit.toSqlTemplate(sb);
+      pagination.toSqlTemplate(sb);
     }
     return sb;
   }
@@ -74,11 +78,11 @@ public class WhereClause implements ISqlStatement {
       }
       orderBy.toSolidSql(sb);
     }
-    if (limit != null) {
+    if (pagination != null) {
       if (!sb.toString().endsWith(" ")) {
         sb.append(" ");
       }
-      limit.toSolidSql(sb);
+      pagination.toSolidSql(sb);
     }
     return sb;
   }
@@ -91,8 +95,8 @@ public class WhereClause implements ISqlStatement {
     if (orderBy != null) {
       orderBy.collectSqlValue(collectedValues);
     }
-    if (limit != null) {
-      limit.collectSqlValue(collectedValues);
+    if (pagination != null) {
+      pagination.collectSqlValue(collectedValues);
     }
     return collectedValues;
   }
