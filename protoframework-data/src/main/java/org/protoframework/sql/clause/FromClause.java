@@ -9,8 +9,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/12
+ * @author: yuanwq
+ * @date: 2018/7/12
  */
 public class FromClause extends AbstractSqlStatement implements ISqlStatement {
   private final ITableRef tableRef;

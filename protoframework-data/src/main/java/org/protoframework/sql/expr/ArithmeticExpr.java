@@ -10,8 +10,8 @@ import java.util.List;
 /**
  * 算术表达式：{@code + - * / DIV MOD | ^ ~}
  * <p>
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
 public class ArithmeticExpr extends AbstractSqlStatement implements IBinaryExpr<ArithmeticOp> {
   private final IExpression left;

@@ -10,8 +10,8 @@ import java.util.List;
 /**
  * 逻辑表达式：AND OR XOR
  * <p>
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
 public class LogicalExpr extends AbstractSqlStatement implements IBinaryExpr<LogicalOp> {
   private final IExpression left;

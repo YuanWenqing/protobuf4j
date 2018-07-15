@@ -5,8 +5,8 @@ import org.protoframework.sql.ISqlOperation;
 import javax.annotation.Nonnull;
 
 /**
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
 
 public enum RelationalOp implements ISqlOperation<RelationalExpr> {

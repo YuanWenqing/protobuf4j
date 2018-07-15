@@ -10,8 +10,8 @@ import java.util.List;
 /**
  * 常量：字符串 数值 等
  * <p>
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
 public class ConstValue extends AbstractSqlStatement implements IExpression {
   private final Object value;

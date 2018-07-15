@@ -9,8 +9,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/12
+ * @author: yuanwq
+ * @date: 2018/7/12
  */
 public abstract class TableRefs {
   public static ITableRef of(String tableName) {

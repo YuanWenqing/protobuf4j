@@ -14,8 +14,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * author: yuanwq
- * date: 2018/7/9
+ * @author: yuanwq
+ * @date: 2018/7/9
  */
 public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelper<T> {
   @SuppressWarnings("rawtypes")

@@ -9,8 +9,8 @@ import java.io.IOException;
 import static org.junit.Assert.*;
 
 /**
- * author: yuanwq
- * date: 2018/7/6
+ * @author: yuanwq
+ * @date: 2018/7/6
  */
 public class TestObjectMapper {
   ObjectMapper mapper = ProtobufObjectMapper.DEFAULT;

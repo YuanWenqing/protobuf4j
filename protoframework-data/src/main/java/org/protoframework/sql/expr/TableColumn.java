@@ -10,8 +10,8 @@ import java.util.List;
 /**
  * 表列
  * <p>
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
 public class TableColumn extends AbstractSqlStatement implements IExpression {
   private final String column;

@@ -10,8 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
 public class RawSql extends AbstractSqlStatement implements ISqlStatement {
 

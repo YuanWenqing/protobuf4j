@@ -8,8 +8,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/15
+ * @author: yuanwq
+ * @date: 2018/7/15
  */
 public class UpdateSql extends AbstractSqlStatement implements ISqlStatement {
   private final ITableRef table;

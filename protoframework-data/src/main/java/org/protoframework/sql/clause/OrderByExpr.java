@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/12
+ * @author: yuanwq
+ * @date: 2018/7/12
  */
 public class OrderByExpr extends AbstractSqlStatement implements ISqlStatement {
   private final IExpression expr;

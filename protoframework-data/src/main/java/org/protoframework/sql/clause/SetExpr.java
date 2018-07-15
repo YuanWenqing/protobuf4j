@@ -10,8 +10,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/14
+ * @author: yuanwq
+ * @date: 2018/7/14
  */
 public class SetExpr extends AbstractSqlStatement implements ISqlStatement {
   private final String column;

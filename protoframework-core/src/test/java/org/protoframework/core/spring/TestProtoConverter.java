@@ -13,8 +13,8 @@ import java.lang.reflect.Field;
 import static org.junit.Assert.*;
 
 /**
- * author: yuanwq
- * date: 2018/7/9
+ * @author: yuanwq
+ * @date: 2018/7/9
  */
 public class TestProtoConverter {
   private TestModel.MsgA msgA;

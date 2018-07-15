@@ -36,7 +36,7 @@ import static com.google.common.base.Preconditions.*;
 /**
  * 处理Protobuf Message的DAO
  * <p>
- * author yuanwq
+ * @author yuanwq
  *
  * @param <T> 访问的数据表的数据元素类型
  */

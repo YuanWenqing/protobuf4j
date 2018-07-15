@@ -8,8 +8,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/15
+ * @author: yuanwq
+ * @date: 2018/7/15
  */
 public class DeleteSql extends AbstractSqlStatement implements ISqlStatement {
   private final FromClause from;

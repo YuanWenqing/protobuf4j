@@ -12,8 +12,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/12
+ * @author: yuanwq
+ * @date: 2018/7/12
  */
 public class SelectClause extends AbstractSqlStatement implements ISqlStatement {
   private final List<SelectExpr> selectExprs = Lists.newArrayList();

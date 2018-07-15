@@ -12,7 +12,7 @@ import java.sql.SQLException;
 /**
  * 将数据库值映射处理为Protobuf Message的字段值
  * <p>
- * author yuanwq
+ * @author yuanwq
  */
 public class ProtoFieldRowMapper<F> implements RowMapper<F> {
 

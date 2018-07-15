@@ -11,8 +11,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * author: yuanwq
- * date: 2018/7/12
+ * @author: yuanwq
+ * @date: 2018/7/12
  */
 public class OrderByClause extends AbstractSqlStatement implements ISqlStatement {
   private final List<OrderByExpr> orderByExprs = Lists.newArrayList();

@@ -12,8 +12,8 @@ import java.util.List;
 
 /**
  * 值集合
- * author: yuanwq
- * date: 2018/7/11
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
 public class ValueSet extends AbstractSqlStatement implements IExpression {
   private final List<Object> values;
