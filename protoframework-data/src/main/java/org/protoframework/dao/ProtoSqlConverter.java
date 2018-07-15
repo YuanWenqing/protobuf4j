@@ -29,6 +29,12 @@ import java.util.stream.Collectors;
 /**
  */
 public class ProtoSqlConverter implements ISqlConverter<Message> {
+  private static final ProtoSqlConverter instance = new ProtoSqlConverter();
+
+  public static ProtoSqlConverter getInstance() {
+    return instance;
+  }
+
   protected static final String LIST_SEP = ",";
   protected static final String MAP_KV_SEP = ":";
   protected static final String MAP_ENTRY_SEP = ";";
@@ -49,6 +55,9 @@ public class ProtoSqlConverter implements ISqlConverter<Message> {
   protected static Splitter MAP_ENTRY_SPLITTER = Splitter.on(MAP_ENTRY_SEP).omitEmptyStrings();
   protected static Splitter.MapSplitter MAP_SPLITTER =
       MAP_ENTRY_SPLITTER.withKeyValueSeparator(MAP_KV_SEP);
+
+  protected ProtoSqlConverter() {
+  }
 
   @Override
   public String tableName(Class<? extends Message> messageClass) {

@@ -23,7 +23,7 @@ public class SqlConverterRegistry {
   }
 
   private void defaultRegistry() {
-    register(Message.class, new ProtoSqlConverter());
+    register(Message.class, ProtoSqlConverter.getInstance());
   }
 
   public static <T> void register(@Nonnull Class<T> beanClass,
