@@ -4,8 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.clause.SelectExpr;
 import org.protoframework.sql.expr.AbstractExpression;
 import org.protoframework.sql.expr.RawExpr;
-import org.protoframework.sql.expr.TableColumn;
-import org.protoframework.sql.expr.Value;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -13,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
+ * 构建sql语句元素的util
+ *
  * @author: yuanwq
  * @date: 2018/7/15
  */
@@ -30,17 +30,6 @@ public class SqlUtil {
       throw new UnsupportedOperationException("cannot set alias for DEFAULT `COUNT(1)`");
     }
   };
-
-  public static ISqlValue sqlValue(Object value) {
-    if (value instanceof ISqlValue) {
-      return (ISqlValue) value;
-    }
-    return new Value(value);
-  }
-
-  public static TableColumn column(String field) {
-    return new TableColumn(field);
-  }
 
   public static final IExpression aggregateWrap(String aggregateFunc, IExpression expr) {
     return new AbstractExpression() {

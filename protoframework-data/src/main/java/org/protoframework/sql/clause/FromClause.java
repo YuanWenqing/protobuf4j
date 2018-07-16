@@ -19,10 +19,6 @@ public class FromClause extends AbstractSqlStatement {
     this.tableRef = tableRef;
   }
 
-  public static FromClause from(String tableName) {
-    return new FromClause(TableRefs.of(tableName));
-  }
-
   public ITableRef getTableRef() {
     return tableRef;
   }
