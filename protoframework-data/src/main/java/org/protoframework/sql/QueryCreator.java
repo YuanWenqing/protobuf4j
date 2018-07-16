@@ -5,6 +5,8 @@ import org.protoframework.sql.expr.TableColumn;
 import org.protoframework.sql.expr.Value;
 
 /**
+ * 构建sql语句元素的util
+ *
  * @author: yuanwq
  * @date: 2018/7/16
  */

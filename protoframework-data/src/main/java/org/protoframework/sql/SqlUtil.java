@@ -11,8 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * 构建sql语句元素的util
- *
  * @author: yuanwq
  * @date: 2018/7/15
  */
