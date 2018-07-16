@@ -1,8 +1,9 @@
 package org.protoframework.sql.expr;
 
+import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlOperation;
 
-import javax.annotation.Nonnull;
+import static com.google.common.base.Preconditions.*;
 
 /**
  * @author: yuanwq
@@ -21,31 +22,9 @@ public enum RelationalOp implements ISqlOperation<RelationalExpr> {
    */
   IS_NULL(" IS NULL") {
     @Override
-    public void toSqlTemplate(@Nonnull RelationalExpr expr, @Nonnull StringBuilder sb) {
-      boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
-      if (needWrap) {
-        sb.append(WRAP_LEFT);
-      }
-      expr.getLeft().toSqlTemplate(sb);
-      if (needWrap) {
-        sb.append(WRAP_RIGHT);
-      }
-      sb.append(this.getOp());
-      // no right
-    }
-
-    @Override
-    public void toSolidSql(@Nonnull RelationalExpr expr, @Nonnull StringBuilder sb) {
-      boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
-      if (needWrap) {
-        sb.append(WRAP_LEFT);
-      }
-      expr.getLeft().toSolidSql(sb);
-      if (needWrap) {
-        sb.append(WRAP_RIGHT);
-      }
-      sb.append(this.getOp());
-      // no right
+    public void checkExpression(IExpression left, IExpression right) {
+      checkNotNull(left, "left expr is null");
+      checkArgument(right == null, "no right expr for IS_NULL");
     }
   },
   /**
@@ -53,31 +32,9 @@ public enum RelationalOp implements ISqlOperation<RelationalExpr> {
    */
   IS_NOT_NULL(" IS NOT NULL") {
     @Override
-    public void toSqlTemplate(@Nonnull RelationalExpr expr, @Nonnull StringBuilder sb) {
-      boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
-      if (needWrap) {
-        sb.append(WRAP_LEFT);
-      }
-      expr.getLeft().toSqlTemplate(sb);
-      if (needWrap) {
-        sb.append(WRAP_RIGHT);
-      }
-      sb.append(this.getOp());
-      // no right
-    }
-
-    @Override
-    public void toSolidSql(@Nonnull RelationalExpr expr, @Nonnull StringBuilder sb) {
-      boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
-      if (needWrap) {
-        sb.append(WRAP_LEFT);
-      }
-      expr.getLeft().toSolidSql(sb);
-      if (needWrap) {
-        sb.append(WRAP_RIGHT);
-      }
-      sb.append(this.getOp());
-      // no right
+    public void checkExpression(IExpression left, IExpression right) {
+      checkNotNull(left, "left expr is null");
+      checkArgument(right == null, "no right expr for IS_NOT_NULL");
     }
   },
   LIKE(" LIKE ") {
@@ -87,41 +44,40 @@ public enum RelationalOp implements ISqlOperation<RelationalExpr> {
    */
   BETWEEN(" BETWEEN ") {
     @Override
-    public void toSqlTemplate(@Nonnull RelationalExpr expr, @Nonnull StringBuilder sb) {
-      boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
-      if (needWrap) {
-        sb.append(WRAP_LEFT);
-      }
-      expr.getLeft().toSqlTemplate(sb);
-      if (needWrap) {
-        sb.append(WRAP_RIGHT);
-      }
-      sb.append(this.getOp());
-      expr.getRight().toSqlTemplate(sb);
-    }
-
-    @Override
-    public void toSolidSql(@Nonnull RelationalExpr expr, @Nonnull StringBuilder sb) {
-      boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
-      if (needWrap) {
-        sb.append(WRAP_LEFT);
-      }
-      expr.getLeft().toSolidSql(sb);
-      if (needWrap) {
-        sb.append(WRAP_RIGHT);
-      }
-      sb.append(this.getOp());
-      expr.getRight().toSolidSql(sb);
+    public void checkExpression(IExpression left, IExpression right) {
+      checkNotNull(left, "left expr is null");
+      checkNotNull(right, "right expr is null");
+      checkArgument(right instanceof BetweenExpr,
+          "right expr of BETWEEN must be of type " + BetweenExpr.class.getName() + ", instead of " +
+              right.getClass().getName());
     }
   },
   /**
    * right expr must a {@link ValueCollection}
    */
-  IN(" IN "),
+  IN(" IN ") {
+    @Override
+    public void checkExpression(IExpression left, IExpression right) {
+      checkNotNull(left, "left expr is null");
+      checkNotNull(right, "right expr is null");
+      checkArgument(right instanceof ValueCollection,
+          "right expr of IN must be of type " + ValueCollection.class.getName() + ", instead of " +
+              right.getClass().getName());
+    }
+  },
   /**
    * right expr must a {@link ValueCollection}
    */
-  NIN(" NOT IN ");
+  NIN(" NOT IN ") {
+    @Override
+    public void checkExpression(IExpression left, IExpression right) {
+      checkNotNull(left, "left expr is null");
+      checkNotNull(right, "right expr is null");
+      checkArgument(right instanceof ValueCollection,
+          "right expr of NIN must be of type " + ValueCollection.class.getName() + ", instead of " +
+              right.getClass().getName());
+    }
+  };
 
   private final String op;
 

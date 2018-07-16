@@ -1,8 +1,9 @@
 package org.protoframework.sql.expr;
 
+import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlOperation;
 
-import javax.annotation.Nonnull;
+import static com.google.common.base.Preconditions.*;
 
 /**
  * @author: yuanwq
@@ -13,33 +14,14 @@ public enum LogicalOp implements ISqlOperation<LogicalExpr> {
   AND(" AND "),
   OR(" OR "),
   XOR(" XOR "),
+  /**
+   * no left expr
+   */
   NOT("NOT ") {
     @Override
-    public void toSqlTemplate(@Nonnull LogicalExpr expr, @Nonnull StringBuilder sb) {
-      // no left
-      sb.append(this.getOp());
-      boolean needWrap = expr.getRight().comparePrecedence(this) < 0;
-      if (needWrap) {
-        sb.append(WRAP_LEFT);
-      }
-      expr.getRight().toSqlTemplate(sb);
-      if (needWrap) {
-        sb.append(WRAP_RIGHT);
-      }
-    }
-
-    @Override
-    public void toSolidSql(@Nonnull LogicalExpr expr, @Nonnull StringBuilder sb) {
-      // no left
-      sb.append(this.getOp());
-      boolean needWrap = expr.getRight().comparePrecedence(this) < 0;
-      if (needWrap) {
-        sb.append(WRAP_LEFT);
-      }
-      expr.getRight().toSolidSql(sb);
-      if (needWrap) {
-        sb.append(WRAP_RIGHT);
-      }
+    public void checkExpression(IExpression left, IExpression right) {
+      checkArgument(left == null, "no left expr for NOT");
+      checkNotNull(right, "right expr is null");
     }
   };
 
