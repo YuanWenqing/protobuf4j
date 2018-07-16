@@ -3,6 +3,7 @@ package org.protoframework.sql.expr;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -71,11 +72,15 @@ public class ValueCollection extends AbstractExpression {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
     for (Object value : values) {
-      collectedValues.add(new Value(value, field));
+      if (value instanceof ISqlValue) {
+        sqlValues.add((ISqlValue) value);
+      } else {
+        sqlValues.add(new Value(value, field));
+      }
     }
-    return collectedValues;
+    return sqlValues;
   }
 
 }

@@ -2,6 +2,7 @@ package org.protoframework.sql.expr;
 
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -77,10 +78,10 @@ public class BetweenExpr extends AbstractExpression {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    min.collectSqlValue(collectedValues);
-    max.collectSqlValue(collectedValues);
-    return collectedValues;
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    min.collectSqlValue(sqlValues);
+    max.collectSqlValue(sqlValues);
+    return sqlValues;
   }
 
 }

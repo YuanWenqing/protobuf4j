@@ -2,6 +2,7 @@ package org.protoframework.sql.clause;
 
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
+import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -110,17 +111,17 @@ public class WhereClause extends AbstractSqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
     if (cond != null) {
-      cond.collectSqlValue(collectedValues);
+      cond.collectSqlValue(sqlValues);
     }
     if (orderBy != null) {
-      orderBy.collectSqlValue(collectedValues);
+      orderBy.collectSqlValue(sqlValues);
     }
     if (pagination != null) {
-      pagination.collectSqlValue(collectedValues);
+      pagination.collectSqlValue(sqlValues);
     }
-    return collectedValues;
+    return sqlValues;
   }
 
 }

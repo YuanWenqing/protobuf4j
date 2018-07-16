@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
+import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -55,9 +56,9 @@ public class SelectExpr extends AbstractSqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    expression.collectSqlValue(collectedValues);
-    return collectedValues;
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    expression.collectSqlValue(sqlValues);
+    return sqlValues;
   }
 
 }

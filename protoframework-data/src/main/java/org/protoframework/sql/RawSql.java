@@ -1,5 +1,6 @@
 package org.protoframework.sql;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 
@@ -8,7 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.*;
 
 /**
  * @author: yuanwq
@@ -49,9 +50,9 @@ public class RawSql extends AbstractSqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    collectedValues.addAll(values);
-    return collectedValues;
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    sqlValues.addAll(Collections2.transform(values, QueryCreator::sqlValue));
+    return sqlValues;
   }
 
 }

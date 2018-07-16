@@ -3,6 +3,7 @@ package org.protoframework.sql.clause;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.Direction;
 import org.protoframework.sql.IExpression;
+import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,8 +53,8 @@ public class GroupByExpr extends AbstractSqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    return expr.collectSqlValue(collectedValues);
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    return expr.collectSqlValue(sqlValues);
   }
 
 }

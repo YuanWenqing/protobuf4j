@@ -61,11 +61,11 @@ public class DeleteSql extends AbstractSqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    from.collectSqlValue(collectedValues);
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    from.collectSqlValue(sqlValues);
     if (where != null) {
-      where.collectSqlValue(collectedValues);
+      where.collectSqlValue(sqlValues);
     }
-    return collectedValues;
+    return sqlValues;
   }
 }

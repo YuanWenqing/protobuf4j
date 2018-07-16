@@ -71,12 +71,12 @@ public class SelectSql extends AbstractSqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    select.collectSqlValue(collectedValues);
-    from.collectSqlValue(collectedValues);
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    select.collectSqlValue(sqlValues);
+    from.collectSqlValue(sqlValues);
     if (where != null) {
-      where.collectSqlValue(collectedValues);
+      where.collectSqlValue(sqlValues);
     }
-    return collectedValues;
+    return sqlValues;
   }
 }

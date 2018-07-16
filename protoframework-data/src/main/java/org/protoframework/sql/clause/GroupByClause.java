@@ -3,6 +3,7 @@ package org.protoframework.sql.clause;
 import com.google.common.collect.Lists;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
+import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.expr.TableColumn;
 
 import javax.annotation.Nonnull;
@@ -70,11 +71,11 @@ public class GroupByClause extends AbstractSqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
     for (GroupByExpr expr : groupByExprs) {
-      expr.collectSqlValue(collectedValues);
+      expr.collectSqlValue(sqlValues);
     }
-    return collectedValues;
+    return sqlValues;
   }
 
 }

@@ -2,6 +2,7 @@ package org.protoframework.sql.clause;
 
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.ITableRef;
 
 import javax.annotation.Nonnull;
@@ -37,8 +38,8 @@ public class SimpleTable extends AbstractSqlStatement implements ITableRef {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    return collectedValues;
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    return sqlValues;
   }
 
 }

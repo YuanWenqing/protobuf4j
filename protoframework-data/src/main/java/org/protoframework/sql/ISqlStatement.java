@@ -27,9 +27,9 @@ public interface ISqlStatement {
   /**
    * 收集{@code SqlTemplate}中的参数值
    *
-   * @return {@code collectedValues} for chain invocation
+   * @return {@code sqlValues} for chain invocation
    */
-  List<Object> collectSqlValue(@Nonnull List<Object> collectedValues);
+  List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues);
 
   /**
    * 显示声明，要求实现类重写{@code toString}

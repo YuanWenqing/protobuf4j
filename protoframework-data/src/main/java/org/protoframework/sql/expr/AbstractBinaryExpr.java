@@ -3,6 +3,7 @@ package org.protoframework.sql.expr;
 import org.protoframework.sql.IBinaryExpr;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -98,13 +99,13 @@ public abstract class AbstractBinaryExpr<T extends ISqlOperation> extends Abstra
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
     if (this.getLeft() != null) {
-      this.getLeft().collectSqlValue(collectedValues);
+      this.getLeft().collectSqlValue(sqlValues);
     }
     if (this.getRight() != null) {
-      this.getRight().collectSqlValue(collectedValues);
+      this.getRight().collectSqlValue(sqlValues);
     }
-    return collectedValues;
+    return sqlValues;
   }
 }

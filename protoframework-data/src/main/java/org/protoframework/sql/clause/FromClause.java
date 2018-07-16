@@ -2,6 +2,7 @@ package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
 import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.ITableRef;
 
 import javax.annotation.Nonnull;
@@ -38,9 +39,9 @@ public class FromClause extends AbstractSqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    tableRef.collectSqlValue(collectedValues);
-    return collectedValues;
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    tableRef.collectSqlValue(sqlValues);
+    return sqlValues;
   }
 
 }

@@ -1,8 +1,11 @@
 package org.protoframework.sql.expr;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.ISqlValue;
+import org.protoframework.sql.QueryCreator;
 import org.protoframework.sql.SqlUtil;
 
 import javax.annotation.Nonnull;
@@ -51,9 +54,9 @@ public class RawExpr extends AbstractExpression {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    collectedValues.addAll(values);
-    return collectedValues;
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    sqlValues.addAll(Collections2.transform(values, QueryCreator::sqlValue));
+    return sqlValues;
   }
 
   @Override

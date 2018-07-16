@@ -2,6 +2,7 @@ package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
 import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -51,8 +52,8 @@ public abstract class PaginationClause extends AbstractSqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    return collectedValues;
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    return sqlValues;
   }
 
   private static class OffsetLimit extends PaginationClause {

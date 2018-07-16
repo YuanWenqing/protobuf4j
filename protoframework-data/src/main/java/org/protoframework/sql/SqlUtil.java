@@ -53,9 +53,9 @@ public class SqlUtil {
       }
 
       @Override
-      public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-        expr.collectSqlValue(collectedValues);
-        return collectedValues;
+      public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+        expr.collectSqlValue(sqlValues);
+        return sqlValues;
       }
     };
   }

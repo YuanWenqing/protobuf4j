@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
+import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.expr.TableColumn;
 
 import javax.annotation.Nonnull;
@@ -70,11 +71,11 @@ public class SelectClause extends AbstractSqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
     for (SelectExpr selectExpr : selectExprs) {
-      selectExpr.collectSqlValue(collectedValues);
+      selectExpr.collectSqlValue(sqlValues);
     }
-    return collectedValues;
+    return sqlValues;
   }
 
 }

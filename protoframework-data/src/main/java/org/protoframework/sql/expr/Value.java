@@ -71,9 +71,9 @@ public class Value extends AbstractExpression implements ISqlValue {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    collectedValues.add(this);
-    return collectedValues;
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    sqlValues.add(this);
+    return sqlValues;
   }
 
 }

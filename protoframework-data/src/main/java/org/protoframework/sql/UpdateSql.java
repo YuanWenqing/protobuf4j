@@ -72,11 +72,11 @@ public class UpdateSql extends AbstractSqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    set.collectSqlValue(collectedValues);
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    set.collectSqlValue(sqlValues);
     if (where != null) {
-      where.collectSqlValue(collectedValues);
+      where.collectSqlValue(sqlValues);
     }
-    return collectedValues;
+    return sqlValues;
   }
 }

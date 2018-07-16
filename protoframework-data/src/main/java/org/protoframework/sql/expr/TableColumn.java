@@ -1,6 +1,7 @@
 package org.protoframework.sql.expr;
 
 import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -39,8 +40,8 @@ public class TableColumn extends AbstractExpression {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    return collectedValues;
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    return sqlValues;
   }
 
 }
