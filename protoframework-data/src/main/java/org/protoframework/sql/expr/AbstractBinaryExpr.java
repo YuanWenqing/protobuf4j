@@ -24,6 +24,7 @@ public abstract class AbstractBinaryExpr<T extends ISqlOperation> extends Abstra
 
   public AbstractBinaryExpr(IExpression left, T op, IExpression right) {
     checkNotNull(op);
+    op.checkExpression(left, right);
     this.left = left;
     this.op = op;
     this.right = right;
