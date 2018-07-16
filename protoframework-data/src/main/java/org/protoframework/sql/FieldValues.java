@@ -12,13 +12,6 @@ import java.util.Collection;
  */
 public abstract class FieldValues {
 
-  public static ISqlValue of(Object value) {
-    if (value instanceof ISqlValue) {
-      return (ISqlValue) value;
-    }
-    return new Value(value);
-  }
-
   public static IExpression eq(String field, Object value) {
     return new RelationalExpr(new TableColumn(field), RelationalOp.EQ, new Value(value, field));
   }
