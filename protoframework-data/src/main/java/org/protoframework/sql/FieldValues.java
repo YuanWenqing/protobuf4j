@@ -41,7 +41,7 @@ public abstract class FieldValues {
   }
 
   public static IExpression isNotNull(String field) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.IS_NULL, null);
+    return new RelationalExpr(new TableColumn(field), RelationalOp.IS_NOT_NULL, null);
   }
 
   public static IExpression like(String field, String value) {
