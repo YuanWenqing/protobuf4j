@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlStatement;
-import org.protoframework.sql.expr.ConstValue;
+import org.protoframework.sql.expr.Value;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -36,7 +36,7 @@ public class SetClause extends AbstractSqlStatement implements ISqlStatement {
   }
 
   public SetClause setColumn(String column, Object value) {
-    return setColumn(column, new ConstValue(value));
+    return setColumn(column, new Value(value));
   }
 
   @Override

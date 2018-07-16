@@ -1,27 +1,26 @@
 package org.protoframework.sql.expr;
 
+import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlOperation;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * 常量：字符串 数值 等
- * <p>
+ * 值集合
+ *
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public class ConstValue extends AbstractSqlStatement implements IExpression {
-  private final Object value;
+public class ValueCollection extends AbstractSqlStatement implements IExpression {
+  private final List<Object> values;
 
-  public ConstValue(@Nonnull Object value) {
-    this.value = value;
-  }
-
-  public Object getValue() {
-    return value;
+  public ValueCollection(@Nonnull Collection<?> values) {
+    this.values = ImmutableList.copyOf(values);
   }
 
   @Override
@@ -31,23 +30,20 @@ public class ConstValue extends AbstractSqlStatement implements IExpression {
 
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    return sb.append("?");
+    sb.append(String.format("(%s)", StringUtils.repeat("?", ",", values.size())));
+    return sb;
   }
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    if (value instanceof String) {
-      sb.append("'").append(String.valueOf(value).replace("'", "\\'")).append("'");
-    } else {
-      sb.append(value);
-    }
+    sb.append(String.format("(%s)", StringUtils.join(values, ",")));
     return sb;
   }
 
   @Override
   public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
     // TODO: value conversion
-    collectedValues.add(value);
+    collectedValues.addAll(values);
     return collectedValues;
   }
 
