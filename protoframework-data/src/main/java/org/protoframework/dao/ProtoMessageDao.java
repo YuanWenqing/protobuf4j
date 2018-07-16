@@ -120,7 +120,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   private int execSqlAndLog(ISqlStatement sqlStatement, Logger logger) {
     String sqlTemplate = sqlStatement.toSqlTemplate(new StringBuilder()).toString();
-    List<Object> sqlValues = sqlStatement.collectSqlValue(Lists.newArrayList());
+    List<ISqlValue> sqlValues = sqlStatement.collectSqlValue(Lists.newArrayList());
+    // TODO: convert
     timer.restart();
     try {
       return this.getJdbcTemplate().update(DaoUtil.makeStatementCreator(sqlTemplate, sqlValues));
@@ -364,7 +365,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   public <V> List<V> doSelect(@Nonnull SelectSql selectSql, RowMapper<V> mapper) {
     checkNotNull(selectSql);
     String sqlTemplate = selectSql.toSqlTemplate(new StringBuilder()).toString();
-    List<Object> sqlValues = selectSql.collectSqlValue(Lists.newArrayList());
+    List<ISqlValue> sqlValues = selectSql.collectSqlValue(Lists.newArrayList());
+    // TODO: convert
     timer.restart();
     try {
       return this.getJdbcTemplate()
