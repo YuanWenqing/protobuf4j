@@ -83,7 +83,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.messageType = checkNotNull(messageType);
     checkArgument(StringUtils.isNotBlank(tableName));
     this.tableName = tableName;
-    this.fromClause = FromClause.from(tableName);
+    this.fromClause = QueryCreator.from(tableName);
     this.messageHelper = ProtoMessageHelper.getHelper(messageType);
     this.messageMapper = new ProtoMessageRowMapper<>(messageType);
     this.sqlConverter = (ProtoSqlConverter) SqlConverterRegistry.findSqlConverter(messageType);
