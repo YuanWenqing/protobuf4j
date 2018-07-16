@@ -1,10 +1,13 @@
 package org.protoframework.sql;
 
+import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.clause.SelectExpr;
 import org.protoframework.sql.expr.AbstractExpression;
 import org.protoframework.sql.expr.RawExpr;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -57,4 +60,20 @@ public class SqlUtil {
     };
   }
 
+  /**
+   * 将{@code sqlTemplate}中的{@code "?"}按顺序使用{@code values}中的值进行替换，若values不足，则保留{@code "?"}
+   */
+  public static String replaceParamHolder(String sqlTemplate, Collection<?> values) {
+    StringBuilder sb = new StringBuilder();
+    Iterator<?> iter = values.iterator();
+    for (String part : StringUtils.splitPreserveAllTokens(sqlTemplate, "?")) {
+      sb.append(part);
+      if (iter.hasNext()) {
+        sb.append(iter.next());
+      } else {
+        sb.append("?");
+      }
+    }
+    return sb.toString();
+  }
 }

@@ -6,8 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * @author: yuanwq
@@ -23,6 +24,7 @@ public class RawSql extends AbstractSqlStatement {
   }
 
   public RawSql(@Nonnull String sql, @Nonnull Collection<?> values) {
+    checkArgument(StringUtils.isNotBlank(sql));
     this.sql = sql;
     this.values = ImmutableList.copyOf(values);
   }
@@ -42,15 +44,7 @@ public class RawSql extends AbstractSqlStatement {
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    Iterator<Object> iter = values.iterator();
-    for (String part : StringUtils.splitPreserveAllTokens(sql, "?")) {
-      sb.append(part);
-      if (iter.hasNext()) {
-        sb.append(iter.next());
-      } else {
-        sb.append("?");
-      }
-    }
+    sb.append(SqlUtil.replaceParamHolder(sql, values));
     return sb;
   }
 

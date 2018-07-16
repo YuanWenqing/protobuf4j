@@ -3,12 +3,14 @@ package org.protoframework.sql.expr;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.SqlUtil;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.*;
 
 /**
  * @author: yuanwq
@@ -24,7 +26,8 @@ public class RawExpr extends AbstractExpression {
   }
 
   public RawExpr(@Nonnull String sql, @Nonnull Collection<?> values) {
-    this.sql = sql;
+    checkArgument(StringUtils.isNotBlank(sql));
+    this.sql = StringUtils.trim(sql);
     this.values = ImmutableList.copyOf(values);
   }
 
@@ -43,15 +46,7 @@ public class RawExpr extends AbstractExpression {
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    Iterator<Object> iter = values.iterator();
-    for (String part : StringUtils.splitPreserveAllTokens(sql, "?")) {
-      sb.append(part);
-      if (iter.hasNext()) {
-        sb.append(iter.next());
-      } else {
-        sb.append("?");
-      }
-    }
+    sb.append(SqlUtil.replaceParamHolder(sql, values));
     return sb;
   }
 
@@ -63,7 +58,10 @@ public class RawExpr extends AbstractExpression {
 
   @Override
   public int comparePrecedence(@Nonnull ISqlOperation outerOp) {
-    return 1;
+    if (sql.startsWith("(") && sql.endsWith(")")) {
+      return 1;
+    }
+    return -1;
   }
 
 }
