@@ -16,7 +16,42 @@ public enum RelationalOp implements ISqlOperation<RelationalExpr> {
   GTE(">="),
   LT("<"),
   LTE("<="),
+  /**
+   * only left expr, no right
+   */
   IS_NULL(" IS NULL") {
+    @Override
+    public void toSqlTemplate(@Nonnull RelationalExpr expr, @Nonnull StringBuilder sb) {
+      boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
+      if (needWrap) {
+        sb.append(WRAP_LEFT);
+      }
+      expr.getLeft().toSqlTemplate(sb);
+      if (needWrap) {
+        sb.append(WRAP_RIGHT);
+      }
+      sb.append(this.getOp());
+      // no right
+    }
+
+    @Override
+    public void toSolidSql(@Nonnull RelationalExpr expr, @Nonnull StringBuilder sb) {
+      boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
+      if (needWrap) {
+        sb.append(WRAP_LEFT);
+      }
+      expr.getLeft().toSolidSql(sb);
+      if (needWrap) {
+        sb.append(WRAP_RIGHT);
+      }
+      sb.append(this.getOp());
+      // no right
+    }
+  },
+  /**
+   * only left expr, no right
+   */
+  IS_NOT_NULL(" IS NOT NULL") {
     @Override
     public void toSqlTemplate(@Nonnull RelationalExpr expr, @Nonnull StringBuilder sb) {
       boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
@@ -47,6 +82,9 @@ public enum RelationalOp implements ISqlOperation<RelationalExpr> {
   },
   LIKE(" LIKE ") {
   },
+  /**
+   * right expr must be {@link BetweenExpr}
+   */
   BETWEEN(" BETWEEN ") {
     @Override
     public void toSqlTemplate(@Nonnull RelationalExpr expr, @Nonnull StringBuilder sb) {
@@ -76,7 +114,13 @@ public enum RelationalOp implements ISqlOperation<RelationalExpr> {
       expr.getRight().toSolidSql(sb);
     }
   },
+  /**
+   * right expr must a {@link ValueCollection}
+   */
   IN(" IN "),
+  /**
+   * right expr must a {@link ValueCollection}
+   */
   NIN(" NOT IN ");
 
   private final String op;

@@ -25,8 +25,8 @@ public class ValueCollection extends AbstractExpression {
   /**
    * @param field 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
    */
-  public ValueCollection(List<Object> values, String field) {
-    this.values = values;
+  public ValueCollection(Collection<?> values, String field) {
+    this(values);
     this.field = field;
   }
 
