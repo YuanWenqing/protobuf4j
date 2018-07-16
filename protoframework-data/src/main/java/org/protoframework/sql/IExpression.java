@@ -23,4 +23,8 @@ public interface IExpression extends ISqlStatement {
   IExpression and(IExpression right);
 
   IExpression or(IExpression right);
+
+  IExpression xor(IExpression right);
+
+  IExpression not();
 }

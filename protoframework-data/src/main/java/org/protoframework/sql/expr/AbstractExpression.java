@@ -19,4 +19,14 @@ public abstract class AbstractExpression extends AbstractSqlStatement implements
   public IExpression or(IExpression right) {
     return new LogicalExpr(this, LogicalOp.OR, right);
   }
+
+  @Override
+  public IExpression xor(IExpression right) {
+    return new LogicalExpr(this, LogicalOp.XOR, right);
+  }
+
+  @Override
+  public IExpression not() {
+    return new LogicalExpr(null, LogicalOp.NOT, this);
+  }
 }
