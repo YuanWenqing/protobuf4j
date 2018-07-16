@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
-import org.protoframework.sql.ISqlStatement;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public class SelectExpr extends AbstractSqlStatement implements ISqlStatement {
+public class SelectExpr extends AbstractSqlStatement {
 
   private final IExpression expression;
   private String alias;

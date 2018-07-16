@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
-import org.protoframework.sql.ISqlStatement;
 import org.protoframework.sql.expr.TableColumn;
 
 import javax.annotation.Nonnull;
@@ -15,7 +14,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public class SelectClause extends AbstractSqlStatement implements ISqlStatement {
+public class SelectClause extends AbstractSqlStatement {
   private final List<SelectExpr> selectExprs = Lists.newArrayList();
 
   public List<SelectExpr> getSelectExprs() {

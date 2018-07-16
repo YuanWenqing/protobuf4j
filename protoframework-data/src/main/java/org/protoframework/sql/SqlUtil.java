@@ -1,6 +1,7 @@
 package org.protoframework.sql;
 
 import org.protoframework.sql.clause.SelectExpr;
+import org.protoframework.sql.expr.AbstractExpression;
 import org.protoframework.sql.expr.RawExpr;
 
 import javax.annotation.Nonnull;
@@ -26,7 +27,7 @@ public class SqlUtil {
   };
 
   public static final IExpression aggregateWrap(String aggregateFunc, IExpression expr) {
-    return new IExpression() {
+    return new AbstractExpression() {
       @Override
       public int comparePrecedence(@Nonnull ISqlOperation outerOp) {
         return 1;

@@ -1,6 +1,5 @@
 package org.protoframework.sql.expr;
 
-import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IBinaryExpr;
 import org.protoframework.sql.IExpression;
 
@@ -10,10 +9,11 @@ import java.util.List;
 /**
  * 逻辑表达式：AND OR XOR
  * <p>
+ *
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public class LogicalExpr extends AbstractSqlStatement implements IBinaryExpr<LogicalOp> {
+public class LogicalExpr extends AbstractExpression implements IBinaryExpr<LogicalOp> {
   private final IExpression left;
   private final LogicalOp op;
   private final IExpression right;

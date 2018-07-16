@@ -1,6 +1,5 @@
 package org.protoframework.sql.expr;
 
-import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlOperation;
 
@@ -11,7 +10,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public class BetweenExpr extends AbstractSqlStatement implements IExpression {
+public class BetweenExpr extends AbstractExpression {
   private final IExpression min;
   private final IExpression max;
 

@@ -2,7 +2,6 @@ package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
 import org.protoframework.sql.AbstractSqlStatement;
-import org.protoframework.sql.ISqlStatement;
 import org.protoframework.sql.ITableRef;
 
 import javax.annotation.Nonnull;
@@ -12,7 +11,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public class FromClause extends AbstractSqlStatement implements ISqlStatement {
+public class FromClause extends AbstractSqlStatement {
   private final ITableRef tableRef;
 
   public FromClause(@Nonnull ITableRef tableRef) {

@@ -1,6 +1,5 @@
 package org.protoframework.sql.expr;
 
-import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IBinaryExpr;
 import org.protoframework.sql.IExpression;
 
@@ -10,10 +9,11 @@ import java.util.List;
 /**
  * 关系表达式：{@code = != < <= > >=}
  * <p>
+ *
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public class RelationalExpr extends AbstractSqlStatement implements IBinaryExpr<RelationalOp> {
+public class RelationalExpr extends AbstractExpression implements IBinaryExpr<RelationalOp> {
   private final IExpression left;
   private final RelationalOp op;
   private final IExpression right;

@@ -1,7 +1,5 @@
 package org.protoframework.sql.expr;
 
-import org.protoframework.sql.AbstractSqlStatement;
-import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlOperation;
 
 import javax.annotation.Nonnull;
@@ -10,10 +8,11 @@ import java.util.List;
 /**
  * 表列
  * <p>
+ *
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public class TableColumn extends AbstractSqlStatement implements IExpression {
+public class TableColumn extends AbstractExpression {
   private final String column;
 
   public TableColumn(String column) {

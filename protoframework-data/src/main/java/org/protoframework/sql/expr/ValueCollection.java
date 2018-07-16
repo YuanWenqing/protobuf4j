@@ -2,8 +2,6 @@ package org.protoframework.sql.expr;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
-import org.protoframework.sql.AbstractSqlStatement;
-import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlOperation;
 
 import javax.annotation.Nonnull;
@@ -16,7 +14,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public class ValueCollection extends AbstractSqlStatement implements IExpression {
+public class ValueCollection extends AbstractExpression {
   private final List<Object> values;
   private String field;
 
@@ -41,18 +39,18 @@ public class ValueCollection extends AbstractSqlStatement implements IExpression
   }
 
   /**
+   * @see #setField(String)
+   */
+  public String getField() {
+    return field;
+  }
+
+  /**
    * @param field 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
    */
   public ValueCollection setField(String field) {
     this.field = field;
     return this;
-  }
-
-  /**
-   * @see #setField(String)
-   */
-  public String getField() {
-    return field;
   }
 
   @Override

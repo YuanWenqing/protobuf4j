@@ -3,7 +3,6 @@ package org.protoframework.sql.clause;
 import com.google.common.collect.Lists;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
-import org.protoframework.sql.ISqlStatement;
 import org.protoframework.sql.expr.TableColumn;
 
 import javax.annotation.Nonnull;
@@ -14,7 +13,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public class OrderByClause extends AbstractSqlStatement implements ISqlStatement {
+public class OrderByClause extends AbstractSqlStatement {
   private final List<OrderByExpr> orderByExprs = Lists.newArrayList();
 
   public List<OrderByExpr> getOrderByExprs() {
