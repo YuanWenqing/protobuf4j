@@ -18,9 +18,41 @@ import java.util.List;
  */
 public class ValueCollection extends AbstractSqlStatement implements IExpression {
   private final List<Object> values;
+  private String field;
 
   public ValueCollection(@Nonnull Collection<?> values) {
     this.values = ImmutableList.copyOf(values);
+  }
+
+  /**
+   * @param field 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
+   */
+  public ValueCollection(List<Object> values, String field) {
+    this.values = values;
+    this.field = field;
+  }
+
+  public List<Object> getValues() {
+    return values;
+  }
+
+  public boolean isEmpty() {
+    return values.isEmpty();
+  }
+
+  /**
+   * @param field 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
+   */
+  public ValueCollection setField(String field) {
+    this.field = field;
+    return this;
+  }
+
+  /**
+   * @see #setField(String)
+   */
+  public String getField() {
+    return field;
   }
 
   @Override
@@ -42,8 +74,9 @@ public class ValueCollection extends AbstractSqlStatement implements IExpression
 
   @Override
   public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    // TODO: value conversion
-    collectedValues.addAll(values);
+    for (Object value : values) {
+      collectedValues.add(new Value(value, field));
+    }
     return collectedValues;
   }
 

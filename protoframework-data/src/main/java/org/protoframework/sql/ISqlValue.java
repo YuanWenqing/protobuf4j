@@ -8,7 +8,7 @@ package org.protoframework.sql;
  */
 public interface ISqlValue {
   /**
-   * {@code value}对应的field
+   * {@code value}对应的field，便于确定{@code value}转换SqlValue时的类型
    */
   String getField();
 
