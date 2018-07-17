@@ -1,5 +1,6 @@
 package org.protoframework.sql.expr;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.ISqlOperation;
@@ -16,18 +17,27 @@ import java.util.List;
  * @date: 2018/7/11
  */
 public class ValueCollection extends AbstractExpression {
-  private final List<Object> values;
-  private String field;
-
-  public ValueCollection(@Nonnull Collection<?> values) {
-    this.values = ImmutableList.copyOf(values);
+  /**
+   * @param field 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
+   */
+  public static ValueCollection of(Collection<?> values, String field) {
+    values = Collections2
+        .transform(values, v -> ((v instanceof ISqlValue) ? ((ISqlValue) v).getValue() : v));
+    return new ValueCollection(values, field);
   }
+
+  public static ValueCollection of(Collection<?> values) {
+    return of(values, null);
+  }
+
+  private final List<Object> values;
+  private final String field;
 
   /**
    * @param field 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
    */
-  public ValueCollection(Collection<?> values, String field) {
-    this(values);
+  private ValueCollection(Collection<?> values, String field) {
+    this.values = ImmutableList.copyOf(values);
     this.field = field;
   }
 
@@ -40,18 +50,10 @@ public class ValueCollection extends AbstractExpression {
   }
 
   /**
-   * @see #setField(String)
+   * @return 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
    */
   public String getField() {
     return field;
-  }
-
-  /**
-   * @param field 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
-   */
-  public ValueCollection setField(String field) {
-    this.field = field;
-    return this;
   }
 
   @Override
@@ -83,4 +85,8 @@ public class ValueCollection extends AbstractExpression {
     return sqlValues;
   }
 
+  @Override
+  public String toString() {
+    return "ValueCollection{" + ", field='" + field + '\'' + ", values=" + values + '}';
+  }
 }

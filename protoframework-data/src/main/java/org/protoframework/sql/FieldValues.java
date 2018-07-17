@@ -55,11 +55,11 @@ public abstract class FieldValues {
 
   public static IExpression in(String field, Collection<?> values) {
     return new RelationalExpr(new TableColumn(field), RelationalOp.IN,
-        new ValueCollection(values, field));
+        ValueCollection.of(values, field));
   }
 
   public static IExpression nin(String field, Collection<?> values) {
     return new RelationalExpr(new TableColumn(field), RelationalOp.NIN,
-        new ValueCollection(values, field));
+        ValueCollection.of(values, field));
   }
 }
