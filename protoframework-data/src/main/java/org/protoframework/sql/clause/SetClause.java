@@ -32,16 +32,16 @@ public class SetClause extends AbstractSqlStatement {
     return this;
   }
 
-  public SetClause setColumn(String column, IExpression valueExpr) {
+  public SetClause setExpr(String column, IExpression valueExpr) {
     return addSetExpr(new SetExpr(column, valueExpr));
   }
 
-  public SetClause setColumn(String column, Object value) {
-    return setColumn(column, Value.of(value, column));
+  public SetClause setValue(String column, Object value) {
+    return setExpr(column, Value.of(value, column));
   }
 
   public SetClause setColumn(String column, String other) {
-    return setColumn(column, TableColumn.of(other));
+    return setExpr(column, TableColumn.of(other));
   }
 
   @Override

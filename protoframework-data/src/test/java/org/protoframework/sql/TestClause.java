@@ -308,7 +308,7 @@ public class TestClause {
     }
     assertEquals("SET ", clause.toSolidSql(new StringBuilder()).toString());
 
-    clause.setColumn("a", 1);
+    clause.setValue("a", 1);
     System.out.println(clause);
     assertEquals("a", clause.getSetExprs().get(0).getColumn());
     assertTrue(clause.getSetExprs().get(0).getValueExpr() instanceof Value);
@@ -316,7 +316,7 @@ public class TestClause {
     assertEquals("SET a=1", clause.toSolidSql(new StringBuilder()).toString());
     assertFalse(clause.isEmpty());
 
-    clause.setColumn("b", FieldValues.add("c", 2));
+    clause.setExpr("b", FieldValues.add("c", 2));
     System.out.println(clause);
     assertTrue(clause.getSetExprs().get(1).getValueExpr() instanceof ArithmeticExpr);
     assertEquals("SET a=?,b=c+?", clause.toSqlTemplate(new StringBuilder()).toString());
