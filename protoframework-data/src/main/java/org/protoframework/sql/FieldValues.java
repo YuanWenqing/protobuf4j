@@ -12,54 +12,52 @@ import java.util.Collection;
  */
 public abstract class FieldValues {
 
-  public static IExpression eq(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.EQ, Value.of(value, field));
+  public static RelationalExpr eq(String field, Object value) {
+    return RelationalExpr.eq(new TableColumn(field), Value.of(value, field));
   }
 
-  public static IExpression ne(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.NE, Value.of(value, field));
+  public static RelationalExpr ne(String field, Object value) {
+    return RelationalExpr.ne(new TableColumn(field), Value.of(value, field));
   }
 
-  public static IExpression lt(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.LT, Value.of(value, field));
+  public static RelationalExpr lt(String field, Object value) {
+    return RelationalExpr.lt(new TableColumn(field), Value.of(value, field));
   }
 
-  public static IExpression lte(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.LTE, Value.of(value, field));
+  public static RelationalExpr lte(String field, Object value) {
+    return RelationalExpr.lte(new TableColumn(field), Value.of(value, field));
   }
 
-  public static IExpression gt(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.GT, Value.of(value, field));
+  public static RelationalExpr gt(String field, Object value) {
+    return RelationalExpr.gt(new TableColumn(field), Value.of(value, field));
   }
 
-  public static IExpression gte(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.GTE, Value.of(value, field));
+  public static RelationalExpr gte(String field, Object value) {
+    return RelationalExpr.gte(new TableColumn(field), Value.of(value, field));
   }
 
-  public static IExpression isNull(String field) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.IS_NULL, null);
+  public static RelationalExpr isNull(String field) {
+    return RelationalExpr.isNull(new TableColumn(field));
   }
 
-  public static IExpression isNotNull(String field) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.IS_NOT_NULL, null);
+  public static RelationalExpr isNotNull(String field) {
+    return RelationalExpr.isNotNull(new TableColumn(field));
   }
 
-  public static IExpression like(String field, String value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.LIKE, Value.of(value, field));
+  public static RelationalExpr like(String field, String value) {
+    return RelationalExpr.like(new TableColumn(field), Value.of(value, field));
   }
 
-  public static IExpression between(String field, Object min, Object max) {
+  public static RelationalExpr between(String field, Object min, Object max) {
     BetweenExpr betweenExpr = new BetweenExpr(Value.of(min, field), Value.of(max, field));
-    return new RelationalExpr(new TableColumn(field), RelationalOp.BETWEEN, betweenExpr);
+    return RelationalExpr.between(new TableColumn(field), betweenExpr);
   }
 
-  public static IExpression in(String field, Collection<?> values) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.IN,
-        ValueCollection.of(values, field));
+  public static RelationalExpr in(String field, Collection<?> values) {
+    return RelationalExpr.in(new TableColumn(field), ValueCollection.of(values, field));
   }
 
-  public static IExpression nin(String field, Collection<?> values) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.NIN,
-        ValueCollection.of(values, field));
+  public static RelationalExpr nin(String field, Collection<?> values) {
+    return RelationalExpr.nin(new TableColumn(field), ValueCollection.of(values, field));
   }
 }

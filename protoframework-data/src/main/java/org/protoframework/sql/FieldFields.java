@@ -1,7 +1,6 @@
 package org.protoframework.sql;
 
 import org.protoframework.sql.expr.RelationalExpr;
-import org.protoframework.sql.expr.RelationalOp;
 import org.protoframework.sql.expr.TableColumn;
 
 /**
@@ -12,27 +11,27 @@ import org.protoframework.sql.expr.TableColumn;
  */
 public abstract class FieldFields {
 
-  public static IExpression eq(String left, String right) {
-    return new RelationalExpr(new TableColumn(left), RelationalOp.EQ, new TableColumn(right));
+  public static RelationalExpr eq(String left, String right) {
+    return RelationalExpr.eq(new TableColumn(left), new TableColumn(right));
   }
 
-  public static IExpression ne(String left, String right) {
-    return new RelationalExpr(new TableColumn(left), RelationalOp.NE, new TableColumn(right));
+  public static RelationalExpr ne(String left, String right) {
+    return RelationalExpr.ne(new TableColumn(left), new TableColumn(right));
   }
 
-  public static IExpression lt(String left, String right) {
-    return new RelationalExpr(new TableColumn(left), RelationalOp.LT, new TableColumn(right));
+  public static RelationalExpr lt(String left, String right) {
+    return RelationalExpr.lt(new TableColumn(left), new TableColumn(right));
   }
 
-  public static IExpression lte(String left, String right) {
-    return new RelationalExpr(new TableColumn(left), RelationalOp.LTE, new TableColumn(right));
+  public static RelationalExpr lte(String left, String right) {
+    return RelationalExpr.lte(new TableColumn(left), new TableColumn(right));
   }
 
-  public static IExpression gt(String left, String right) {
-    return new RelationalExpr(new TableColumn(left), RelationalOp.GT, new TableColumn(right));
+  public static RelationalExpr gt(String left, String right) {
+    return RelationalExpr.gt(new TableColumn(left), new TableColumn(right));
   }
 
-  public static IExpression gte(String left, String right) {
-    return new RelationalExpr(new TableColumn(left), RelationalOp.GTE, new TableColumn(right));
+  public static RelationalExpr gte(String left, String right) {
+    return RelationalExpr.gte(new TableColumn(left), new TableColumn(right));
   }
 }
