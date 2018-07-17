@@ -76,17 +76,13 @@ public class ValueCollection extends AbstractExpression {
   @Override
   public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
     for (Object value : values) {
-      if (value instanceof ISqlValue) {
-        sqlValues.add((ISqlValue) value);
-      } else {
-        sqlValues.add(Value.of(value, field));
-      }
+      sqlValues.add(Value.of(value, field));
     }
     return sqlValues;
   }
 
   @Override
   public String toString() {
-    return "ValueCollection{" + ", field='" + field + '\'' + ", values=" + values + '}';
+    return "ValueCollection{" + "field='" + field + '\'' + ", values=" + values + '}';
   }
 }
