@@ -63,6 +63,11 @@ public class RelationalExpr extends AbstractBinaryExpr<RelationalOp> {
     return new RelationalExpr(left, RelationalOp.LIKE, value);
   }
 
+  public static RelationalExpr between(IExpression left, IExpression min, IExpression max) {
+    BetweenExpr betweenExpr = new BetweenExpr(min, max);
+    return new RelationalExpr(left, RelationalOp.BETWEEN, betweenExpr);
+  }
+
   public static RelationalExpr between(IExpression left, BetweenExpr betweenExpr) {
     return new RelationalExpr(left, RelationalOp.BETWEEN, betweenExpr);
   }

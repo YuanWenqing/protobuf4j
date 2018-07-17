@@ -139,6 +139,14 @@ public class TestRelationalExpr {
       BetweenExpr betweenExpr = (BetweenExpr) expr.getRight();
       assertTrue(betweenExpr.getMin() instanceof Value);
       assertTrue(betweenExpr.getMax() instanceof Value);
+
+      expr = RelationalExpr
+          .between(TableColumn.of("a"), FieldValues.add("b", 1), FieldValues.mod("c", 2));
+      System.out.println(expr);
+      assertEquals("a BETWEEN (b+?) AND (c MOD ?)",
+          expr.toSqlTemplate(new StringBuilder()).toString());
+      assertEquals("a BETWEEN (b+1) AND (c MOD 2)",
+          expr.toSolidSql(new StringBuilder()).toString());
     }
     {
       // in
