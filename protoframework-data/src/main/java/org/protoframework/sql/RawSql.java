@@ -1,19 +1,21 @@
 package org.protoframework.sql;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.*;
 
 /**
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public class RawSql extends AbstractSqlStatement implements ISqlStatement {
+public class RawSql extends AbstractSqlStatement {
 
   private final String sql;
   private final List<Object> values;
@@ -23,6 +25,7 @@ public class RawSql extends AbstractSqlStatement implements ISqlStatement {
   }
 
   public RawSql(@Nonnull String sql, @Nonnull Collection<?> values) {
+    checkArgument(StringUtils.isNotBlank(sql));
     this.sql = sql;
     this.values = ImmutableList.copyOf(values);
   }
@@ -42,22 +45,14 @@ public class RawSql extends AbstractSqlStatement implements ISqlStatement {
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    Iterator<Object> iter = values.iterator();
-    for (String part : StringUtils.splitPreserveAllTokens(sql, "?")) {
-      sb.append(part);
-      if (iter.hasNext()) {
-        sb.append(iter.next());
-      } else {
-        sb.append("?");
-      }
-    }
+    sb.append(SqlUtil.replaceParamHolder(sql, values));
     return sb;
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    collectedValues.addAll(values);
-    return collectedValues;
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    sqlValues.addAll(Collections2.transform(values, QueryCreator::sqlValue));
+    return sqlValues;
   }
 
 }

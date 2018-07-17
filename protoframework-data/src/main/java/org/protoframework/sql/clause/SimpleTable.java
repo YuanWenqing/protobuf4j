@@ -1,6 +1,6 @@
 package org.protoframework.sql.clause;
 
-import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.ITableRef;
@@ -8,39 +8,37 @@ import org.protoframework.sql.ITableRef;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.*;
+
 /**
  * @author: yuanwq
- * @date: 2018/7/12
+ * @date: 2018/7/16
  */
-public class FromClause extends AbstractSqlStatement {
-  private final ITableRef tableRef;
+public class SimpleTable extends AbstractSqlStatement implements ITableRef {
+  private final String tableName;
 
-  public FromClause(@Nonnull ITableRef tableRef) {
-    Preconditions.checkNotNull(tableRef);
-    this.tableRef = tableRef;
+  public SimpleTable(String tableName) {
+    checkArgument(StringUtils.isNotBlank(tableName));
+    this.tableName = tableName;
   }
 
-  public ITableRef getTableRef() {
-    return tableRef;
+  @Override
+  public String getTableName() {
+    return tableName;
   }
 
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    sb.append("FROM ");
-    tableRef.toSqlTemplate(sb);
-    return sb;
+    return sb.append(tableName);
   }
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    sb.append("FROM ");
-    tableRef.toSolidSql(sb);
-    return sb;
+    return sb.append(tableName);
   }
 
   @Override
   public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
-    tableRef.collectSqlValue(sqlValues);
     return sqlValues;
   }
 

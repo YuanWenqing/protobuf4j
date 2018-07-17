@@ -11,7 +11,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/15
  */
-public class UpdateSql extends AbstractSqlStatement implements ISqlStatement {
+public class UpdateSql extends AbstractSqlStatement {
   private final ITableRef table;
   private final SetClause set;
   private WhereClause where;
@@ -72,11 +72,11 @@ public class UpdateSql extends AbstractSqlStatement implements ISqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    set.collectSqlValue(collectedValues);
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    set.collectSqlValue(sqlValues);
     if (where != null) {
-      where.collectSqlValue(collectedValues);
+      where.collectSqlValue(sqlValues);
     }
-    return collectedValues;
+    return sqlValues;
   }
 }

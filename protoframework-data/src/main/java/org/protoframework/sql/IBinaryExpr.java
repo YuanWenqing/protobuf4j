@@ -4,10 +4,9 @@ import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
+ * @param <T> 运算符类型
  * @author: yuanwq
  * @date: 2018/7/11
- *
- * @param <T></T> 运算符类型
  */
 public interface IBinaryExpr<T extends ISqlOperation> extends IExpression {
   /**

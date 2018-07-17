@@ -12,7 +12,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/15
  */
-public class SelectSql extends AbstractSqlStatement implements ISqlStatement {
+public class SelectSql extends AbstractSqlStatement {
   private final SelectClause select;
   private final FromClause from;
   private WhereClause where;
@@ -71,12 +71,12 @@ public class SelectSql extends AbstractSqlStatement implements ISqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    select.collectSqlValue(collectedValues);
-    from.collectSqlValue(collectedValues);
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    select.collectSqlValue(sqlValues);
+    from.collectSqlValue(sqlValues);
     if (where != null) {
-      where.collectSqlValue(collectedValues);
+      where.collectSqlValue(sqlValues);
     }
-    return collectedValues;
+    return sqlValues;
   }
 }

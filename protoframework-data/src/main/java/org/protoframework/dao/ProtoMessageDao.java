@@ -18,10 +18,7 @@ import org.protoframework.sql.expr.RawExpr;
 import org.protoframework.util.ThreadLocalTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -83,7 +80,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.messageType = checkNotNull(messageType);
     checkArgument(StringUtils.isNotBlank(tableName));
     this.tableName = tableName;
-    this.fromClause = FromClause.from(tableName);
+    this.fromClause = QueryCreator.from(tableName);
     this.messageHelper = ProtoMessageHelper.getHelper(messageType);
     this.messageMapper = new ProtoMessageRowMapper<>(messageType);
     this.sqlConverter = (ProtoSqlConverter) SqlConverterRegistry.findSqlConverter(messageType);
@@ -120,16 +117,37 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   private int execSqlAndLog(ISqlStatement sqlStatement, Logger logger) {
     String sqlTemplate = sqlStatement.toSqlTemplate(new StringBuilder()).toString();
-    List<Object> sqlValues = sqlStatement.collectSqlValue(Lists.newArrayList());
+    List<ISqlValue> sqlValues = sqlStatement.collectSqlValue(Lists.newArrayList());
     timer.restart();
     try {
-      return this.getJdbcTemplate().update(DaoUtil.makeStatementCreator(sqlTemplate, sqlValues));
+      return this.getJdbcTemplate().update(makeStatementCreator(sqlTemplate, sqlValues));
     } finally {
       logger.info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
           sqlValues);
     }
   }
 
+  private PreparedStatementCreator makeStatementCreator(String sql,
+      Collection<ISqlValue> sqlValues) {
+    return new PreparedStatementCreator() {
+      @Override
+      public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+        PreparedStatement ps = con.prepareStatement(sql);
+        if (sqlValues.isEmpty()) return ps;
+        int i = 1;
+        for (ISqlValue sqlValue : sqlValues) {
+          Object value;
+          if (StringUtils.isBlank(sqlValue.getField())) {
+            value = sqlValue.getValue();
+          } else {
+            value = sqlConverter.toSqlValue(messageType, sqlValue.getField(), sqlValue.getValue());
+          }
+          ps.setObject(i++, value);
+        }
+        return ps;
+      }
+    };
+  }
   ////////////////////////////// raw sql //////////////////////////////
 
   @Override
@@ -364,11 +382,10 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   public <V> List<V> doSelect(@Nonnull SelectSql selectSql, RowMapper<V> mapper) {
     checkNotNull(selectSql);
     String sqlTemplate = selectSql.toSqlTemplate(new StringBuilder()).toString();
-    List<Object> sqlValues = selectSql.collectSqlValue(Lists.newArrayList());
+    List<ISqlValue> sqlValues = selectSql.collectSqlValue(Lists.newArrayList());
     timer.restart();
     try {
-      return this.getJdbcTemplate()
-          .query(DaoUtil.makeStatementCreator(sqlTemplate, sqlValues), mapper);
+      return this.getJdbcTemplate().query(makeStatementCreator(sqlTemplate, sqlValues), mapper);
     } finally {
       sqlLogger.select()
           .info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
@@ -446,7 +463,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     SelectClause select = new SelectClause().select(countExpr);
     WhereClause where = new WhereClause().setCond(cond);
     SelectSql selectSql = new SelectSql(select, fromClause, where);
-    Integer ret = doSelectFirst(selectSql, DaoUtil.getSingleColumnMapper(Integer.class));
+    Integer ret = doSelectFirst(selectSql, new SingleColumnRowMapper<>(Integer.class));
     return ret == null ? 0 : ret;
   }
 
@@ -463,7 +480,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     SelectClause select = new SelectClause().select(sumExpr);
     WhereClause where = new WhereClause().setCond(cond);
     SelectSql selectSql = new SelectSql(select, fromClause, where);
-    Long ret = doSelectFirst(selectSql, DaoUtil.getSingleColumnMapper(Long.class));
+    Long ret = doSelectFirst(selectSql, new SingleColumnRowMapper<>(Long.class));
     return ret == null ? 0 : ret;
   }
 

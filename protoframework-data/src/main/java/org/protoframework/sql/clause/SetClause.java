@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
-import org.protoframework.sql.ISqlStatement;
-import org.protoframework.sql.expr.ConstValue;
+import org.protoframework.sql.ISqlValue;
+import org.protoframework.sql.expr.Value;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -15,7 +15,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public class SetClause extends AbstractSqlStatement implements ISqlStatement {
+public class SetClause extends AbstractSqlStatement {
   private final List<SetExpr> setExprs = Lists.newArrayList();
 
   public List<SetExpr> getSetExprs() {
@@ -36,7 +36,7 @@ public class SetClause extends AbstractSqlStatement implements ISqlStatement {
   }
 
   public SetClause setColumn(String column, Object value) {
-    return setColumn(column, new ConstValue(value));
+    return setColumn(column, Value.of(value, column));
   }
 
   @Override
@@ -71,10 +71,10 @@ public class SetClause extends AbstractSqlStatement implements ISqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
     for (SetExpr setExpr : setExprs) {
-      setExpr.collectSqlValue(collectedValues);
+      setExpr.collectSqlValue(sqlValues);
     }
-    return collectedValues;
+    return sqlValues;
   }
 }

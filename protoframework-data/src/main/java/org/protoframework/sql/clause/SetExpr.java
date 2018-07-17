@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
-import org.protoframework.sql.ISqlStatement;
+import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/14
  */
-public class SetExpr extends AbstractSqlStatement implements ISqlStatement {
+public class SetExpr extends AbstractSqlStatement {
   private final String column;
   private final IExpression valueExpr;
 
@@ -47,8 +47,8 @@ public class SetExpr extends AbstractSqlStatement implements ISqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    valueExpr.collectSqlValue(collectedValues);
-    return collectedValues;
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    valueExpr.collectSqlValue(sqlValues);
+    return sqlValues;
   }
 }

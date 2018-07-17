@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 /**
  * 表达式
+ *
  * @author: yuanwq
  * @date: 2018/7/11
  */
@@ -18,4 +19,12 @@ public interface IExpression extends ISqlStatement {
    * @return 1: 表达式优先级高于外部运算符；0：相同；-1：表达式优先级低于外部运算符
    */
   int comparePrecedence(@Nonnull ISqlOperation outerOp);
+
+  IExpression and(IExpression right);
+
+  IExpression or(IExpression right);
+
+  IExpression xor(IExpression right);
+
+  IExpression not();
 }

@@ -1,14 +1,14 @@
 package org.protoframework.sql;
 
-import javax.annotation.Nonnull;
+import static com.google.common.base.Preconditions.*;
 
 /**
  * 访问者模式解耦具体表达式的sql语句构造逻辑
  * <p>
- * @author: yuanwq
- * @date: 2018/7/11
  *
  * @param <T> 处理的表达式类型
+ * @author: yuanwq
+ * @date: 2018/7/11
  */
 public interface ISqlOperation<T extends IBinaryExpr> {
   String WRAP_LEFT = "(";
@@ -19,44 +19,11 @@ public interface ISqlOperation<T extends IBinaryExpr> {
    */
   String getOp();
 
-  default void toSqlTemplate(@Nonnull T expr, @Nonnull StringBuilder sb) {
-    boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
-    if (needWrap) {
-      sb.append(WRAP_LEFT);
-    }
-    expr.getLeft().toSqlTemplate(sb);
-    if (needWrap) {
-      sb.append(WRAP_RIGHT);
-    }
-    sb.append(this.getOp());
-    needWrap = expr.getRight().comparePrecedence(this) < 0;
-    if (needWrap) {
-      sb.append(WRAP_LEFT);
-    }
-    expr.getRight().toSqlTemplate(sb);
-    if (needWrap) {
-      sb.append(WRAP_RIGHT);
-    }
+  /**
+   * 校验操作符两侧的表达式参数
+   */
+  default void checkExpression(IExpression left, IExpression right) {
+    checkNotNull(left, "left expr is null");
+    checkNotNull(right, "right expr is null");
   }
-
-  default void toSolidSql(@Nonnull T expr, @Nonnull StringBuilder sb) {
-    boolean needWrap = expr.getLeft().comparePrecedence(this) < 0;
-    if (needWrap) {
-      sb.append(WRAP_LEFT);
-    }
-    expr.getLeft().toSolidSql(sb);
-    if (needWrap) {
-      sb.append(WRAP_RIGHT);
-    }
-    sb.append(this.getOp());
-    needWrap = expr.getRight().comparePrecedence(this) < 0;
-    if (needWrap) {
-      sb.append(WRAP_LEFT);
-    }
-    expr.getRight().toSolidSql(sb);
-    if (needWrap) {
-      sb.append(WRAP_RIGHT);
-    }
-  }
-
 }

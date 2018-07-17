@@ -2,7 +2,7 @@ package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
 import org.protoframework.sql.AbstractSqlStatement;
-import org.protoframework.sql.ISqlStatement;
+import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -10,10 +10,11 @@ import java.util.List;
 /**
  * 分页子句：{@code LIMIT <limit> OFFSET <offset>}
  * <p>
+ *
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public abstract class PaginationClause extends AbstractSqlStatement implements ISqlStatement {
+public abstract class PaginationClause extends AbstractSqlStatement {
   protected final int limit;
 
   public PaginationClause(int limit) {
@@ -51,8 +52,8 @@ public abstract class PaginationClause extends AbstractSqlStatement implements I
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    return collectedValues;
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    return sqlValues;
   }
 
   private static class OffsetLimit extends PaginationClause {

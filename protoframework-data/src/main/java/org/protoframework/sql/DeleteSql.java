@@ -11,7 +11,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/15
  */
-public class DeleteSql extends AbstractSqlStatement implements ISqlStatement {
+public class DeleteSql extends AbstractSqlStatement {
   private final FromClause from;
   private WhereClause where;
 
@@ -61,11 +61,11 @@ public class DeleteSql extends AbstractSqlStatement implements ISqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
-    from.collectSqlValue(collectedValues);
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
+    from.collectSqlValue(sqlValues);
     if (where != null) {
-      where.collectSqlValue(collectedValues);
+      where.collectSqlValue(sqlValues);
     }
-    return collectedValues;
+    return sqlValues;
   }
 }

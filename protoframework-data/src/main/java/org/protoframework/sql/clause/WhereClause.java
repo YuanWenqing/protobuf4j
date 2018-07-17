@@ -2,7 +2,7 @@ package org.protoframework.sql.clause;
 
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
-import org.protoframework.sql.ISqlStatement;
+import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public class WhereClause extends AbstractSqlStatement implements ISqlStatement {
+public class WhereClause extends AbstractSqlStatement {
   private IExpression cond;
   private OrderByClause orderBy;
   private GroupByClause groupBy;
@@ -35,12 +35,12 @@ public class WhereClause extends AbstractSqlStatement implements ISqlStatement {
     return this;
   }
 
-  public void setGroupBy(GroupByClause groupBy) {
-    this.groupBy = groupBy;
-  }
-
   public GroupByClause getGroupBy() {
     return groupBy;
+  }
+
+  public void setGroupBy(GroupByClause groupBy) {
+    this.groupBy = groupBy;
   }
 
   public PaginationClause getPagination() {
@@ -111,17 +111,17 @@ public class WhereClause extends AbstractSqlStatement implements ISqlStatement {
   }
 
   @Override
-  public List<Object> collectSqlValue(@Nonnull List<Object> collectedValues) {
+  public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
     if (cond != null) {
-      cond.collectSqlValue(collectedValues);
+      cond.collectSqlValue(sqlValues);
     }
     if (orderBy != null) {
-      orderBy.collectSqlValue(collectedValues);
+      orderBy.collectSqlValue(sqlValues);
     }
     if (pagination != null) {
-      pagination.collectSqlValue(collectedValues);
+      pagination.collectSqlValue(sqlValues);
     }
-    return collectedValues;
+    return sqlValues;
   }
 
 }
