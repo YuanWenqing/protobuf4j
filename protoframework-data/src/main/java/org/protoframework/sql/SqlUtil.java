@@ -81,4 +81,30 @@ public class SqlUtil {
     }
     return sb.toString();
   }
+
+  private static String escapePercent(String word) {
+    return word.replace("%", "%%");
+  }
+
+  /**
+   * LIKE 'xxx%'
+   */
+  public static String likePrefix(String prefix) {
+    return escapePercent(prefix) + "%";
+  }
+
+  /**
+   * LIKE '%xxx'
+   */
+  public static String likeSuffix(String suffix) {
+    return "%" + escapePercent(suffix);
+  }
+
+  /**
+   * LIKE '%xxx%'
+   */
+  public static String likeSub(String substring) {
+    return "%" + escapePercent(substring) + "%";
+  }
+
 }
