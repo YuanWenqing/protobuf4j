@@ -40,8 +40,8 @@ public abstract class FieldFields {
     return ArithmeticExpr.add(new TableColumn(left), new TableColumn(right));
   }
 
-  public static ArithmeticExpr substract(String left, String right) {
-    return ArithmeticExpr.substract(new TableColumn(left), new TableColumn(right));
+  public static ArithmeticExpr subtract(String left, String right) {
+    return ArithmeticExpr.subtract(new TableColumn(left), new TableColumn(right));
   }
 
   public static ArithmeticExpr multiply(String left, String right) {

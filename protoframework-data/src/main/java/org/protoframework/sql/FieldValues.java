@@ -62,46 +62,42 @@ public abstract class FieldValues {
   }
 
   public static ArithmeticExpr add(String field, Number value) {
-    return ArithmeticExpr.add(new TableColumn(field), Value.of(value));
+    return ArithmeticExpr.add(new TableColumn(field), Value.of(value, field));
   }
 
-  public static ArithmeticExpr substract(String field, Number value) {
-    return ArithmeticExpr.substract(new TableColumn(field), Value.of(value));
+  public static ArithmeticExpr subtract(String field, Number value) {
+    return ArithmeticExpr.subtract(new TableColumn(field), Value.of(value, field));
   }
 
   public static ArithmeticExpr multiply(String field, Number value) {
-    return ArithmeticExpr.multiply(new TableColumn(field), Value.of(value));
+    return ArithmeticExpr.multiply(new TableColumn(field), Value.of(value, field));
   }
 
   public static ArithmeticExpr divide(String field, Number value) {
-    return ArithmeticExpr.divide(new TableColumn(field), Value.of(value));
+    return ArithmeticExpr.divide(new TableColumn(field), Value.of(value, field));
   }
 
   public static ArithmeticExpr divRound(String field, Number value) {
-    return ArithmeticExpr.divRound(new TableColumn(field), Value.of(value));
+    return ArithmeticExpr.divRound(new TableColumn(field), Value.of(value, field));
   }
 
   public static ArithmeticExpr mod(String field, Number value) {
-    return ArithmeticExpr.mod(new TableColumn(field), Value.of(value));
+    return ArithmeticExpr.mod(new TableColumn(field), Value.of(value, field));
   }
 
-  public static ArithmeticExpr substract(Number value, String field) {
-    return ArithmeticExpr.substract(Value.of(value), new TableColumn(field));
-  }
-
-  public static ArithmeticExpr multiply(Number value, String field) {
-    return ArithmeticExpr.multiply(new TableColumn(field), Value.of(value));
+  public static ArithmeticExpr subtract(Number value, String field) {
+    return ArithmeticExpr.subtract(Value.of(value, field), new TableColumn(field));
   }
 
   public static ArithmeticExpr divide(Number value, String field) {
-    return ArithmeticExpr.divide(new TableColumn(field), Value.of(value));
+    return ArithmeticExpr.divide(Value.of(value, field), new TableColumn(field));
   }
 
   public static ArithmeticExpr divRound(Number value, String field) {
-    return ArithmeticExpr.divRound(new TableColumn(field), Value.of(value));
+    return ArithmeticExpr.divRound(Value.of(value, field), new TableColumn(field));
   }
 
   public static ArithmeticExpr mod(Number value, String field) {
-    return ArithmeticExpr.mod(new TableColumn(field), Value.of(value));
+    return ArithmeticExpr.mod(Value.of(value, field), new TableColumn(field));
   }
 }

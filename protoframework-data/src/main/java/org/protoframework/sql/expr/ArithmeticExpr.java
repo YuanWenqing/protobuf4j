@@ -20,8 +20,8 @@ public class ArithmeticExpr extends AbstractBinaryExpr<ArithmeticOp> {
     return new ArithmeticExpr(left, ArithmeticOp.ADD, right);
   }
 
-  public static ArithmeticExpr substract(IExpression left, IExpression right) {
-    return new ArithmeticExpr(left, ArithmeticOp.SUBSTRACT, right);
+  public static ArithmeticExpr subtract(IExpression left, IExpression right) {
+    return new ArithmeticExpr(left, ArithmeticOp.SUBTRACT, right);
   }
 
   public static ArithmeticExpr multiply(IExpression left, IExpression right) {
