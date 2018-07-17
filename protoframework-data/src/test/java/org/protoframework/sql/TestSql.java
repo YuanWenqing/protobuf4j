@@ -124,6 +124,54 @@ public class TestSql {
 
   @Test
   public void testRaw() {
+    RawSql sql;
 
+    sql = new RawSql("a");
+    System.out.println(sql);
+    assertEquals("a", sql.getSql());
+    assertTrue(sql.getValues().isEmpty());
+    assertEquals("a", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("a", sql.toSolidSql(new StringBuilder()).toString());
+    assertTrue(sql.collectSqlValue(Lists.newArrayList()).isEmpty());
+
+    sql = new RawSql("a+b");
+    System.out.println(sql);
+    assertEquals("a+b", sql.getSql());
+    assertTrue(sql.getValues().isEmpty());
+    assertEquals("a+b", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("a+b", sql.toSolidSql(new StringBuilder()).toString());
+    assertTrue(sql.collectSqlValue(Lists.newArrayList()).isEmpty());
+
+    sql = new RawSql("?", Lists.newArrayList(1));
+    System.out.println(sql);
+    assertEquals("?", sql.getSql());
+    assertEquals("?", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("1", sql.toSolidSql(new StringBuilder()).toString());
+
+    sql = new RawSql("(? AND ?)", Lists.newArrayList(1));
+    System.out.println(sql);
+    assertEquals("(? AND ?)", sql.getSql());
+    assertEquals("(? AND ?)", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("(1 AND ?)", sql.toSolidSql(new StringBuilder()).toString());
+
+    sql = new RawSql("a+?", Lists.newArrayList(1));
+    System.out.println(sql);
+    assertEquals("a+?", sql.getSql());
+    assertEquals("a+?", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("a+1", sql.toSolidSql(new StringBuilder()).toString());
+
+    sql = new RawSql("?+a", Lists.newArrayList(1));
+    System.out.println(sql);
+    assertEquals("?+a", sql.getSql());
+    assertEquals("?+a", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("1+a", sql.toSolidSql(new StringBuilder()).toString());
+
+    sql = new RawSql("? AND a", Lists.newArrayList(1));
+    System.out.println(sql);
+    assertEquals("? AND a", sql.getSql());
+    assertEquals("? AND a", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("1 AND a", sql.toSolidSql(new StringBuilder()).toString());
+    List<ISqlValue> sqlValues = sql.collectSqlValue(Lists.newArrayList());
+    assertEquals(1, sqlValues.size());
   }
 }
