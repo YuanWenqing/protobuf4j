@@ -9,6 +9,8 @@ package org.protoframework.sql;
 public interface ISqlValue {
   /**
    * {@code value}对应的field，便于确定{@code value}转换SqlValue时的类型
+   * <p>
+   * Warn：若为空，则直接取{@code value}
    */
   String getField();
 
