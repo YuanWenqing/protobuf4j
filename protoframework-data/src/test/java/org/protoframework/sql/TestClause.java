@@ -66,7 +66,79 @@ public class TestClause {
 
   @Test
   public void testWhere() {
+    WhereClause clause;
 
+    clause = QueryCreator.where();
+    System.out.println(clause);
+    assertNull(clause.getCond());
+    assertNull(clause.getOrderBy());
+    assertNull(clause.getGroupBy());
+    assertNull(clause.getPagination());
+    assertEquals("", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("", clause.toSolidSql(new StringBuilder()).toString());
+    assertTrue(clause.collectSqlValue(Lists.newArrayList()).isEmpty());
+
+    clause.setCond(FieldValues.eq("a", 1));
+    System.out.println(clause);
+    assertNotNull(clause.getCond());
+    assertEquals("WHERE a=?", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("WHERE a=1", clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.orderBy();
+    System.out.println(clause);
+    assertNotNull(clause.getOrderBy());
+    assertEquals("WHERE a=?", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("WHERE a=1", clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.orderBy().asc("b");
+    System.out.println(clause);
+    assertEquals("WHERE a=? ORDER BY b ASC", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("WHERE a=1 ORDER BY b ASC", clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.groupBy();
+    System.out.println(clause);
+    assertNotNull(clause.getGroupBy());
+    assertEquals("WHERE a=? ORDER BY b ASC", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("WHERE a=1 ORDER BY b ASC", clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.groupBy().by("c");
+    System.out.println(clause);
+    assertEquals("WHERE a=? ORDER BY b ASC GROUP BY c",
+        clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("WHERE a=1 ORDER BY b ASC GROUP BY c",
+        clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.limit(10);
+    System.out.println(clause);
+    assertEquals("WHERE a=? ORDER BY b ASC GROUP BY c LIMIT 10 OFFSET 0",
+        clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("WHERE a=1 ORDER BY b ASC GROUP BY c LIMIT 10 OFFSET 0",
+        clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.setCond(null);
+    System.out.println(clause);
+    assertEquals("ORDER BY b ASC GROUP BY c LIMIT 10 OFFSET 0",
+        clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("ORDER BY b ASC GROUP BY c LIMIT 10 OFFSET 0",
+        clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.setGroupBy(null);
+    System.out.println(clause);
+    assertEquals("ORDER BY b ASC LIMIT 10 OFFSET 0",
+        clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("ORDER BY b ASC LIMIT 10 OFFSET 0",
+        clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.setOrderBy(null);
+    System.out.println(clause);
+    assertEquals("LIMIT 10 OFFSET 0", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("LIMIT 10 OFFSET 0", clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.setPagination(null);
+    clause.groupBy().by("c");
+    System.out.println(clause);
+    assertEquals("GROUP BY c", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("GROUP BY c", clause.toSolidSql(new StringBuilder()).toString());
   }
 
   @Test
