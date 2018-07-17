@@ -247,16 +247,25 @@ public class TestClause {
         setDefaultLimit(10).build();
     assertEquals(10, clause.getLimit());
     assertEquals(0, clause.getOffset());
+    clause = clause.next();
+    assertEquals(10, clause.getLimit());
+    assertEquals(10, clause.getOffset());
 
     clause = QueryCreator.pagination(20).
         setDefaultLimit(12).
         setDefaultPageNo(10).buildByPageNo(0);
     assertEquals(20, clause.getLimit());
     assertEquals(180, clause.getOffset());
+    clause = clause.next();
+    assertEquals(20, clause.getLimit());
+    assertEquals(200, clause.getOffset());
 
     clause = QueryCreator.pagination(10).
         setDefaultOffset(10).buildByOffset(-1);
     assertEquals(10, clause.getLimit());
     assertEquals(10, clause.getOffset());
+    clause = clause.next();
+    assertEquals(10, clause.getLimit());
+    assertEquals(20, clause.getOffset());
   }
 }
