@@ -14,20 +14,20 @@ import java.util.List;
  * @date: 2018/7/12
  */
 public class GroupByExpr extends AbstractSqlStatement {
-  private final IExpression expr;
+  private final IExpression expression;
   private final Direction direction;
 
-  public GroupByExpr(@Nonnull IExpression expr, @Nullable Direction direction) {
-    this.expr = expr;
+  public GroupByExpr(@Nonnull IExpression expression, @Nullable Direction direction) {
+    this.expression = expression;
     this.direction = direction;
   }
 
-  public GroupByExpr(@Nonnull IExpression expr) {
-    this(expr, null);
+  public GroupByExpr(@Nonnull IExpression expression) {
+    this(expression, null);
   }
 
   public IExpression getExpression() {
-    return expr;
+    return expression;
   }
 
   public Direction getDirection() {
@@ -36,7 +36,7 @@ public class GroupByExpr extends AbstractSqlStatement {
 
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    this.expr.toSqlTemplate(sb);
+    this.expression.toSqlTemplate(sb);
     if (direction != null) {
       sb.append(" ").append(direction.name());
     }
@@ -45,7 +45,7 @@ public class GroupByExpr extends AbstractSqlStatement {
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    this.expr.toSolidSql(sb);
+    this.expression.toSolidSql(sb);
     if (direction != null) {
       sb.append(" ").append(direction.name());
     }
@@ -54,7 +54,7 @@ public class GroupByExpr extends AbstractSqlStatement {
 
   @Override
   public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
-    return expr.collectSqlValue(sqlValues);
+    return expression.collectSqlValue(sqlValues);
   }
 
 }

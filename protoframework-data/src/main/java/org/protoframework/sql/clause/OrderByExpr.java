@@ -16,17 +16,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @date: 2018/7/12
  */
 public class OrderByExpr extends AbstractSqlStatement {
-  private final IExpression expr;
+  private final IExpression expression;
   private final Direction direction;
 
-  public OrderByExpr(@Nonnull IExpression expr, @Nullable Direction direction) {
-    checkNotNull(expr);
-    this.expr = expr;
+  public OrderByExpr(@Nonnull IExpression expression, @Nullable Direction direction) {
+    checkNotNull(expression);
+    this.expression = expression;
     this.direction = direction;
   }
 
   public IExpression getExpression() {
-    return expr;
+    return expression;
   }
 
   public Direction getDirection() {
@@ -35,7 +35,7 @@ public class OrderByExpr extends AbstractSqlStatement {
 
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    this.expr.toSqlTemplate(sb);
+    this.expression.toSqlTemplate(sb);
     if (direction != null) {
       sb.append(" ").append(direction.name());
     }
@@ -44,7 +44,7 @@ public class OrderByExpr extends AbstractSqlStatement {
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    this.expr.toSolidSql(sb);
+    this.expression.toSolidSql(sb);
     if (direction != null) {
       sb.append(" ").append(direction.name());
     }
@@ -53,7 +53,7 @@ public class OrderByExpr extends AbstractSqlStatement {
 
   @Override
   public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
-    return expr.collectSqlValue(sqlValues);
+    return expression.collectSqlValue(sqlValues);
   }
 
 }
