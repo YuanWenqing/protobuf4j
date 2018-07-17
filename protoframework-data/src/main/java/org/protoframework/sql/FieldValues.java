@@ -60,4 +60,48 @@ public abstract class FieldValues {
   public static RelationalExpr nin(String field, Collection<?> values) {
     return RelationalExpr.nin(new TableColumn(field), ValueCollection.of(values, field));
   }
+
+  public static ArithmeticExpr add(String field, Number value) {
+    return ArithmeticExpr.add(new TableColumn(field), Value.of(value));
+  }
+
+  public static ArithmeticExpr substract(String field, Number value) {
+    return ArithmeticExpr.substract(new TableColumn(field), Value.of(value));
+  }
+
+  public static ArithmeticExpr multiply(String field, Number value) {
+    return ArithmeticExpr.multiply(new TableColumn(field), Value.of(value));
+  }
+
+  public static ArithmeticExpr divide(String field, Number value) {
+    return ArithmeticExpr.divide(new TableColumn(field), Value.of(value));
+  }
+
+  public static ArithmeticExpr divRound(String field, Number value) {
+    return ArithmeticExpr.divRound(new TableColumn(field), Value.of(value));
+  }
+
+  public static ArithmeticExpr mod(String field, Number value) {
+    return ArithmeticExpr.mod(new TableColumn(field), Value.of(value));
+  }
+
+  public static ArithmeticExpr substract(Number value, String field) {
+    return ArithmeticExpr.substract(Value.of(value), new TableColumn(field));
+  }
+
+  public static ArithmeticExpr multiply(Number value, String field) {
+    return ArithmeticExpr.multiply(new TableColumn(field), Value.of(value));
+  }
+
+  public static ArithmeticExpr divide(Number value, String field) {
+    return ArithmeticExpr.divide(new TableColumn(field), Value.of(value));
+  }
+
+  public static ArithmeticExpr divRound(Number value, String field) {
+    return ArithmeticExpr.divRound(new TableColumn(field), Value.of(value));
+  }
+
+  public static ArithmeticExpr mod(Number value, String field) {
+    return ArithmeticExpr.mod(new TableColumn(field), Value.of(value));
+  }
 }

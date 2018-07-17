@@ -20,15 +20,15 @@ public class ArithmeticExpr extends AbstractBinaryExpr<ArithmeticOp> {
     return new ArithmeticExpr(left, ArithmeticOp.ADD, right);
   }
 
-  public static ArithmeticExpr sub(IExpression left, IExpression right) {
+  public static ArithmeticExpr substract(IExpression left, IExpression right) {
     return new ArithmeticExpr(left, ArithmeticOp.SUBSTRACT, right);
   }
 
-  public static ArithmeticExpr multi(IExpression left, IExpression right) {
+  public static ArithmeticExpr multiply(IExpression left, IExpression right) {
     return new ArithmeticExpr(left, ArithmeticOp.MULTIPLY, right);
   }
 
-  public static ArithmeticExpr div(IExpression left, IExpression right) {
+  public static ArithmeticExpr divide(IExpression left, IExpression right) {
     return new ArithmeticExpr(left, ArithmeticOp.DIVIDE, right);
   }
 
