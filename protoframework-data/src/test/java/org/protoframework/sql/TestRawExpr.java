@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
  * @author: yuanwq
  * @date: 2018/7/17
  */
-public class TestRaw {
+public class TestRawExpr {
 
   @Test
   public void testRawExpr() {
