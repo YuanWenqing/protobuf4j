@@ -51,6 +51,10 @@ public class TestSql {
     assertNull(sql.getSelect());
     assertNull(sql.getWhere());
     assertEquals("FROM t", sql.toSolidSql(new StringBuilder()).toString());
+
+    sql = new SelectSql(null, QueryCreator.from("t"), null);
+    assertNull(sql.getSelect());
+    assertNull(sql.getWhere());
   }
 
   @Test
@@ -92,6 +96,10 @@ public class TestSql {
     assertNull(sql.getSet());
     assertNull(sql.getWhere());
     assertEquals("UPDATE t", sql.toSolidSql(new StringBuilder()).toString());
+
+    sql = new UpdateSql(QueryCreator.table("t"), null, null);
+    assertNull(sql.getSet());
+    assertNull(sql.getWhere());
   }
 
   @Test
@@ -106,6 +114,7 @@ public class TestSql {
 
     sql.where();
     System.out.println(sql);
+    assertNotNull(sql.getWhere());
     assertEquals("DELETE FROM t ", sql.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("DELETE FROM t ", sql.toSolidSql(new StringBuilder()).toString());
     sql.where().setCond(FieldValues.eq("a", 1));
@@ -120,6 +129,10 @@ public class TestSql {
     System.out.println(sql);
     assertNull(sql.getWhere());
     assertEquals("DELETE FROM t", sql.toSolidSql(new StringBuilder()).toString());
+
+    sql = new DeleteSql(QueryCreator.from("a"), QueryCreator.where());
+    assertNotNull(sql.getFrom());
+    assertNotNull(sql.getWhere());
   }
 
   @Test

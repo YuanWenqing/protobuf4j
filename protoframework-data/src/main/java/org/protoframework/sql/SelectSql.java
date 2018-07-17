@@ -22,7 +22,7 @@ public class SelectSql extends AbstractSqlStatement {
     this.from = from;
   }
 
-  public SelectSql(SelectClause select, FromClause from, WhereClause where) {
+  public SelectSql(SelectClause select, @Nonnull FromClause from, WhereClause where) {
     this.select = select;
     this.from = from;
     this.where = where;

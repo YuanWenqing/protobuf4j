@@ -22,7 +22,7 @@ public class UpdateSql extends AbstractSqlStatement {
     this.table = table;
   }
 
-  public UpdateSql(@Nonnull ITableRef table, @Nonnull SetClause set, WhereClause where) {
+  public UpdateSql(@Nonnull ITableRef table, SetClause set, WhereClause where) {
     this(table);
     this.set = set;
     this.where = where;
