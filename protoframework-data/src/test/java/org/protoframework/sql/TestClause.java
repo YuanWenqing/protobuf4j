@@ -3,7 +3,9 @@ package org.protoframework.sql;
 import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.protoframework.sql.clause.*;
+import org.protoframework.sql.expr.ArithmeticExpr;
 import org.protoframework.sql.expr.TableColumn;
+import org.protoframework.sql.expr.Value;
 
 import java.util.List;
 
@@ -287,6 +289,46 @@ public class TestClause {
     assertEquals(10, clause.totalPages(100));
     assertEquals(10, clause.totalPages(91));
     assertEquals(10, clause.totalPages(99));
+  }
 
+  @Test
+  public void testSet() {
+    SetClause clause;
+
+    clause = QueryCreator.set();
+    System.out.println(clause);
+    assertTrue(clause.isEmpty());
+    assertEquals(0, clause.getSetExprs().size());
+    try {
+      clause.toSqlTemplate(new StringBuilder());
+      fail();
+    } catch (IllegalArgumentException e) {
+      System.out.println(e.getMessage());
+    }
+    assertEquals("SET ", clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.setColumn("a", 1);
+    System.out.println(clause);
+    assertTrue(clause.getSetExprs().get(0).getValueExpr() instanceof Value);
+    assertEquals("SET a=?", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("SET a=1", clause.toSolidSql(new StringBuilder()).toString());
+    assertFalse(clause.isEmpty());
+
+    clause.setColumn("b", FieldValues.add("c", 2));
+    System.out.println(clause);
+    assertTrue(clause.getSetExprs().get(1).getValueExpr() instanceof ArithmeticExpr);
+    assertEquals("SET a=?,b=c+?", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("SET a=1,b=c+2", clause.toSolidSql(new StringBuilder()).toString());
+    assertFalse(clause.isEmpty());
+
+    clause.setColumn("d", "e");
+    System.out.println(clause);
+    assertTrue(clause.getSetExprs().get(2).getValueExpr() instanceof TableColumn);
+    assertEquals("SET a=?,b=c+?,d=e", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("SET a=1,b=c+2,d=e", clause.toSolidSql(new StringBuilder()).toString());
+    List<ISqlValue> sqlValues = clause.collectSqlValue(Lists.newArrayList());
+    assertEquals(2, sqlValues.size());
+    assertEquals(1, sqlValues.get(0).getValue());
+    assertEquals(2, sqlValues.get(1).getValue());
   }
 }

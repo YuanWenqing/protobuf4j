@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
+import org.protoframework.sql.expr.TableColumn;
 import org.protoframework.sql.expr.Value;
 
 import javax.annotation.Nonnull;
@@ -39,9 +40,13 @@ public class SetClause extends AbstractSqlStatement {
     return setColumn(column, Value.of(value, column));
   }
 
+  public SetClause setColumn(String column, String other) {
+    return setColumn(column, TableColumn.of(other));
+  }
+
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    Preconditions.checkArgument(setExprs.isEmpty(), "nothing to set");
+    Preconditions.checkArgument(!setExprs.isEmpty(), "nothing to set");
     sb.append("SET ");
     boolean first = true;
     for (SetExpr setExpr : setExprs) {
