@@ -13,27 +13,27 @@ import java.util.Collection;
 public abstract class FieldValues {
 
   public static IExpression eq(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.EQ, new Value(value, field));
+    return new RelationalExpr(new TableColumn(field), RelationalOp.EQ, Value.of(value, field));
   }
 
   public static IExpression ne(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.NE, new Value(value, field));
+    return new RelationalExpr(new TableColumn(field), RelationalOp.NE, Value.of(value, field));
   }
 
   public static IExpression lt(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.LT, new Value(value, field));
+    return new RelationalExpr(new TableColumn(field), RelationalOp.LT, Value.of(value, field));
   }
 
   public static IExpression lte(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.LTE, new Value(value, field));
+    return new RelationalExpr(new TableColumn(field), RelationalOp.LTE, Value.of(value, field));
   }
 
   public static IExpression gt(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.GT, new Value(value, field));
+    return new RelationalExpr(new TableColumn(field), RelationalOp.GT, Value.of(value, field));
   }
 
   public static IExpression gte(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.GTE, new Value(value, field));
+    return new RelationalExpr(new TableColumn(field), RelationalOp.GTE, Value.of(value, field));
   }
 
   public static IExpression isNull(String field) {
@@ -45,11 +45,11 @@ public abstract class FieldValues {
   }
 
   public static IExpression like(String field, String value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.LIKE, new Value(value, field));
+    return new RelationalExpr(new TableColumn(field), RelationalOp.LIKE, Value.of(value, field));
   }
 
   public static IExpression between(String field, Object min, Object max) {
-    BetweenExpr betweenExpr = new BetweenExpr(new Value(min, field), new Value(max, field));
+    BetweenExpr betweenExpr = new BetweenExpr(Value.of(min, field), Value.of(max, field));
     return new RelationalExpr(new TableColumn(field), RelationalOp.BETWEEN, betweenExpr);
   }
 

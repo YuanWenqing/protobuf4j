@@ -36,7 +36,7 @@ public class SetClause extends AbstractSqlStatement {
   }
 
   public SetClause setColumn(String column, Object value) {
-    return setColumn(column, new Value(value));
+    return setColumn(column, Value.of(value, column));
   }
 
   @Override

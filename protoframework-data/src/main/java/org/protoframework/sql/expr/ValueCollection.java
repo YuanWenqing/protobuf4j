@@ -77,7 +77,7 @@ public class ValueCollection extends AbstractExpression {
       if (value instanceof ISqlValue) {
         sqlValues.add((ISqlValue) value);
       } else {
-        sqlValues.add(new Value(value, field));
+        sqlValues.add(Value.of(value, field));
       }
     }
     return sqlValues;

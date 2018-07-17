@@ -16,7 +16,7 @@ public abstract class QueryCreator {
     if (value instanceof ISqlValue) {
       return (ISqlValue) value;
     }
-    return new Value(value);
+    return Value.of(value);
   }
 
   public static TableColumn column(String field) {
