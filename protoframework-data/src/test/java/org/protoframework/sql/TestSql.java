@@ -96,7 +96,30 @@ public class TestSql {
 
   @Test
   public void testDelete() {
+    DeleteSql sql;
 
+    sql = QueryCreator.deleteFrom("t");
+    System.out.println(sql);
+    assertNotNull(sql.getFrom());
+    assertNull(sql.getWhere());
+    assertEquals("DELETE FROM t", sql.toSolidSql(new StringBuilder()).toString());
+
+    sql.where();
+    System.out.println(sql);
+    assertEquals("DELETE FROM t ", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("DELETE FROM t ", sql.toSolidSql(new StringBuilder()).toString());
+    sql.where().setCond(FieldValues.eq("a", 1));
+    System.out.println(sql);
+    assertEquals("DELETE FROM t WHERE a=?", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("DELETE FROM t WHERE a=1", sql.toSolidSql(new StringBuilder()).toString());
+
+    List<ISqlValue> sqlValues = sql.collectSqlValue(Lists.newArrayList());
+    assertEquals(1, sqlValues.size());
+
+    sql.setWhere(null);
+    System.out.println(sql);
+    assertNull(sql.getWhere());
+    assertEquals("DELETE FROM t", sql.toSolidSql(new StringBuilder()).toString());
   }
 
   @Test
