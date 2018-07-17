@@ -23,6 +23,7 @@ public class TestRelationalExpr {
       expr = FieldValues.eq("a", 1);
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof TableColumn);
+      assertEquals("a", ((TableColumn) expr.getLeft()).getColumn());
       assertTrue(expr.getRight() instanceof Value);
       assertEquals(RelationalOp.EQ, expr.getOp());
       assertEquals("a=?", expr.toSqlTemplate(new StringBuilder()).toString());
