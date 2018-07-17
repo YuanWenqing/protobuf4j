@@ -284,7 +284,8 @@ public class TestClause {
     assertEquals("LIMIT 10 OFFSET 20", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("LIMIT 10 OFFSET 20", clause.toSolidSql(new StringBuilder()).toString());
 
-    clause = QueryCreator.pagination(10).build();
+    PaginationClause.Builder builder = QueryCreator.pagination(10);
+    clause = builder.build();
     assertEquals(0, clause.totalPages(0));
     assertEquals(10, clause.totalPages(100));
     assertEquals(10, clause.totalPages(91));
@@ -309,6 +310,7 @@ public class TestClause {
 
     clause.setColumn("a", 1);
     System.out.println(clause);
+    assertEquals("a", clause.getSetExprs().get(0).getColumn());
     assertTrue(clause.getSetExprs().get(0).getValueExpr() instanceof Value);
     assertEquals("SET a=?", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SET a=1", clause.toSolidSql(new StringBuilder()).toString());
@@ -330,5 +332,17 @@ public class TestClause {
     assertEquals(2, sqlValues.size());
     assertEquals(1, sqlValues.get(0).getValue());
     assertEquals(2, sqlValues.get(1).getValue());
+  }
+
+  @Test
+  public void testQueryCreator() {
+    TableColumn column = QueryCreator.column("a");
+    assertEquals("a", column.getColumn());
+
+    ISqlValue value = QueryCreator.sqlValue("s");
+    assertEquals("s", value.getValue());
+
+    value = QueryCreator.sqlValue(value);
+    assertEquals("s", value.getValue());
   }
 }
