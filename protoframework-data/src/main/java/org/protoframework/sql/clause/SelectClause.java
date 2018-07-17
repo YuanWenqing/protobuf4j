@@ -41,7 +41,7 @@ public class SelectClause extends AbstractSqlStatement {
 
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    Preconditions.checkArgument(selectExprs.isEmpty(), "nothing to select");
+    Preconditions.checkArgument(!selectExprs.isEmpty(), "nothing to select");
     sb.append("SELECT ");
     boolean first = true;
     for (SelectExpr selectExpr : selectExprs) {

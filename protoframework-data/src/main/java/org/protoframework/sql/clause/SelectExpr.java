@@ -52,7 +52,11 @@ public class SelectExpr extends AbstractSqlStatement {
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    return toSqlTemplate(sb);
+    expression.toSolidSql(sb);
+    if (StringUtils.isNotBlank(alias)) {
+      sb.append(" AS ").append(alias);
+    }
+    return sb;
   }
 
   @Override
