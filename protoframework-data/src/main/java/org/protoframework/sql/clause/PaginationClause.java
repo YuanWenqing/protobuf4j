@@ -42,7 +42,11 @@ public abstract class PaginationClause extends AbstractSqlStatement {
 
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    sb.append("LIMIT ").append(limit).append(" OFFSET ").append(getOffset());
+    sb.append("LIMIT ").append(limit);
+    int offset = getOffset();
+    if (offset > 0) {
+      sb.append(" OFFSET ").append(offset);
+    }
     return sb;
   }
 

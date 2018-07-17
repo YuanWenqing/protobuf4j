@@ -110,29 +110,27 @@ public class TestClause {
 
     clause.limit(10);
     System.out.println(clause);
-    assertEquals("WHERE a=? ORDER BY b ASC GROUP BY c LIMIT 10 OFFSET 0",
+    assertEquals("WHERE a=? ORDER BY b ASC GROUP BY c LIMIT 10",
         clause.toSqlTemplate(new StringBuilder()).toString());
-    assertEquals("WHERE a=1 ORDER BY b ASC GROUP BY c LIMIT 10 OFFSET 0",
+    assertEquals("WHERE a=1 ORDER BY b ASC GROUP BY c LIMIT 10",
         clause.toSolidSql(new StringBuilder()).toString());
 
     clause.setCond(null);
     System.out.println(clause);
-    assertEquals("ORDER BY b ASC GROUP BY c LIMIT 10 OFFSET 0",
+    assertEquals("ORDER BY b ASC GROUP BY c LIMIT 10",
         clause.toSqlTemplate(new StringBuilder()).toString());
-    assertEquals("ORDER BY b ASC GROUP BY c LIMIT 10 OFFSET 0",
+    assertEquals("ORDER BY b ASC GROUP BY c LIMIT 10",
         clause.toSolidSql(new StringBuilder()).toString());
 
     clause.setGroupBy(null);
     System.out.println(clause);
-    assertEquals("ORDER BY b ASC LIMIT 10 OFFSET 0",
-        clause.toSqlTemplate(new StringBuilder()).toString());
-    assertEquals("ORDER BY b ASC LIMIT 10 OFFSET 0",
-        clause.toSolidSql(new StringBuilder()).toString());
+    assertEquals("ORDER BY b ASC LIMIT 10", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("ORDER BY b ASC LIMIT 10", clause.toSolidSql(new StringBuilder()).toString());
 
     clause.setOrderBy(null);
     System.out.println(clause);
-    assertEquals("LIMIT 10 OFFSET 0", clause.toSqlTemplate(new StringBuilder()).toString());
-    assertEquals("LIMIT 10 OFFSET 0", clause.toSolidSql(new StringBuilder()).toString());
+    assertEquals("LIMIT 10", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("LIMIT 10", clause.toSolidSql(new StringBuilder()).toString());
 
     clause.setPagination(null);
     clause.groupBy().by("c");
@@ -247,25 +245,37 @@ public class TestClause {
         setDefaultLimit(10).build();
     assertEquals(10, clause.getLimit());
     assertEquals(0, clause.getOffset());
+    assertEquals("LIMIT 10", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("LIMIT 10", clause.toSolidSql(new StringBuilder()).toString());
     clause = clause.next();
     assertEquals(10, clause.getLimit());
     assertEquals(10, clause.getOffset());
+    assertEquals("LIMIT 10 OFFSET 10", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("LIMIT 10 OFFSET 10", clause.toSolidSql(new StringBuilder()).toString());
 
     clause = QueryCreator.pagination(20).
         setDefaultLimit(12).
         setDefaultPageNo(10).buildByPageNo(0);
     assertEquals(20, clause.getLimit());
     assertEquals(180, clause.getOffset());
+    assertEquals("LIMIT 20 OFFSET 180", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("LIMIT 20 OFFSET 180", clause.toSolidSql(new StringBuilder()).toString());
     clause = clause.next();
     assertEquals(20, clause.getLimit());
     assertEquals(200, clause.getOffset());
+    assertEquals("LIMIT 20 OFFSET 200", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("LIMIT 20 OFFSET 200", clause.toSolidSql(new StringBuilder()).toString());
 
     clause = QueryCreator.pagination(10).
         setDefaultOffset(10).buildByOffset(-1);
     assertEquals(10, clause.getLimit());
     assertEquals(10, clause.getOffset());
+    assertEquals("LIMIT 10 OFFSET 10", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("LIMIT 10 OFFSET 10", clause.toSolidSql(new StringBuilder()).toString());
     clause = clause.next();
     assertEquals(10, clause.getLimit());
     assertEquals(20, clause.getOffset());
+    assertEquals("LIMIT 10 OFFSET 20", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("LIMIT 10 OFFSET 20", clause.toSolidSql(new StringBuilder()).toString());
   }
 }
