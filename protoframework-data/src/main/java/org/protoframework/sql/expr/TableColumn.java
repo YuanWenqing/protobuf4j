@@ -1,10 +1,13 @@
 package org.protoframework.sql.expr;
 
+import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.ISqlOperation;
 import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.*;
 
 /**
  * 表列
@@ -14,9 +17,14 @@ import java.util.List;
  * @date: 2018/7/11
  */
 public class TableColumn extends AbstractExpression {
+  public static TableColumn of(String column) {
+    return new TableColumn(column);
+  }
+
   private final String column;
 
-  public TableColumn(String column) {
+  private TableColumn(String column) {
+    checkArgument(StringUtils.isNotBlank(column));
     this.column = column;
   }
 

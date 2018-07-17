@@ -20,7 +20,7 @@ public abstract class QueryCreator {
   }
 
   public static TableColumn column(String field) {
-    return new TableColumn(field);
+    return TableColumn.of(field);
   }
 
   public static SelectClause select() {

@@ -31,7 +31,7 @@ public class GroupByClause extends AbstractSqlStatement {
   }
 
   public GroupByClause by(String column) {
-    return by(new TableColumn(column));
+    return by(TableColumn.of(column));
   }
 
   @Override

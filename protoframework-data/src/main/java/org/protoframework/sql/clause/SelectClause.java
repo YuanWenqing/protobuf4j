@@ -36,7 +36,7 @@ public class SelectClause extends AbstractSqlStatement {
   }
 
   public SelectClause select(String column) {
-    return select(new TableColumn(column));
+    return select(TableColumn.of(column));
   }
 
   @Override

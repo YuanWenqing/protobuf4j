@@ -31,7 +31,7 @@ public class OrderByClause extends AbstractSqlStatement {
   }
 
   public OrderByClause by(String column) {
-    return by(new TableColumn(column));
+    return by(TableColumn.of(column));
   }
 
   @Override
