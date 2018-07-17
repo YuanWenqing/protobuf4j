@@ -78,7 +78,7 @@ public class UpdateSql extends AbstractSqlStatement {
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
     sb.append("UPDATE ");
     table.toSolidSql(sb);
-    if (set != null) {
+    if (set != null && !set.isEmpty()) {
       sb.append(" ");
       set.toSolidSql(sb);
     }

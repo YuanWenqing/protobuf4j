@@ -55,7 +55,43 @@ public class TestSql {
 
   @Test
   public void testUpdate() {
+    UpdateSql sql;
 
+    sql = QueryCreator.updateSql("t");
+    System.out.println(sql);
+    assertNotNull(sql.getTable());
+    assertNull(sql.getSet());
+    assertNull(sql.getWhere());
+    assertEquals("UPDATE t", sql.toSolidSql(new StringBuilder()).toString());
+
+    sql.set();
+    System.out.println(sql);
+    assertNotNull(sql.getSet());
+    assertEquals("UPDATE t", sql.toSolidSql(new StringBuilder()).toString());
+    sql.set().setValue("a", "b");
+    System.out.println(sql);
+    assertEquals("UPDATE t SET a=?", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("UPDATE t SET a='b'", sql.toSolidSql(new StringBuilder()).toString());
+
+    sql.where();
+    System.out.println(sql);
+    assertEquals("UPDATE t SET a=? ", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("UPDATE t SET a='b' ", sql.toSolidSql(new StringBuilder()).toString());
+    sql.where().setCond(FieldValues.eq("a", 1));
+    System.out.println(sql);
+    assertEquals("UPDATE t SET a=? WHERE a=?", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("UPDATE t SET a='b' WHERE a=1", sql.toSolidSql(new StringBuilder()).toString());
+
+    List<ISqlValue> sqlValues = sql.collectSqlValue(Lists.newArrayList());
+    assertEquals(2, sqlValues.size());
+
+    sql.setWhere(null);
+    System.out.println(sql);
+    sql.setSet(null);
+    System.out.println(sql);
+    assertNull(sql.getSet());
+    assertNull(sql.getWhere());
+    assertEquals("UPDATE t", sql.toSolidSql(new StringBuilder()).toString());
   }
 
   @Test
