@@ -7,6 +7,7 @@ import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.*;
 
@@ -29,6 +30,12 @@ public abstract class AbstractBinaryExpr<T extends ISqlOperation> extends Abstra
     this.left = left;
     this.op = op;
     this.right = right;
+  }
+
+  @Override
+  public int comparePrecedence(@Nonnull ISqlOperation outerOp) {
+    // 默认：运算符不同，就需要包裹括号
+    return Objects.equals(getOp(), outerOp) ? 0 : -1;
   }
 
   @Override
