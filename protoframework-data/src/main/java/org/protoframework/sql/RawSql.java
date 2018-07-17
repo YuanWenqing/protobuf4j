@@ -3,6 +3,7 @@ package org.protoframework.sql;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
+import org.protoframework.sql.expr.Value;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -51,7 +52,7 @@ public class RawSql extends AbstractSqlStatement {
 
   @Override
   public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
-    sqlValues.addAll(Collections2.transform(values, QueryCreator::sqlValue));
+    sqlValues.addAll(Collections2.transform(values, Value::of));
     return sqlValues;
   }
 

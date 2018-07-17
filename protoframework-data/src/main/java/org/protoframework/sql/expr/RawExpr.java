@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.sql.ISqlOperation;
 import org.protoframework.sql.ISqlValue;
-import org.protoframework.sql.QueryCreator;
 import org.protoframework.sql.SqlUtil;
 
 import javax.annotation.Nonnull;
@@ -55,12 +54,15 @@ public class RawExpr extends AbstractExpression {
 
   @Override
   public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
-    sqlValues.addAll(Collections2.transform(values, QueryCreator::sqlValue));
+    sqlValues.addAll(Collections2.transform(values, Value::of));
     return sqlValues;
   }
 
   @Override
   public int comparePrecedence(@Nonnull ISqlOperation outerOp) {
+    if (!StringUtils.containsAny(sql, " +-*/><=")) {
+      return 1;
+    }
     if (sql.startsWith("(") && sql.endsWith(")")) {
       return 1;
     }

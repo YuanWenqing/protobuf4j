@@ -66,13 +66,18 @@ public class SqlUtil {
   public static String replaceParamHolder(String sqlTemplate, Collection<?> values) {
     StringBuilder sb = new StringBuilder();
     Iterator<?> iter = values.iterator();
+    boolean first = true;
     for (String part : StringUtils.splitPreserveAllTokens(sqlTemplate, "?")) {
-      sb.append(part);
-      if (iter.hasNext()) {
-        sb.append(iter.next());
+      if (first) {
+        first = false;
       } else {
-        sb.append("?");
+        if (iter.hasNext()) {
+          sb.append(iter.next());
+        } else {
+          sb.append("?");
+        }
       }
+      sb.append(part);
     }
     return sb.toString();
   }
