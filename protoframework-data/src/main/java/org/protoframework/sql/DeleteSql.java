@@ -38,6 +38,11 @@ public class DeleteSql extends AbstractSqlStatement {
     return this;
   }
 
+  public WhereClause where() {
+    this.where = new WhereClause();
+    return this.where;
+  }
+
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
     sb.append("DELETE ");

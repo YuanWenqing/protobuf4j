@@ -1,6 +1,5 @@
 package org.protoframework.sql;
 
-import com.google.common.base.Preconditions;
 import org.protoframework.sql.clause.FromClause;
 import org.protoframework.sql.clause.SelectClause;
 import org.protoframework.sql.clause.WhereClause;
@@ -8,29 +7,39 @@ import org.protoframework.sql.clause.WhereClause;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.*;
+
 /**
  * @author: yuanwq
  * @date: 2018/7/15
  */
 public class SelectSql extends AbstractSqlStatement {
-  private final SelectClause select;
+  private SelectClause select;
   private final FromClause from;
   private WhereClause where;
 
-  public SelectSql(@Nonnull SelectClause select, @Nonnull FromClause from) {
-    Preconditions.checkNotNull(select);
-    Preconditions.checkNotNull(from);
-    this.select = select;
+  public SelectSql(FromClause from) {
     this.from = from;
   }
 
-  public SelectSql(@Nonnull SelectClause select, @Nonnull FromClause from, WhereClause where) {
-    this(select, from);
-    this.setWhere(where);
+  public SelectSql(SelectClause select, FromClause from, WhereClause where) {
+    this.select = select;
+    this.from = from;
+    this.where = where;
   }
 
   public SelectClause getSelect() {
     return select;
+  }
+
+  public SelectSql setSelect(SelectClause select) {
+    this.select = select;
+    return this;
+  }
+
+  public SelectClause select() {
+    this.select = new SelectClause();
+    return this.select;
   }
 
   public FromClause getFrom() {
@@ -46,8 +55,15 @@ public class SelectSql extends AbstractSqlStatement {
     return this;
   }
 
+  public WhereClause where() {
+    this.where = new WhereClause();
+    return this.where;
+  }
+
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
+    checkNotNull(select);
+    checkNotNull(from);
     select.toSqlTemplate(sb);
     sb.append(" ");
     from.toSqlTemplate(sb);
@@ -60,11 +76,19 @@ public class SelectSql extends AbstractSqlStatement {
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    select.toSolidSql(sb);
-    sb.append(" ");
-    from.toSolidSql(sb);
+    if (select != null) {
+      select.toSolidSql(sb);
+    }
+    if (from != null) {
+      if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
+        sb.append(" ");
+      }
+      from.toSolidSql(sb);
+    }
     if (where != null) {
-      sb.append(" ");
+      if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
+        sb.append(" ");
+      }
       where.toSolidSql(sb);
     }
     return sb;
@@ -72,8 +96,12 @@ public class SelectSql extends AbstractSqlStatement {
 
   @Override
   public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
-    select.collectSqlValue(sqlValues);
-    from.collectSqlValue(sqlValues);
+    if (select != null) {
+      select.collectSqlValue(sqlValues);
+    }
+    if (from != null) {
+      from.collectSqlValue(sqlValues);
+    }
     if (where != null) {
       where.collectSqlValue(sqlValues);
     }
