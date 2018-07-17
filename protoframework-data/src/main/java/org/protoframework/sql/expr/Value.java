@@ -20,38 +20,31 @@ public class Value extends AbstractExpression implements ISqlValue {
    * @param field 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
    */
   public static Value of(Object value, String field) {
-    return of(value).setField(field);
+    if (value instanceof ISqlValue) {
+      value = ((ISqlValue) value).getValue();
+    }
+    return new Value(value, field);
   }
 
   public static Value of(Object value) {
-    if (value instanceof Value) {
-      return ((Value) value);
-    }
-    return new Value(value);
+    return of(value, null);
   }
 
   private final Object value;
-  private String field;
+  private final String field;
 
   /**
    * 将构造方法私有化，避免嵌套构造
    */
-  private Value(@Nonnull Object value) {
+  private Value(@Nonnull Object value, String field) {
     checkNotNull(value);
     this.value = value;
+    this.field = field;
   }
 
   @Override
   public String getField() {
     return field;
-  }
-
-  /**
-   * @param field 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
-   */
-  public Value setField(String field) {
-    this.field = field;
-    return this;
   }
 
   @Override
