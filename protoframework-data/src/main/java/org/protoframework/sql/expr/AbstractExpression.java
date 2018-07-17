@@ -12,21 +12,21 @@ import org.protoframework.sql.IExpression;
 public abstract class AbstractExpression extends AbstractSqlStatement implements IExpression {
   @Override
   public IExpression and(IExpression right) {
-    return new LogicalExpr(this, LogicalOp.AND, right);
+    return LogicalExpr.and(this, right);
   }
 
   @Override
   public IExpression or(IExpression right) {
-    return new LogicalExpr(this, LogicalOp.OR, right);
+    return LogicalExpr.or(this, right);
   }
 
   @Override
   public IExpression xor(IExpression right) {
-    return new LogicalExpr(this, LogicalOp.XOR, right);
+    return LogicalExpr.xor(this, right);
   }
 
   @Override
   public IExpression not() {
-    return new LogicalExpr(null, LogicalOp.NOT, this);
+    return LogicalExpr.not(this);
   }
 }

@@ -1,6 +1,7 @@
 package org.protoframework.sql;
 
 import org.protoframework.sql.expr.ArithmeticExpr;
+import org.protoframework.sql.expr.LogicalExpr;
 import org.protoframework.sql.expr.RelationalExpr;
 import org.protoframework.sql.expr.TableColumn;
 
@@ -58,5 +59,21 @@ public abstract class FieldFields {
 
   public static ArithmeticExpr mod(String left, String right) {
     return ArithmeticExpr.mod(new TableColumn(left), new TableColumn(right));
+  }
+
+  public static LogicalExpr and(String left, String right) {
+    return LogicalExpr.and(new TableColumn(left), new TableColumn(right));
+  }
+
+  public static LogicalExpr or(String left, String right) {
+    return LogicalExpr.or(new TableColumn(left), new TableColumn(right));
+  }
+
+  public static LogicalExpr xor(String left, String right) {
+    return LogicalExpr.xor(new TableColumn(left), new TableColumn(right));
+  }
+
+  public static LogicalExpr not(String field) {
+    return LogicalExpr.not(new TableColumn(field));
   }
 }
