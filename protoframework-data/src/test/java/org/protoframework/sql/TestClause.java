@@ -71,7 +71,33 @@ public class TestClause {
 
   @Test
   public void testGroupBy() {
+    GroupByClause clause;
 
+    clause = QueryCreator.groupBy();
+    System.out.println(clause);
+    assertTrue(clause.isEmpty());
+    assertEquals(0, clause.getGroupByExprs().size());
+    assertEquals("", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("", clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.asc("a");
+    System.out.println(clause);
+    assertEquals("GROUP BY a ASC", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("GROUP BY a ASC", clause.toSolidSql(new StringBuilder()).toString());
+    assertFalse(clause.isEmpty());
+
+    clause.desc("b");
+    System.out.println(clause);
+    assertTrue(clause.getGroupByExprs().get(1).getExpression() instanceof TableColumn);
+    assertEquals(Direction.DESC, clause.getGroupByExprs().get(1).getDirection());
+    assertEquals("GROUP BY a ASC,b DESC", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("GROUP BY a ASC,b DESC", clause.toSolidSql(new StringBuilder()).toString());
+    assertFalse(clause.isEmpty());
+
+    clause.by("c");
+    System.out.println(clause);
+    assertEquals("GROUP BY a ASC,b DESC,c", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("GROUP BY a ASC,b DESC,c", clause.toSolidSql(new StringBuilder()).toString());
   }
 
   @Test
@@ -85,7 +111,7 @@ public class TestClause {
     assertEquals("", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("", clause.toSolidSql(new StringBuilder()).toString());
 
-    clause.asc(TableColumn.of("a"));
+    clause.asc("a");
     System.out.println(clause);
     assertEquals("ORDER BY a ASC", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("ORDER BY a ASC", clause.toSolidSql(new StringBuilder()).toString());

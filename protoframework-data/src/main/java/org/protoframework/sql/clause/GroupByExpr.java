@@ -26,7 +26,7 @@ public class GroupByExpr extends AbstractSqlStatement {
     this(expr, null);
   }
 
-  public IExpression getExpr() {
+  public IExpression getExpression() {
     return expr;
   }
 
