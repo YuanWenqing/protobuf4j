@@ -9,6 +9,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * @author: yuanwq
  * @date: 2018/7/12
@@ -18,15 +20,12 @@ public class OrderByExpr extends AbstractSqlStatement {
   private final Direction direction;
 
   public OrderByExpr(@Nonnull IExpression expr, @Nullable Direction direction) {
+    checkNotNull(expr);
     this.expr = expr;
     this.direction = direction;
   }
 
-  public OrderByExpr(@Nonnull IExpression expr) {
-    this(expr, null);
-  }
-
-  public IExpression getExpr() {
+  public IExpression getExpression() {
     return expr;
   }
 

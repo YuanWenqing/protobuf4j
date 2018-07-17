@@ -2,10 +2,7 @@ package org.protoframework.sql;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
-import org.protoframework.sql.clause.FromClause;
-import org.protoframework.sql.clause.PaginationClause;
-import org.protoframework.sql.clause.SelectClause;
-import org.protoframework.sql.clause.SelectExpr;
+import org.protoframework.sql.clause.*;
 import org.protoframework.sql.expr.TableColumn;
 
 import java.util.List;
@@ -79,7 +76,38 @@ public class TestClause {
 
   @Test
   public void testOrderBy() {
+    OrderByClause clause;
 
+    clause = QueryCreator.orderBy();
+    System.out.println(clause);
+    assertTrue(clause.isEmpty());
+    assertEquals(0, clause.getOrderByExprs().size());
+    assertEquals("", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("", clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.asc(TableColumn.of("a"));
+    System.out.println(clause);
+    assertEquals("ORDER BY a ASC", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("ORDER BY a ASC", clause.toSolidSql(new StringBuilder()).toString());
+    assertFalse(clause.isEmpty());
+
+    clause.desc("b");
+    System.out.println(clause);
+    assertTrue(clause.getOrderByExprs().get(1).getExpression() instanceof TableColumn);
+    assertEquals(Direction.DESC, clause.getOrderByExprs().get(1).getDirection());
+    assertEquals("ORDER BY a ASC,b DESC", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("ORDER BY a ASC,b DESC", clause.toSolidSql(new StringBuilder()).toString());
+    assertFalse(clause.isEmpty());
+
+    clause.by(new OrderByExpr(FieldValues.add("a", 1), Direction.DESC));
+    System.out.println(clause);
+    assertEquals("ORDER BY a ASC,b DESC,a+? DESC",
+        clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("ORDER BY a ASC,b DESC,a+1 DESC",
+        clause.toSolidSql(new StringBuilder()).toString());
+    List<ISqlValue> sqlValues = clause.collectSqlValue(Lists.newArrayList());
+    assertEquals(1, sqlValues.size());
+    assertEquals(1, sqlValues.get(0).getValue());
   }
 
   @Test
