@@ -160,4 +160,5 @@ public abstract class PaginationClause extends AbstractSqlStatement {
       return new PageNoLimit(limit, pageNo);
     }
   }
+
 }
