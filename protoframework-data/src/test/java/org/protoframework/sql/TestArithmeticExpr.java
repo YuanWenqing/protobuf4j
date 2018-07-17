@@ -162,5 +162,13 @@ public class TestArithmeticExpr {
     assertEquals(1, sqlValues.size());
     assertEquals("a", sqlValues.get(0).getField());
     assertEquals(1, sqlValues.get(0).getValue());
+
+    expr = ArithmeticExpr.add(FieldFields.add("a", "b"), FieldFields.multiply("c", "d"));
+    System.out.println(expr);
+    assertEquals("a+b+(c*d)", expr.toSqlTemplate(new StringBuilder()).toString());
+
+    expr = ArithmeticExpr.add(FieldFields.eq("a", "b"), FieldFields.and("c", "d"));
+    System.out.println(expr);
+    assertEquals("(a=b)+(c AND d)", expr.toSqlTemplate(new StringBuilder()).toString());
   }
 }

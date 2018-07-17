@@ -252,5 +252,14 @@ public class TestRelationalExpr {
     assertEquals(1, sqlValues.size());
     assertEquals("a", sqlValues.get(0).getField());
     assertEquals(1, sqlValues.get(0).getValue());
+
+    expr = RelationalExpr.gt(FieldFields.add("a", "b"), FieldFields.multiply("c", "d"));
+    System.out.println(expr);
+    assertEquals("(a+b)>(c*d)", expr.toSqlTemplate(new StringBuilder()).toString());
+
+    expr = RelationalExpr.lt(FieldFields.eq("a", "b"), FieldFields.and("c", "d"));
+    System.out.println(expr);
+    assertEquals("(a=b)<(c AND d)", expr.toSqlTemplate(new StringBuilder()).toString());
+
   }
 }
