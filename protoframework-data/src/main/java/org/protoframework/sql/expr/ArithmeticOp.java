@@ -9,7 +9,7 @@ import org.protoframework.sql.ISqlOperation;
 public enum ArithmeticOp implements ISqlOperation<ArithmeticExpr> {
   ADD("+"),
 
-  SUBSTRACT("-"),
+  SUBTRACT("-"),
 
   MULTIPLY("*"),
 

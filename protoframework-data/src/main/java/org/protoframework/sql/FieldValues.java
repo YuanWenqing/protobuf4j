@@ -12,54 +12,92 @@ import java.util.Collection;
  */
 public abstract class FieldValues {
 
-  public static IExpression eq(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.EQ, Value.of(value, field));
+  public static RelationalExpr eq(String field, Object value) {
+    return RelationalExpr.eq(TableColumn.of(field), Value.of(value, field));
   }
 
-  public static IExpression ne(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.NE, Value.of(value, field));
+  public static RelationalExpr ne(String field, Object value) {
+    return RelationalExpr.ne(TableColumn.of(field), Value.of(value, field));
   }
 
-  public static IExpression lt(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.LT, Value.of(value, field));
+  public static RelationalExpr lt(String field, Object value) {
+    return RelationalExpr.lt(TableColumn.of(field), Value.of(value, field));
   }
 
-  public static IExpression lte(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.LTE, Value.of(value, field));
+  public static RelationalExpr lte(String field, Object value) {
+    return RelationalExpr.lte(TableColumn.of(field), Value.of(value, field));
   }
 
-  public static IExpression gt(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.GT, Value.of(value, field));
+  public static RelationalExpr gt(String field, Object value) {
+    return RelationalExpr.gt(TableColumn.of(field), Value.of(value, field));
   }
 
-  public static IExpression gte(String field, Object value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.GTE, Value.of(value, field));
+  public static RelationalExpr gte(String field, Object value) {
+    return RelationalExpr.gte(TableColumn.of(field), Value.of(value, field));
   }
 
-  public static IExpression isNull(String field) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.IS_NULL, null);
+  public static RelationalExpr isNull(String field) {
+    return RelationalExpr.isNull(TableColumn.of(field));
   }
 
-  public static IExpression isNotNull(String field) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.IS_NOT_NULL, null);
+  public static RelationalExpr isNotNull(String field) {
+    return RelationalExpr.isNotNull(TableColumn.of(field));
   }
 
-  public static IExpression like(String field, String value) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.LIKE, Value.of(value, field));
+  public static RelationalExpr like(String field, String value) {
+    return RelationalExpr.like(TableColumn.of(field), Value.of(value, field));
   }
 
-  public static IExpression between(String field, Object min, Object max) {
+  public static RelationalExpr between(String field, Object min, Object max) {
     BetweenExpr betweenExpr = new BetweenExpr(Value.of(min, field), Value.of(max, field));
-    return new RelationalExpr(new TableColumn(field), RelationalOp.BETWEEN, betweenExpr);
+    return RelationalExpr.between(TableColumn.of(field), betweenExpr);
   }
 
-  public static IExpression in(String field, Collection<?> values) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.IN,
-        new ValueCollection(values, field));
+  public static RelationalExpr in(String field, Collection<?> values) {
+    return RelationalExpr.in(TableColumn.of(field), ValueCollection.of(values, field));
   }
 
-  public static IExpression nin(String field, Collection<?> values) {
-    return new RelationalExpr(new TableColumn(field), RelationalOp.NIN,
-        new ValueCollection(values, field));
+  public static RelationalExpr nin(String field, Collection<?> values) {
+    return RelationalExpr.nin(TableColumn.of(field), ValueCollection.of(values, field));
+  }
+
+  public static ArithmeticExpr add(String field, Number value) {
+    return ArithmeticExpr.add(TableColumn.of(field), Value.of(value, field));
+  }
+
+  public static ArithmeticExpr subtract(String field, Number value) {
+    return ArithmeticExpr.subtract(TableColumn.of(field), Value.of(value, field));
+  }
+
+  public static ArithmeticExpr multiply(String field, Number value) {
+    return ArithmeticExpr.multiply(TableColumn.of(field), Value.of(value, field));
+  }
+
+  public static ArithmeticExpr divide(String field, Number value) {
+    return ArithmeticExpr.divide(TableColumn.of(field), Value.of(value, field));
+  }
+
+  public static ArithmeticExpr divRound(String field, Number value) {
+    return ArithmeticExpr.divRound(TableColumn.of(field), Value.of(value, field));
+  }
+
+  public static ArithmeticExpr mod(String field, Number value) {
+    return ArithmeticExpr.mod(TableColumn.of(field), Value.of(value, field));
+  }
+
+  public static ArithmeticExpr subtract(Number value, String field) {
+    return ArithmeticExpr.subtract(Value.of(value, field), TableColumn.of(field));
+  }
+
+  public static ArithmeticExpr divide(Number value, String field) {
+    return ArithmeticExpr.divide(Value.of(value, field), TableColumn.of(field));
+  }
+
+  public static ArithmeticExpr divRound(Number value, String field) {
+    return ArithmeticExpr.divRound(Value.of(value, field), TableColumn.of(field));
+  }
+
+  public static ArithmeticExpr mod(Number value, String field) {
+    return ArithmeticExpr.mod(Value.of(value, field), TableColumn.of(field));
   }
 }

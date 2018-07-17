@@ -20,7 +20,7 @@ public abstract class QueryCreator {
   }
 
   public static TableColumn column(String field) {
-    return new TableColumn(field);
+    return TableColumn.of(field);
   }
 
   public static SelectClause select() {
@@ -54,4 +54,17 @@ public abstract class QueryCreator {
   public static SetClause set() {
     return new SetClause();
   }
+
+  public static SelectSql selectFrom(String table) {
+    return new SelectSql(from(table));
+  }
+
+  public static DeleteSql deleteFrom(String table) {
+    return new DeleteSql(from(table));
+  }
+
+  public static UpdateSql updateSql(String table) {
+    return new UpdateSql(table(table));
+  }
+
 }

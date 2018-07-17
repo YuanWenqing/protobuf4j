@@ -13,8 +13,23 @@ import javax.annotation.Nonnull;
  */
 public class LogicalExpr extends AbstractBinaryExpr<LogicalOp> {
 
-  public LogicalExpr(IExpression left, @Nonnull LogicalOp op, IExpression right) {
+  protected LogicalExpr(IExpression left, @Nonnull LogicalOp op, IExpression right) {
     super(left, op, right);
   }
 
+  public static LogicalExpr and(IExpression left, IExpression right) {
+    return new LogicalExpr(left, LogicalOp.AND, right);
+  }
+
+  public static LogicalExpr or(IExpression left, IExpression right) {
+    return new LogicalExpr(left, LogicalOp.OR, right);
+  }
+
+  public static LogicalExpr xor(IExpression left, IExpression right) {
+    return new LogicalExpr(left, LogicalOp.XOR, right);
+  }
+
+  public static LogicalExpr not(IExpression expr) {
+    return new LogicalExpr(null, LogicalOp.NOT, expr);
+  }
 }

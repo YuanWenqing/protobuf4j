@@ -421,7 +421,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       Object oldValue = messageHelper.getFieldValue(oldItem, fd.getName());
       Object newValue = messageHelper.getFieldValue(newItem, fd.getName());
       if (!Objects.equals(oldValue, newValue)) {
-        setClause.setColumn(fd.getName(), newValue);
+        setClause.setValue(fd.getName(), newValue);
       }
     }
     return setClause;

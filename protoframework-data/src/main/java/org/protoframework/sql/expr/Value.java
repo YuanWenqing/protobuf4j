@@ -78,4 +78,8 @@ public class Value extends AbstractExpression implements ISqlValue {
     return sqlValues;
   }
 
+  @Override
+  public String toString() {
+    return "Value{" + "value=" + value + ", field='" + field + '\'' + '}';
+  }
 }

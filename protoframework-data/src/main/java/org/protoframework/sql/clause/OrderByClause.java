@@ -2,6 +2,7 @@ package org.protoframework.sql.clause;
 
 import com.google.common.collect.Lists;
 import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.Direction;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.expr.TableColumn;
@@ -26,12 +27,24 @@ public class OrderByClause extends AbstractSqlStatement {
     return this;
   }
 
-  public OrderByClause by(IExpression expr) {
-    return by(new OrderByExpr(expr));
+  public OrderByClause asc(IExpression expr) {
+    return by(new OrderByExpr(expr, Direction.ASC));
   }
 
-  public OrderByClause by(String column) {
-    return by(new TableColumn(column));
+  public OrderByClause asc(String column) {
+    return asc(TableColumn.of(column));
+  }
+
+  public OrderByClause desc(IExpression expr) {
+    return by(new OrderByExpr(expr, Direction.DESC));
+  }
+
+  public OrderByClause desc(String column) {
+    return desc(TableColumn.of(column));
+  }
+
+  public boolean isEmpty() {
+    return orderByExprs.isEmpty();
   }
 
   @Override

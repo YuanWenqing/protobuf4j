@@ -42,7 +42,11 @@ public abstract class PaginationClause extends AbstractSqlStatement {
 
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    sb.append("LIMIT ").append(limit).append(" OFFSET ").append(getOffset());
+    sb.append("LIMIT ").append(limit);
+    int offset = getOffset();
+    if (offset > 0) {
+      sb.append(" OFFSET ").append(offset);
+    }
     return sb;
   }
 
@@ -153,7 +157,8 @@ public abstract class PaginationClause extends AbstractSqlStatement {
       }
       Preconditions.checkArgument(limit >= 0, "limit(>=0): " + limit);
       Preconditions.checkArgument(pageNo > 0, "pageNo(>0): " + pageNo);
-      return new OffsetLimit(limit, pageNo);
+      return new PageNoLimit(limit, pageNo);
     }
   }
+
 }

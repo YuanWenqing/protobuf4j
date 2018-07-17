@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
+import org.protoframework.sql.SqlUtil;
 import org.protoframework.sql.expr.TableColumn;
 
 import javax.annotation.Nonnull;
@@ -36,12 +37,16 @@ public class SelectClause extends AbstractSqlStatement {
   }
 
   public SelectClause select(String column) {
-    return select(new TableColumn(column));
+    return select(TableColumn.of(column));
+  }
+
+  public SelectClause star() {
+    return select(SqlUtil.SELECT_STAR);
   }
 
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    Preconditions.checkArgument(selectExprs.isEmpty(), "nothing to select");
+    Preconditions.checkArgument(!selectExprs.isEmpty(), "nothing to select");
     sb.append("SELECT ");
     boolean first = true;
     for (SelectExpr selectExpr : selectExprs) {

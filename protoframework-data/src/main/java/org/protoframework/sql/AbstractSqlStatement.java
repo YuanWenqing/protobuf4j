@@ -10,9 +10,7 @@ package org.protoframework.sql;
 public abstract class AbstractSqlStatement implements ISqlStatement {
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder(getClass().getSimpleName()).append("{");
-    this.toSolidSql(sb);
-    sb.append("}");
-    return sb.toString();
+    StringBuilder sb = this.toSolidSql(new StringBuilder());
+    return String.format("%s{%s}", getClass().getSimpleName(), sb);
   }
 }

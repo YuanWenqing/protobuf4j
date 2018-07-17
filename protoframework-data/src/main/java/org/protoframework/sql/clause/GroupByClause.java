@@ -2,6 +2,7 @@ package org.protoframework.sql.clause;
 
 import com.google.common.collect.Lists;
 import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.Direction;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.expr.TableColumn;
@@ -31,7 +32,27 @@ public class GroupByClause extends AbstractSqlStatement {
   }
 
   public GroupByClause by(String column) {
-    return by(new TableColumn(column));
+    return by(TableColumn.of(column));
+  }
+
+  public GroupByClause asc(IExpression expr) {
+    return by(new GroupByExpr(expr, Direction.ASC));
+  }
+
+  public GroupByClause asc(String column) {
+    return asc(TableColumn.of(column));
+  }
+
+  public GroupByClause desc(IExpression expr) {
+    return by(new GroupByExpr(expr, Direction.DESC));
+  }
+
+  public GroupByClause desc(String column) {
+    return desc(TableColumn.of(column));
+  }
+
+  public boolean isEmpty() {
+    return groupByExprs.isEmpty();
   }
 
   @Override

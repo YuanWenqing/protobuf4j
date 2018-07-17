@@ -1,8 +1,5 @@
 package org.protoframework.sql;
 
-import javax.annotation.Nonnull;
-import java.util.Objects;
-
 /**
  * @param <T> 运算符类型
  * @author: yuanwq
@@ -24,9 +21,4 @@ public interface IBinaryExpr<T extends ISqlOperation> extends IExpression {
    */
   T getOp();
 
-  @Override
-  default int comparePrecedence(@Nonnull ISqlOperation outerOp) {
-    // 默认：运算符不同，就需要包裹括号
-    return Objects.equals(getOp(), outerOp) ? 0 : -1;
-  }
 }

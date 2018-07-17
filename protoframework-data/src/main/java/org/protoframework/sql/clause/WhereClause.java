@@ -3,6 +3,7 @@ package org.protoframework.sql.clause;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
+import org.protoframework.sql.QueryCreator;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -35,12 +36,27 @@ public class WhereClause extends AbstractSqlStatement {
     return this;
   }
 
+  public OrderByClause orderBy() {
+    if (orderBy == null) {
+      setOrderBy(QueryCreator.orderBy());
+    }
+    return orderBy;
+  }
+
   public GroupByClause getGroupBy() {
     return groupBy;
   }
 
-  public void setGroupBy(GroupByClause groupBy) {
+  public WhereClause setGroupBy(GroupByClause groupBy) {
     this.groupBy = groupBy;
+    return this;
+  }
+
+  public GroupByClause groupBy() {
+    if (groupBy == null) {
+      setGroupBy(QueryCreator.groupBy());
+    }
+    return groupBy;
   }
 
   public PaginationClause getPagination() {
@@ -62,20 +78,20 @@ public class WhereClause extends AbstractSqlStatement {
       sb.append("WHERE ");
       cond.toSqlTemplate(sb);
     }
-    if (orderBy != null) {
-      if (!sb.toString().endsWith(" ")) {
+    if (orderBy != null && !orderBy.isEmpty()) {
+      if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
         sb.append(" ");
       }
       orderBy.toSqlTemplate(sb);
     }
-    if (groupBy != null) {
-      if (!sb.toString().endsWith(" ")) {
+    if (groupBy != null && !groupBy.isEmpty()) {
+      if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
         sb.append(" ");
       }
       groupBy.toSqlTemplate(sb);
     }
     if (pagination != null) {
-      if (!sb.toString().endsWith(" ")) {
+      if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
         sb.append(" ");
       }
       pagination.toSqlTemplate(sb);
@@ -89,20 +105,20 @@ public class WhereClause extends AbstractSqlStatement {
       sb.append("WHERE ");
       cond.toSolidSql(sb);
     }
-    if (orderBy != null) {
-      if (!sb.toString().endsWith(" ")) {
+    if (orderBy != null && !orderBy.isEmpty()) {
+      if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
         sb.append(" ");
       }
       orderBy.toSolidSql(sb);
     }
-    if (groupBy != null) {
-      if (!sb.toString().endsWith(" ")) {
+    if (groupBy != null && !groupBy.isEmpty()) {
+      if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
         sb.append(" ");
       }
       groupBy.toSolidSql(sb);
     }
     if (pagination != null) {
-      if (!sb.toString().endsWith(" ")) {
+      if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
         sb.append(" ");
       }
       pagination.toSolidSql(sb);
@@ -115,13 +131,17 @@ public class WhereClause extends AbstractSqlStatement {
     if (cond != null) {
       cond.collectSqlValue(sqlValues);
     }
-    if (orderBy != null) {
+    if (orderBy != null && !orderBy.isEmpty()) {
       orderBy.collectSqlValue(sqlValues);
+    }
+    if (groupBy != null && !groupBy.isEmpty()) {
+      groupBy.collectSqlValue(sqlValues);
     }
     if (pagination != null) {
       pagination.collectSqlValue(sqlValues);
     }
     return sqlValues;
   }
+
 
 }
