@@ -6,7 +6,7 @@ import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.SqlUtil;
-import org.protoframework.sql.expr.TableColumn;
+import org.protoframework.sql.expr.Column;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -37,7 +37,7 @@ public class SelectClause extends AbstractSqlStatement {
   }
 
   public SelectClause select(String column) {
-    return select(TableColumn.of(column));
+    return select(Column.of(column));
   }
 
   public SelectClause star() {

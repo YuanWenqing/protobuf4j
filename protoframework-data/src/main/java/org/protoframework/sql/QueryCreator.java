@@ -1,7 +1,7 @@
 package org.protoframework.sql;
 
 import org.protoframework.sql.clause.*;
-import org.protoframework.sql.expr.TableColumn;
+import org.protoframework.sql.expr.Column;
 import org.protoframework.sql.expr.Value;
 
 /**
@@ -19,8 +19,8 @@ public abstract class QueryCreator {
     return Value.of(value);
   }
 
-  public static TableColumn column(String field) {
-    return TableColumn.of(field);
+  public static Column column(String field) {
+    return Column.of(field);
   }
 
   public static SelectClause select() {

@@ -22,10 +22,6 @@ public class SqlConverterRegistry {
     defaultRegistry();
   }
 
-  private void defaultRegistry() {
-    register(Message.class, ProtoSqlConverter.getInstance());
-  }
-
   public static <T> void register(@Nonnull Class<T> beanClass,
       @Nonnull ISqlConverter<? super T> sqlConverter) {
     checkNotNull(beanClass);
@@ -50,5 +46,9 @@ public class SqlConverterRegistry {
       }
     }
     return null;
+  }
+
+  private void defaultRegistry() {
+    register(Message.class, ProtoSqlConverter.getInstance());
   }
 }

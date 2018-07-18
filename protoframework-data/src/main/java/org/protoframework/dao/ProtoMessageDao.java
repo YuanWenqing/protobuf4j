@@ -39,7 +39,9 @@ import static com.google.common.base.Preconditions.*;
  */
 public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   protected static final ThreadLocalTimer timer = new ThreadLocalTimer();
-
+  protected static final String SQL_INSERT_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s);";
+  protected static final String SQL_INSERT_IGNORE_TEMPLATE =
+      "INSERT IGNORE INTO %s (%s) VALUES (%s);";
   /**
    * 访问的数据表的数据元素类型
    */
@@ -52,7 +54,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   protected final ProtoMessageHelper<T> messageHelper;
   protected final ProtoMessageRowMapper<T> messageMapper;
   protected final ProtoSqlConverter sqlConverter;
-
   /**
    * 记录dao日志的logger
    */
@@ -61,19 +62,10 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
    * 记录执行的sql的logger
    */
   protected final DaoSqlLogger sqlLogger;
-
   protected JdbcTemplate jdbcTemplate;
-
-  protected static final String SQL_INSERT_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s);";
-  protected static final String SQL_INSERT_IGNORE_TEMPLATE =
-      "INSERT IGNORE INTO %s (%s) VALUES (%s);";
 
   public ProtoMessageDao(@Nonnull Class<T> messageType) {
     this(messageType, defaultTableName(messageType));
-  }
-
-  protected static <T extends Message> String defaultTableName(Class<T> messageType) {
-    return SqlConverterRegistry.findSqlConverter(messageType).tableName(messageType);
   }
 
   private ProtoMessageDao(@Nonnull Class<T> messageType, @Nonnull String tableName) {
@@ -89,6 +81,10 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.daoLogger = LoggerFactory
         .getLogger(getClass().getName() + "#" + messageHelper.getDescriptor().getFullName());
     this.sqlLogger = new DaoSqlLogger(messageHelper.getDescriptor().getFullName());
+  }
+
+  protected static <T extends Message> String defaultTableName(Class<T> messageType) {
+    return SqlConverterRegistry.findSqlConverter(messageType).tableName(messageType);
   }
 
   public Class<T> getMessageType() {
@@ -107,12 +103,12 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     return messageMapper;
   }
 
-  public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-    this.jdbcTemplate = jdbcTemplate;
-  }
-
   public JdbcTemplate getJdbcTemplate() {
     return jdbcTemplate;
+  }
+
+  public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+    this.jdbcTemplate = jdbcTemplate;
   }
 
   private int execSqlAndLog(ISqlStatement sqlStatement, Logger logger) {

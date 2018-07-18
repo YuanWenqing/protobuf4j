@@ -13,91 +13,91 @@ import java.util.Collection;
 public abstract class FieldValues {
 
   public static RelationalExpr eq(String field, Object value) {
-    return RelationalExpr.eq(TableColumn.of(field), Value.of(value, field));
+    return RelationalExpr.eq(Column.of(field), Value.of(value, field));
   }
 
   public static RelationalExpr ne(String field, Object value) {
-    return RelationalExpr.ne(TableColumn.of(field), Value.of(value, field));
+    return RelationalExpr.ne(Column.of(field), Value.of(value, field));
   }
 
   public static RelationalExpr lt(String field, Object value) {
-    return RelationalExpr.lt(TableColumn.of(field), Value.of(value, field));
+    return RelationalExpr.lt(Column.of(field), Value.of(value, field));
   }
 
   public static RelationalExpr lte(String field, Object value) {
-    return RelationalExpr.lte(TableColumn.of(field), Value.of(value, field));
+    return RelationalExpr.lte(Column.of(field), Value.of(value, field));
   }
 
   public static RelationalExpr gt(String field, Object value) {
-    return RelationalExpr.gt(TableColumn.of(field), Value.of(value, field));
+    return RelationalExpr.gt(Column.of(field), Value.of(value, field));
   }
 
   public static RelationalExpr gte(String field, Object value) {
-    return RelationalExpr.gte(TableColumn.of(field), Value.of(value, field));
+    return RelationalExpr.gte(Column.of(field), Value.of(value, field));
   }
 
   public static RelationalExpr isNull(String field) {
-    return RelationalExpr.isNull(TableColumn.of(field));
+    return RelationalExpr.isNull(Column.of(field));
   }
 
   public static RelationalExpr isNotNull(String field) {
-    return RelationalExpr.isNotNull(TableColumn.of(field));
+    return RelationalExpr.isNotNull(Column.of(field));
   }
 
   public static RelationalExpr like(String field, String value) {
-    return RelationalExpr.like(TableColumn.of(field), Value.of(value, field));
+    return RelationalExpr.like(Column.of(field), Value.of(value, field));
   }
 
   public static RelationalExpr between(String field, Object min, Object max) {
     BetweenExpr betweenExpr = new BetweenExpr(Value.of(min, field), Value.of(max, field));
-    return RelationalExpr.between(TableColumn.of(field), betweenExpr);
+    return RelationalExpr.between(Column.of(field), betweenExpr);
   }
 
   public static RelationalExpr in(String field, Collection<?> values) {
-    return RelationalExpr.in(TableColumn.of(field), ValueCollection.of(values, field));
+    return RelationalExpr.in(Column.of(field), ValueCollection.of(values, field));
   }
 
   public static RelationalExpr nin(String field, Collection<?> values) {
-    return RelationalExpr.nin(TableColumn.of(field), ValueCollection.of(values, field));
+    return RelationalExpr.nin(Column.of(field), ValueCollection.of(values, field));
   }
 
   public static ArithmeticExpr add(String field, Number value) {
-    return ArithmeticExpr.add(TableColumn.of(field), Value.of(value, field));
+    return ArithmeticExpr.add(Column.of(field), Value.of(value, field));
   }
 
   public static ArithmeticExpr subtract(String field, Number value) {
-    return ArithmeticExpr.subtract(TableColumn.of(field), Value.of(value, field));
+    return ArithmeticExpr.subtract(Column.of(field), Value.of(value, field));
   }
 
   public static ArithmeticExpr multiply(String field, Number value) {
-    return ArithmeticExpr.multiply(TableColumn.of(field), Value.of(value, field));
+    return ArithmeticExpr.multiply(Column.of(field), Value.of(value, field));
   }
 
   public static ArithmeticExpr divide(String field, Number value) {
-    return ArithmeticExpr.divide(TableColumn.of(field), Value.of(value, field));
+    return ArithmeticExpr.divide(Column.of(field), Value.of(value, field));
   }
 
   public static ArithmeticExpr divRound(String field, Number value) {
-    return ArithmeticExpr.divRound(TableColumn.of(field), Value.of(value, field));
+    return ArithmeticExpr.divRound(Column.of(field), Value.of(value, field));
   }
 
   public static ArithmeticExpr mod(String field, Number value) {
-    return ArithmeticExpr.mod(TableColumn.of(field), Value.of(value, field));
+    return ArithmeticExpr.mod(Column.of(field), Value.of(value, field));
   }
 
   public static ArithmeticExpr subtract(Number value, String field) {
-    return ArithmeticExpr.subtract(Value.of(value, field), TableColumn.of(field));
+    return ArithmeticExpr.subtract(Value.of(value, field), Column.of(field));
   }
 
   public static ArithmeticExpr divide(Number value, String field) {
-    return ArithmeticExpr.divide(Value.of(value, field), TableColumn.of(field));
+    return ArithmeticExpr.divide(Value.of(value, field), Column.of(field));
   }
 
   public static ArithmeticExpr divRound(Number value, String field) {
-    return ArithmeticExpr.divRound(Value.of(value, field), TableColumn.of(field));
+    return ArithmeticExpr.divRound(Value.of(value, field), Column.of(field));
   }
 
   public static ArithmeticExpr mod(Number value, String field) {
-    return ArithmeticExpr.mod(Value.of(value, field), TableColumn.of(field));
+    return ArithmeticExpr.mod(Value.of(value, field), Column.of(field));
   }
 }

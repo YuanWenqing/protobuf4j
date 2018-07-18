@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
-import org.protoframework.sql.expr.TableColumn;
+import org.protoframework.sql.expr.Column;
 import org.protoframework.sql.expr.Value;
 
 import javax.annotation.Nonnull;
@@ -33,7 +33,7 @@ public class SetClause extends AbstractSqlStatement {
   }
 
   public SetClause setExpr(String column, IExpression valueExpr) {
-    return addSetExpr(new SetExpr(column, valueExpr));
+    return addSetExpr(new SetExpr(Column.of(column), valueExpr));
   }
 
   public SetClause setValue(String column, Object value) {
@@ -41,7 +41,7 @@ public class SetClause extends AbstractSqlStatement {
   }
 
   public SetClause setColumn(String column, String other) {
-    return setExpr(column, TableColumn.of(other));
+    return setExpr(column, Column.of(other));
   }
 
   @Override

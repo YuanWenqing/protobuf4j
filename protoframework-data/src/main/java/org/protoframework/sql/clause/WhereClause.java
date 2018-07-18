@@ -143,5 +143,4 @@ public class WhereClause extends AbstractSqlStatement {
     return sqlValues;
   }
 
-
 }

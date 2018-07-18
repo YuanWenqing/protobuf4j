@@ -16,16 +16,16 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public class TableColumn extends AbstractExpression {
-  public static TableColumn of(String column) {
-    return new TableColumn(column);
-  }
-
+public class Column extends AbstractExpression {
   private final String column;
 
-  private TableColumn(String column) {
+  private Column(String column) {
     checkArgument(StringUtils.isNotBlank(column));
     this.column = column;
+  }
+
+  public static Column of(String column) {
+    return new Column(column);
   }
 
   public String getColumn() {

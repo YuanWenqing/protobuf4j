@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.protoframework.sql.clause.*;
 import org.protoframework.sql.expr.ArithmeticExpr;
-import org.protoframework.sql.expr.TableColumn;
+import org.protoframework.sql.expr.Column;
 import org.protoframework.sql.expr.Value;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class TestClause {
     }
     assertEquals("SELECT ", clause.toSolidSql(new StringBuilder()).toString());
 
-    clause.select(TableColumn.of("a"));
+    clause.select(Column.of("a"));
     System.out.println(clause);
     assertEquals("SELECT a", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SELECT a", clause.toSolidSql(new StringBuilder()).toString());
@@ -40,7 +40,7 @@ public class TestClause {
 
     clause.select("b");
     System.out.println(clause);
-    assertTrue(clause.getSelectExprs().get(1).getExpression() instanceof TableColumn);
+    assertTrue(clause.getSelectExprs().get(1).getExpression() instanceof Column);
     assertNull(clause.getSelectExprs().get(1).getAlias());
     assertEquals("SELECT a,b", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SELECT a,b", clause.toSolidSql(new StringBuilder()).toString());
@@ -164,7 +164,7 @@ public class TestClause {
 
     clause.desc("b");
     System.out.println(clause);
-    assertTrue(clause.getGroupByExprs().get(1).getExpression() instanceof TableColumn);
+    assertTrue(clause.getGroupByExprs().get(1).getExpression() instanceof Column);
     assertEquals(Direction.DESC, clause.getGroupByExprs().get(1).getDirection());
     assertEquals("GROUP BY a ASC,b DESC", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("GROUP BY a ASC,b DESC", clause.toSolidSql(new StringBuilder()).toString());
@@ -195,7 +195,7 @@ public class TestClause {
 
     clause.desc("b");
     System.out.println(clause);
-    assertTrue(clause.getOrderByExprs().get(1).getExpression() instanceof TableColumn);
+    assertTrue(clause.getOrderByExprs().get(1).getExpression() instanceof Column);
     assertEquals(Direction.DESC, clause.getOrderByExprs().get(1).getDirection());
     assertEquals("ORDER BY a ASC,b DESC", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("ORDER BY a ASC,b DESC", clause.toSolidSql(new StringBuilder()).toString());
@@ -310,7 +310,7 @@ public class TestClause {
 
     clause.setValue("a", 1);
     System.out.println(clause);
-    assertEquals("a", clause.getSetExprs().get(0).getColumn());
+    assertEquals("a", clause.getSetExprs().get(0).getColumn().getColumn());
     assertTrue(clause.getSetExprs().get(0).getValueExpr() instanceof Value);
     assertEquals("SET a=?", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SET a=1", clause.toSolidSql(new StringBuilder()).toString());
@@ -325,7 +325,7 @@ public class TestClause {
 
     clause.setColumn("d", "e");
     System.out.println(clause);
-    assertTrue(clause.getSetExprs().get(2).getValueExpr() instanceof TableColumn);
+    assertTrue(clause.getSetExprs().get(2).getValueExpr() instanceof Column);
     assertEquals("SET a=?,b=c+?,d=e", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SET a=1,b=c+2,d=e", clause.toSolidSql(new StringBuilder()).toString());
     List<ISqlValue> sqlValues = clause.collectSqlValue(Lists.newArrayList());
@@ -336,7 +336,7 @@ public class TestClause {
 
   @Test
   public void testQueryCreator() {
-    TableColumn column = QueryCreator.column("a");
+    Column column = QueryCreator.column("a");
     assertEquals("a", column.getColumn());
 
     ISqlValue value = QueryCreator.sqlValue("s");

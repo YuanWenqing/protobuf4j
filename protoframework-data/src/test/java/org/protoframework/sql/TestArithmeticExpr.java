@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.protoframework.sql.expr.ArithmeticExpr;
 import org.protoframework.sql.expr.ArithmeticOp;
-import org.protoframework.sql.expr.TableColumn;
+import org.protoframework.sql.expr.Column;
 import org.protoframework.sql.expr.Value;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class TestArithmeticExpr {
       // +
       expr = FieldValues.add("a", 1);
       System.out.println(expr);
-      assertTrue(expr.getLeft() instanceof TableColumn);
+      assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Value);
       assertEquals(ArithmeticOp.ADD, expr.getOp());
       assertEquals("a+?", expr.toSqlTemplate(new StringBuilder()).toString());
@@ -102,8 +102,8 @@ public class TestArithmeticExpr {
       // +
       expr = FieldFields.add("a", "b");
       System.out.println(expr);
-      assertTrue(expr.getLeft() instanceof TableColumn);
-      assertTrue(expr.getRight() instanceof TableColumn);
+      assertTrue(expr.getLeft() instanceof Column);
+      assertTrue(expr.getRight() instanceof Column);
       assertEquals(ArithmeticOp.ADD, expr.getOp());
       assertEquals("a+b", expr.toSqlTemplate(new StringBuilder()).toString());
       assertEquals("a+b", expr.toSolidSql(new StringBuilder()).toString());
