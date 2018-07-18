@@ -5,7 +5,7 @@ import org.protoframework.sql.AbstractSqlStatement;
 import org.protoframework.sql.Direction;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
-import org.protoframework.sql.expr.TableColumn;
+import org.protoframework.sql.expr.Column;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -32,7 +32,7 @@ public class GroupByClause extends AbstractSqlStatement {
   }
 
   public GroupByClause by(String column) {
-    return by(TableColumn.of(column));
+    return by(Column.of(column));
   }
 
   public GroupByClause asc(IExpression expr) {
@@ -40,7 +40,7 @@ public class GroupByClause extends AbstractSqlStatement {
   }
 
   public GroupByClause asc(String column) {
-    return asc(TableColumn.of(column));
+    return asc(Column.of(column));
   }
 
   public GroupByClause desc(IExpression expr) {
@@ -48,7 +48,7 @@ public class GroupByClause extends AbstractSqlStatement {
   }
 
   public GroupByClause desc(String column) {
-    return desc(TableColumn.of(column));
+    return desc(Column.of(column));
   }
 
   public boolean isEmpty() {

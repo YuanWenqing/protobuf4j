@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.protoframework.sql.expr.LogicalExpr;
 import org.protoframework.sql.expr.LogicalOp;
-import org.protoframework.sql.expr.TableColumn;
+import org.protoframework.sql.expr.Column;
 import org.protoframework.sql.expr.Value;
 
 import java.util.List;
@@ -26,8 +26,8 @@ public class TestLogicalExpr {
       // and
       expr = FieldFields.and("a", "b");
       System.out.println(expr);
-      assertTrue(expr.getLeft() instanceof TableColumn);
-      assertTrue(expr.getRight() instanceof TableColumn);
+      assertTrue(expr.getLeft() instanceof Column);
+      assertTrue(expr.getRight() instanceof Column);
       assertEquals(LogicalOp.AND, expr.getOp());
       assertEquals("a AND b", expr.toSqlTemplate(new StringBuilder()).toString());
       assertEquals("a AND b", expr.toSolidSql(new StringBuilder()).toString());
@@ -84,7 +84,7 @@ public class TestLogicalExpr {
     assertEquals("a>b AND c AND d", expr.toSqlTemplate(new StringBuilder()).toString());
 
     expr = FieldValues.gt("a", 1);
-    expr = expr.and(TableColumn.of("b"));
+    expr = expr.and(Column.of("b"));
     System.out.println(expr);
     assertEquals("a>? AND b", expr.toSqlTemplate(new StringBuilder()).toString());
     expr = expr.or(Value.of(true));
@@ -93,7 +93,7 @@ public class TestLogicalExpr {
     expr = expr.not();
     System.out.println(expr);
     assertEquals("NOT ((a>? AND b) OR ?)", expr.toSqlTemplate(new StringBuilder()).toString());
-    expr = expr.xor(TableColumn.of("c"));
+    expr = expr.xor(Column.of("c"));
     System.out.println(expr);
     assertEquals("(NOT ((a>? AND b) OR ?)) XOR c", expr.toSqlTemplate(new StringBuilder()).toString());
   }
