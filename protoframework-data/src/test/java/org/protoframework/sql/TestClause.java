@@ -310,7 +310,7 @@ public class TestClause {
 
     clause.setValue("a", 1);
     System.out.println(clause);
-    assertEquals("a", clause.getSetExprs().get(0).getColumn());
+    assertEquals("a", clause.getSetExprs().get(0).getColumn().getColumn());
     assertTrue(clause.getSetExprs().get(0).getValueExpr() instanceof Value);
     assertEquals("SET a=?", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SET a=1", clause.toSolidSql(new StringBuilder()).toString());

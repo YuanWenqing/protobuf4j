@@ -33,7 +33,7 @@ public class SetClause extends AbstractSqlStatement {
   }
 
   public SetClause setExpr(String column, IExpression valueExpr) {
-    return addSetExpr(new SetExpr(column, valueExpr));
+    return addSetExpr(new SetExpr(Column.of(column), valueExpr));
   }
 
   public SetClause setValue(String column, Object value) {
