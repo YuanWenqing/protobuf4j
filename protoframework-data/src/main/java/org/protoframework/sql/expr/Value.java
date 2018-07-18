@@ -16,6 +16,18 @@ import static com.google.common.base.Preconditions.*;
  * @date: 2018/7/11
  */
 public class Value extends AbstractExpression implements ISqlValue {
+  private final Object value;
+  private final String field;
+
+  /**
+   * 将构造方法私有化，避免嵌套构造
+   */
+  private Value(@Nonnull Object value, String field) {
+    checkNotNull(value);
+    this.value = value;
+    this.field = field;
+  }
+
   /**
    * @param field 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
    */
@@ -28,18 +40,6 @@ public class Value extends AbstractExpression implements ISqlValue {
 
   public static Value of(Object value) {
     return of(value, null);
-  }
-
-  private final Object value;
-  private final String field;
-
-  /**
-   * 将构造方法私有化，避免嵌套构造
-   */
-  private Value(@Nonnull Object value, String field) {
-    checkNotNull(value);
-    this.value = value;
-    this.field = field;
   }
 
   @Override

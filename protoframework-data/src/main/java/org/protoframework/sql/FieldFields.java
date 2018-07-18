@@ -1,9 +1,9 @@
 package org.protoframework.sql;
 
 import org.protoframework.sql.expr.ArithmeticExpr;
+import org.protoframework.sql.expr.Column;
 import org.protoframework.sql.expr.LogicalExpr;
 import org.protoframework.sql.expr.RelationalExpr;
-import org.protoframework.sql.expr.Column;
 
 /**
  * a util to build relational expression for two specified fields

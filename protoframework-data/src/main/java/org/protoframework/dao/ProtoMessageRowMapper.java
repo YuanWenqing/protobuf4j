@@ -59,6 +59,14 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
   }
 
   /**
+   * Return whether we're strictly validating that all bean properties have been mapped from
+   * corresponding database fields.
+   */
+  public boolean isCheckFullyPopulated() {
+    return this.checkFullyPopulated;
+  }
+
+  /**
    * Set whether we're strictly validating that all bean properties have been mapped from
    * corresponding database fields.
    * <p>
@@ -66,14 +74,6 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    */
   public void setCheckFullyPopulated(boolean checkFullyPopulated) {
     this.checkFullyPopulated = checkFullyPopulated;
-  }
-
-  /**
-   * Return whether we're strictly validating that all bean properties have been mapped from
-   * corresponding database fields.
-   */
-  public boolean isCheckFullyPopulated() {
-    return this.checkFullyPopulated;
   }
 
   /**

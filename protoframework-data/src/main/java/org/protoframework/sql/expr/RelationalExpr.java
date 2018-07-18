@@ -18,15 +18,6 @@ public class RelationalExpr extends AbstractBinaryExpr<RelationalOp> {
     super(left, op, right);
   }
 
-  @Override
-  public int comparePrecedence(@Nonnull ISqlOperation outerOp) {
-    // 关系表达式嵌套在逻辑表达式中不需要括号，其他都需要
-    if (outerOp instanceof LogicalOp) {
-      return 1;
-    }
-    return -1;
-  }
-
   public static RelationalExpr eq(IExpression left, IExpression right) {
     return new RelationalExpr(left, RelationalOp.EQ, right);
   }
@@ -78,6 +69,15 @@ public class RelationalExpr extends AbstractBinaryExpr<RelationalOp> {
 
   public static RelationalExpr nin(IExpression left, ValueCollection valueCollection) {
     return new RelationalExpr(left, RelationalOp.NIN, valueCollection);
+  }
+
+  @Override
+  public int comparePrecedence(@Nonnull ISqlOperation outerOp) {
+    // 关系表达式嵌套在逻辑表达式中不需要括号，其他都需要
+    if (outerOp instanceof LogicalOp) {
+      return 1;
+    }
+    return -1;
   }
 
 }

@@ -2,9 +2,9 @@ package org.protoframework.sql;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
+import org.protoframework.sql.expr.Column;
 import org.protoframework.sql.expr.LogicalExpr;
 import org.protoframework.sql.expr.LogicalOp;
-import org.protoframework.sql.expr.Column;
 import org.protoframework.sql.expr.Value;
 
 import java.util.List;
@@ -95,6 +95,7 @@ public class TestLogicalExpr {
     assertEquals("NOT ((a>? AND b) OR ?)", expr.toSqlTemplate(new StringBuilder()).toString());
     expr = expr.xor(Column.of("c"));
     System.out.println(expr);
-    assertEquals("(NOT ((a>? AND b) OR ?)) XOR c", expr.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("(NOT ((a>? AND b) OR ?)) XOR c",
+        expr.toSqlTemplate(new StringBuilder()).toString());
   }
 }

@@ -14,8 +14,8 @@ import static com.google.common.base.Preconditions.*;
  * @date: 2018/7/15
  */
 public class SelectSql extends AbstractSqlStatement {
-  private SelectClause select;
   private final FromClause from;
+  private SelectClause select;
   private WhereClause where;
 
   public SelectSql(FromClause from) {

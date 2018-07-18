@@ -29,32 +29,30 @@ import java.util.stream.Collectors;
 /**
  */
 public class ProtoSqlConverter implements ISqlConverter<Message> {
+  protected static final String LIST_SEP = ",";
+  protected static final String MAP_KV_SEP = ":";
+  protected static final String MAP_ENTRY_SEP = ";";
+  protected static final String[][] LIST_LOOKUP = {{",", "%2c"}, {"%", "%25"}};
+  protected static final LookupTranslator LIST_VALUE_ESCAPE = new LookupTranslator(LIST_LOOKUP);
+  protected static final LookupTranslator LIST_VALUE_UNESCAPE =
+      new LookupTranslator(EntityArrays.invert(LIST_LOOKUP));
+  protected static final String[][] MAP_LOOKUP = {{":", "%3a"}, {";", "%3b"}, {"%", "%25"}};
+  protected static final LookupTranslator MAP_VALUE_ESCAPE = new LookupTranslator(MAP_LOOKUP);
+  protected static final LookupTranslator MAP_VALUE_UNESCAPE =
+      new LookupTranslator(EntityArrays.invert(MAP_LOOKUP));
+  // not omit empty string
+  protected static Splitter LIST_SPLITTER = Splitter.on(LIST_SEP);
+  // omit empty string, 因为entry至少包含一个“:”分隔符，不可能为空
+  protected static final Splitter MAP_ENTRY_SPLITTER =
+      Splitter.on(MAP_ENTRY_SEP).omitEmptyStrings();
+  protected static final Splitter.MapSplitter MAP_SPLITTER =
+      MAP_ENTRY_SPLITTER.withKeyValueSeparator(MAP_KV_SEP);
+
   private static final ProtoSqlConverter instance = new ProtoSqlConverter();
 
   public static ProtoSqlConverter getInstance() {
     return instance;
   }
-
-  protected static final String LIST_SEP = ",";
-  protected static final String MAP_KV_SEP = ":";
-  protected static final String MAP_ENTRY_SEP = ";";
-
-  protected static final String[][] LIST_LOOKUP = {{",", "%2c"}, {"%", "%25"}};
-  protected static final LookupTranslator LIST_VALUE_ESCAPE = new LookupTranslator(LIST_LOOKUP);
-  protected static final LookupTranslator LIST_VALUE_UNESCAPE =
-      new LookupTranslator(EntityArrays.invert(LIST_LOOKUP));
-
-  protected static final String[][] MAP_LOOKUP = {{":", "%3a"}, {";", "%3b"}, {"%", "%25"}};
-  protected static final LookupTranslator MAP_VALUE_ESCAPE = new LookupTranslator(MAP_LOOKUP);
-  protected static final LookupTranslator MAP_VALUE_UNESCAPE =
-      new LookupTranslator(EntityArrays.invert(MAP_LOOKUP));
-
-  // not omit empty string
-  protected static Splitter LIST_SPLITTER = Splitter.on(LIST_SEP);
-  // omit empty string, 因为entry至少包含一个“:”分隔符，不可能为空
-  protected static Splitter MAP_ENTRY_SPLITTER = Splitter.on(MAP_ENTRY_SEP).omitEmptyStrings();
-  protected static Splitter.MapSplitter MAP_SPLITTER =
-      MAP_ENTRY_SPLITTER.withKeyValueSeparator(MAP_KV_SEP);
 
   protected ProtoSqlConverter() {
   }

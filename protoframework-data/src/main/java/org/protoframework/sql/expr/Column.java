@@ -17,15 +17,15 @@ import static com.google.common.base.Preconditions.*;
  * @date: 2018/7/11
  */
 public class Column extends AbstractExpression {
-  public static Column of(String column) {
-    return new Column(column);
-  }
-
   private final String column;
 
   private Column(String column) {
     checkArgument(StringUtils.isNotBlank(column));
     this.column = column;
+  }
+
+  public static Column of(String column) {
+    return new Column(column);
   }
 
   public String getColumn() {
