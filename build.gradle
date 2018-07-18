@@ -1,4 +1,3 @@
-
 buildscript {
     repositories {
 //        mavenCentral()
@@ -48,7 +47,7 @@ subprojects {
 
     }
 }
-project(':test-proto') {
+project(':test-proto') { // 测试用的proto module
     apply plugin: "com.google.protobuf"
     protobuf {
         generatedFilesBaseDir = "$projectDir/gen/"
@@ -60,7 +59,7 @@ project(':test-proto') {
         delete protobuf.generatedFilesBaseDir
     }
     sourceSets {
-        test.java.srcDir("${protobuf.generatedFilesBaseDir}/test/java")
+        main.java.srcDir("${protobuf.generatedFilesBaseDir}/main/java")
     }
 
     dependencies {
@@ -119,6 +118,8 @@ project(':protoframework-data') {
         //compile 'org.apache.logging.log4j:log4j-core:2.11.0'
         //compile 'org.apache.logging.log4j:log4j-api:2.11.0'
         //compile 'org.slf4j:slf4j-api:1.7.25'
+
+        testCompile project(":test-proto") // dao testcase use this
     }
 }
 project(':protoframework-grpc') {
