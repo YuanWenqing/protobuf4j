@@ -118,8 +118,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     try {
       return this.getJdbcTemplate().update(makeStatementCreator(sqlTemplate, sqlValues));
     } finally {
-      logger.info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-          sqlValues);
+      logger.info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
+          sqlValues, sqlStatement);
     }
   }
 
@@ -384,8 +384,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       return this.getJdbcTemplate().query(makeStatementCreator(sqlTemplate, sqlValues), mapper);
     } finally {
       sqlLogger.select()
-          .info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-              sqlValues);
+          .info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
+              sqlValues, selectSql);
     }
   }
 
