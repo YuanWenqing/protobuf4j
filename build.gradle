@@ -48,7 +48,7 @@ subprojects {
 
     }
 }
-project(':protoframework-core') {
+project(':test-proto') {
     apply plugin: "com.google.protobuf"
     protobuf {
         generatedFilesBaseDir = "$projectDir/gen/"
@@ -62,6 +62,26 @@ project(':protoframework-core') {
     sourceSets {
         test.java.srcDir("${protobuf.generatedFilesBaseDir}/test/java")
     }
+
+    dependencies {
+        // protobuf
+        compile 'com.google.protobuf:protobuf-java:3.6.0'
+    }
+}
+project(':protoframework-core') {
+//    apply plugin: "com.google.protobuf"
+//    protobuf {
+//        generatedFilesBaseDir = "$projectDir/gen/"
+//        generateProtoTasks {
+//            ofSourceSet('test')
+//        }
+//    }
+//    clean {
+//        delete protobuf.generatedFilesBaseDir
+//    }
+//    sourceSets {
+//        test.java.srcDir("${protobuf.generatedFilesBaseDir}/test/java")
+//    }
 
     dependencies {
 
@@ -78,6 +98,8 @@ project(':protoframework-core') {
 
         // json
         compile 'com.hubspot.jackson:jackson-datatype-protobuf:0.9.9-jackson2.9-proto3'
+
+        testCompile project(":test-proto")
     }
 }
 project(':protoframework-data') {
