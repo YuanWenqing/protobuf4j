@@ -53,7 +53,7 @@ project(':test-proto') {
     protobuf {
         generatedFilesBaseDir = "$projectDir/gen/"
         generateProtoTasks {
-            ofSourceSet('test')
+            ofSourceSet('main')
         }
     }
     clean {
