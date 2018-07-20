@@ -17,6 +17,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 
+import javax.annotation.Nonnull;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -34,20 +35,22 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    */
   private final Class<T> mappedClass;
   private final ProtoMessageHelper<T> messageHelper;
-  private final ProtoSqlConverter sqlConverter;
+  private final IProtoSqlConverter sqlConverter;
   /**
    * Whether we're strictly validating
    */
   private boolean checkFullyPopulated = false;
 
-  public ProtoMessageRowMapper(Class<T> mappedClass) {
+  public ProtoMessageRowMapper(@Nonnull Class<T> mappedClass,
+      @Nonnull IProtoSqlConverter sqlConverter) {
     this.mappedClass = mappedClass;
     this.messageHelper = ProtoMessageHelper.getHelper(mappedClass);
-    this.sqlConverter = (ProtoSqlConverter) SqlConverterRegistry.findSqlConverter(mappedClass);
+    this.sqlConverter = sqlConverter;
   }
 
-  public ProtoMessageRowMapper(Class<T> mappedClass, boolean checkFullyPopulated) {
-    this(mappedClass);
+  public ProtoMessageRowMapper(@Nonnull Class<T> mappedClass,
+      @Nonnull IProtoSqlConverter sqlConverter, boolean checkFullyPopulated) {
+    this(mappedClass, sqlConverter);
     this.checkFullyPopulated = checkFullyPopulated;
   }
 

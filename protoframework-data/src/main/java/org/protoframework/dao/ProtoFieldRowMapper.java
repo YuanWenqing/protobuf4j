@@ -8,6 +8,7 @@ import org.protoframework.core.ProtoMessageHelper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 
+import javax.annotation.Nonnull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -20,16 +21,16 @@ import java.sql.SQLException;
 public class ProtoFieldRowMapper<F> implements RowMapper<F> {
 
   private final ProtoMessageHelper<?> messageHelper;
-  private final ProtoSqlConverter sqlConverter;
+  private final IProtoSqlConverter sqlConverter;
   private final FieldDescriptor fd;
 
-  public ProtoFieldRowMapper(ProtoMessageHelper<?> messageHelper, FieldDescriptor fd) {
+  public ProtoFieldRowMapper(@Nonnull ProtoMessageHelper<?> messageHelper,
+      @Nonnull IProtoSqlConverter sqlConverter, @Nonnull FieldDescriptor fd) {
     if (fd.getJavaType().equals(FieldDescriptor.JavaType.ENUM)) {
       throw new RuntimeException("not supported for enum field, field=" + fd.getFullName());
     }
     this.messageHelper = messageHelper;
-    this.sqlConverter =
-        (ProtoSqlConverter) SqlConverterRegistry.findSqlConverter(messageHelper.getType());
+    this.sqlConverter = sqlConverter;
     this.fd = fd;
   }
 

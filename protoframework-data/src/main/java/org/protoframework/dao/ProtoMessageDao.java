@@ -46,14 +46,14 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
    * 访问的数据表的数据元素类型
    */
   protected final Class<T> messageType;
+  protected final ProtoMessageHelper<T> messageHelper;
+  protected final IProtoSqlConverter sqlConverter;
+  protected final ProtoMessageRowMapper<T> messageMapper;
   /**
    * 访问的数据表名
    */
   protected final String tableName;
   protected final FromClause fromClause;
-  protected final ProtoMessageHelper<T> messageHelper;
-  protected final ProtoMessageRowMapper<T> messageMapper;
-  protected final ProtoSqlConverter sqlConverter;
   /**
    * 记录dao日志的logger
    */
@@ -65,26 +65,28 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   protected JdbcTemplate jdbcTemplate;
 
   public ProtoMessageDao(@Nonnull Class<T> messageType) {
-    this(messageType, defaultTableName(messageType));
+    this(messageType, (IProtoSqlConverter) SqlConverterRegistry.findSqlConverter(messageType),
+        null);
   }
 
-  private ProtoMessageDao(@Nonnull Class<T> messageType, @Nonnull String tableName) {
+  /**
+   * @param tableName 为空，表示使用默认规则生成表名
+   */
+  public ProtoMessageDao(@Nonnull Class<T> messageType, IProtoSqlConverter sqlConverter,
+      @Nullable String tableName) {
     this.messageType = checkNotNull(messageType);
     checkArgument(StringUtils.isNotBlank(tableName));
-    this.tableName = tableName;
-    this.fromClause = QueryCreator.from(tableName);
     this.messageHelper = ProtoMessageHelper.getHelper(messageType);
-    this.messageMapper = new ProtoMessageRowMapper<>(messageType);
-    this.sqlConverter = (ProtoSqlConverter) SqlConverterRegistry.findSqlConverter(messageType);
+    this.sqlConverter = sqlConverter;
     checkNotNull(this.sqlConverter, "no available sqlConverter for " + messageType.getName());
+    this.messageMapper = new ProtoMessageRowMapper<>(messageType, this.sqlConverter);
+    this.tableName =
+        StringUtils.defaultIfBlank(tableName, this.sqlConverter.tableName(messageType));
+    this.fromClause = QueryCreator.from(tableName);
 
     this.daoLogger = LoggerFactory
         .getLogger(getClass().getName() + "#" + messageHelper.getDescriptor().getFullName());
     this.sqlLogger = new DaoSqlLogger(messageHelper.getDescriptor().getFullName());
-  }
-
-  protected static <T extends Message> String defaultTableName(Class<T> messageType) {
-    return SqlConverterRegistry.findSqlConverter(messageType).tableName(messageType);
   }
 
   public Class<T> getMessageType() {
@@ -118,8 +120,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     try {
       return this.getJdbcTemplate().update(makeStatementCreator(sqlTemplate, sqlValues));
     } finally {
-      logger.info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-          sqlValues);
+      logger.info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
+          sqlValues, sqlStatement);
     }
   }
 
@@ -384,8 +386,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       return this.getJdbcTemplate().query(makeStatementCreator(sqlTemplate, sqlValues), mapper);
     } finally {
       sqlLogger.select()
-          .info("cost={}, {}, values: {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-              sqlValues);
+          .info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
+              sqlValues, selectSql);
     }
   }
 
@@ -500,7 +502,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   protected <V> RowMapper<V> getSingleColumnMapper(String column) {
     FieldDescriptor fd = messageHelper.checkFieldDescriptor(column);
     // 与ProtoMessageRowMapper类似的方式处理我们约定的字段类型
-    return new ProtoFieldRowMapper<>(messageHelper, fd);
+    return new ProtoFieldRowMapper<>(messageHelper, sqlConverter, fd);
   }
 
   @Override
