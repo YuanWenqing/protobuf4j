@@ -64,7 +64,8 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
     return toSqlValue(fd, value);
   }
 
-  protected Object toSqlValue(Descriptors.FieldDescriptor fd, Object value) {
+  @Override
+  public Object toSqlValue(Descriptors.FieldDescriptor fd, Object value) {
     if (fd.isMapField()) {
       // check map first, for map field is also repeated
       return encodeMapToString(fd, value);

@@ -10,6 +10,11 @@ import org.protoframework.core.ProtoMessageHelper;
  */
 public interface IProtoSqlConverter extends ISqlConverter<Message> {
   /**
+   * 将{@code fd}字段的值{@code value}转换为对应sql类型的值
+   */
+  Object toSqlValue(Descriptors.FieldDescriptor fd, Object value);
+
+  /**
    * 判断{@code fd}是否是一个时间戳字段
    */
   boolean isTimestampField(Descriptors.FieldDescriptor fd);
