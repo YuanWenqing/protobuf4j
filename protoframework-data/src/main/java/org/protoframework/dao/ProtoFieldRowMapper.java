@@ -20,7 +20,7 @@ import java.sql.SQLException;
 public class ProtoFieldRowMapper<F> implements RowMapper<F> {
 
   private final ProtoMessageHelper<?> messageHelper;
-  private final ProtoSqlConverter sqlConverter;
+  private final IProtoSqlConverter sqlConverter;
   private final FieldDescriptor fd;
 
   public ProtoFieldRowMapper(ProtoMessageHelper<?> messageHelper, FieldDescriptor fd) {
@@ -29,7 +29,7 @@ public class ProtoFieldRowMapper<F> implements RowMapper<F> {
     }
     this.messageHelper = messageHelper;
     this.sqlConverter =
-        (ProtoSqlConverter) SqlConverterRegistry.findSqlConverter(messageHelper.getType());
+        (IProtoSqlConverter) SqlConverterRegistry.findSqlConverter(messageHelper.getType());
     this.fd = fd;
   }
 

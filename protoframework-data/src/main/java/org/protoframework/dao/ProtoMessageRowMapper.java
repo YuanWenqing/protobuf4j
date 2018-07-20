@@ -34,7 +34,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    */
   private final Class<T> mappedClass;
   private final ProtoMessageHelper<T> messageHelper;
-  private final ProtoSqlConverter sqlConverter;
+  private final IProtoSqlConverter sqlConverter;
   /**
    * Whether we're strictly validating
    */
@@ -43,7 +43,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
   public ProtoMessageRowMapper(Class<T> mappedClass) {
     this.mappedClass = mappedClass;
     this.messageHelper = ProtoMessageHelper.getHelper(mappedClass);
-    this.sqlConverter = (ProtoSqlConverter) SqlConverterRegistry.findSqlConverter(mappedClass);
+    this.sqlConverter = (IProtoSqlConverter) SqlConverterRegistry.findSqlConverter(mappedClass);
   }
 
   public ProtoMessageRowMapper(Class<T> mappedClass, boolean checkFullyPopulated) {
