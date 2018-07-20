@@ -52,8 +52,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   protected final String tableName;
   protected final FromClause fromClause;
   protected final ProtoMessageHelper<T> messageHelper;
-  protected final ProtoMessageRowMapper<T> messageMapper;
   protected final ProtoSqlConverter sqlConverter;
+  protected final ProtoMessageRowMapper<T> messageMapper;
   /**
    * 记录dao日志的logger
    */
@@ -74,9 +74,9 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.tableName = tableName;
     this.fromClause = QueryCreator.from(tableName);
     this.messageHelper = ProtoMessageHelper.getHelper(messageType);
-    this.messageMapper = new ProtoMessageRowMapper<>(messageType);
     this.sqlConverter = (ProtoSqlConverter) SqlConverterRegistry.findSqlConverter(messageType);
     checkNotNull(this.sqlConverter, "no available sqlConverter for " + messageType.getName());
+    this.messageMapper = new ProtoMessageRowMapper<>(messageType, this.sqlConverter);
 
     this.daoLogger = LoggerFactory
         .getLogger(getClass().getName() + "#" + messageHelper.getDescriptor().getFullName());
@@ -500,7 +500,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   protected <V> RowMapper<V> getSingleColumnMapper(String column) {
     FieldDescriptor fd = messageHelper.checkFieldDescriptor(column);
     // 与ProtoMessageRowMapper类似的方式处理我们约定的字段类型
-    return new ProtoFieldRowMapper<>(messageHelper, fd);
+    return new ProtoFieldRowMapper<>(messageHelper, sqlConverter, fd);
   }
 
   @Override
