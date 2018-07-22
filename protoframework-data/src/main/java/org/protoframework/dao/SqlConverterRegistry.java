@@ -26,18 +26,23 @@ public class SqlConverterRegistry {
     this.cache = new ConcurrentHashMap<>(100);
   }
 
-  public static <T> void register(@Nonnull Class<T> beanClass,
+  public <T> void register(@Nonnull Class<T> beanClass,
       @Nonnull ISqlConverter<? super T> sqlConverter) {
     checkNotNull(beanClass);
-    instance.cache.put(beanClass, sqlConverter);
+    this.cache.put(beanClass, sqlConverter);
   }
 
   @SuppressWarnings("unchecked")
   public static <T> ISqlConverter<? super T> findSqlConverter(@Nonnull Class<T> beanClass) {
+    checkNotNull(beanClass);
     if (instance.cache.contains(beanClass)) {
       return (ISqlConverter<? super T>) instance.cache.get(beanClass);
     }
-    ISqlConverter<?> converter = findSqlConverter(beanClass.getSuperclass());
+    Class<?> superClass = beanClass.getSuperclass();
+    if (superClass == null) {
+      return null;
+    }
+    ISqlConverter<?> converter = findSqlConverter(superClass);
     if (converter != null) {
       instance.cache.putIfAbsent(beanClass, converter);
       return (ISqlConverter<? super T>) converter;
