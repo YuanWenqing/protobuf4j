@@ -12,7 +12,7 @@ import static com.google.common.base.Preconditions.*;
  * date: 2018/7/15
  */
 public class SqlConverterRegistry {
-  private static final SqlConverterRegistry instance = buildRegistry();
+  public static final SqlConverterRegistry instance = buildRegistry();
 
   private static SqlConverterRegistry buildRegistry() {
     SqlConverterRegistry registry = new SqlConverterRegistry();
@@ -35,7 +35,7 @@ public class SqlConverterRegistry {
   @SuppressWarnings("unchecked")
   public static <T> ISqlConverter<? super T> findSqlConverter(@Nonnull Class<T> beanClass) {
     checkNotNull(beanClass);
-    if (instance.cache.contains(beanClass)) {
+    if (instance.cache.containsKey(beanClass)) {
       return (ISqlConverter<? super T>) instance.cache.get(beanClass);
     }
     Class<?> superClass = beanClass.getSuperclass();

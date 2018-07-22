@@ -81,7 +81,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.messageMapper = new ProtoMessageRowMapper<>(messageType, this.sqlConverter);
     this.tableName =
         StringUtils.defaultIfBlank(tableName, this.sqlConverter.tableName(messageType));
-    this.fromClause = QueryCreator.from(tableName);
+    this.fromClause = QueryCreator.from(this.tableName);
 
     this.daoLogger = LoggerFactory
         .getLogger(getClass().getName() + "#" + messageHelper.getDescriptor().getFullName());
