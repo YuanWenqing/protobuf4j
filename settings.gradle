@@ -4,4 +4,3 @@ include 'test-proto'
 include 'protoframework-core'
 include 'protoframework-data'
 include 'protoframework-grpc'
-
