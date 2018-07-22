@@ -12,14 +12,18 @@ import static com.google.common.base.Preconditions.*;
  * date: 2018/7/15
  */
 public class SqlConverterRegistry {
-  private static final SqlConverterRegistry instance = new SqlConverterRegistry();
+  private static final SqlConverterRegistry instance = buildRegistry();
+
+  private static SqlConverterRegistry buildRegistry() {
+    SqlConverterRegistry registry = new SqlConverterRegistry();
+    registry.register(Message.class, ProtoSqlConverter.getInstance());
+    return registry;
+  }
 
   private final ConcurrentHashMap<Class<?>, ISqlConverter<?>> cache;
 
   private SqlConverterRegistry() {
     this.cache = new ConcurrentHashMap<>(100);
-
-    defaultRegistry();
   }
 
   public static <T> void register(@Nonnull Class<T> beanClass,
@@ -48,7 +52,4 @@ public class SqlConverterRegistry {
     return null;
   }
 
-  private void defaultRegistry() {
-    register(Message.class, ProtoSqlConverter.getInstance());
-  }
 }
