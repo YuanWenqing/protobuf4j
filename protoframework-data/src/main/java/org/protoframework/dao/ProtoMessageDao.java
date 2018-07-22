@@ -75,7 +75,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   public ProtoMessageDao(@Nonnull Class<T> messageType, IProtoSqlConverter sqlConverter,
       @Nullable String tableName) {
     this.messageType = checkNotNull(messageType);
-    checkArgument(StringUtils.isNotBlank(tableName));
     this.messageHelper = ProtoMessageHelper.getHelper(messageType);
     this.sqlConverter = sqlConverter;
     checkNotNull(this.sqlConverter, "no available sqlConverter for " + messageType.getName());
