@@ -128,7 +128,7 @@ public interface IMessageDao<T> {
    *
    * @return 更新的数据条数
    */
-  int updateItem(T newItem, T oldItem, IExpression cond);
+  int updateMessage(T newItem, T oldItem, IExpression cond);
 
   /**
    * 根据条件更新字段

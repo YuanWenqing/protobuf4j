@@ -18,6 +18,9 @@ buildscript {
 
 // project setting
 subprojects {
+    group = "org.protoframework"
+    version = "0.5.3"
+
     repositories {
         mavenLocal()
         maven {
@@ -31,8 +34,6 @@ subprojects {
     }
 
     apply plugin: "java"
-
-    ext.group = "org.protoframework"
 
     // build dir change to out
     project.buildDir = "out"
@@ -68,6 +69,8 @@ project(':test-proto') { // 测试用的proto module
     }
 }
 project(':protoframework-core') {
+    apply plugin: 'maven-publish'
+
 //    apply plugin: "com.google.protobuf"
 //    protobuf {
 //        generatedFilesBaseDir = "$projectDir/gen/"
@@ -102,6 +105,8 @@ project(':protoframework-core') {
     }
 }
 project(':protoframework-data') {
+    apply plugin: 'maven-publish'
+
     dependencies {
         compile project(":protoframework-core")
 
@@ -127,5 +132,29 @@ project(':protoframework-grpc') {
 
         compile 'io.grpc:grpc-all:1.13.1'
 
+    }
+}
+
+configure(subprojects.findAll {
+    it.plugins.hasPlugin('maven-publish')
+}) {
+    project.task('sourcesJar', type: Jar) {
+        from sourceSets.main.allJava
+        classifier = 'sources'
+    }
+    project.publishing.publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            version project.version
+
+            artifact sourcesJar
+        }
+    }
+    project.task('local') {
+        dependsOn publishToMavenLocal
+        doLast {
+            def pub = publishing.publications.mavenJava
+            println "artifact: ${pub.groupId}:${pub.artifactId}:${pub.version}"
+        }
     }
 }
