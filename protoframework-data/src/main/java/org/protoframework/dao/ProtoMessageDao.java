@@ -115,30 +115,38 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   private int execSqlAndLog(ISqlStatement sqlStatement, Logger logger) {
     String sqlTemplate = sqlStatement.toSqlTemplate(new StringBuilder()).toString();
     List<ISqlValue> sqlValues = sqlStatement.collectSqlValue(Lists.newArrayList());
+    List<Object> values = convertSqlValues(sqlValues);
     timer.restart();
     try {
-      return this.getJdbcTemplate().update(makeStatementCreator(sqlTemplate, sqlValues));
+      return this.getJdbcTemplate().update(makeStatementCreator(sqlTemplate, values));
     } finally {
       logger.info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-          sqlValues, sqlStatement);
+          values, sqlStatement);
     }
   }
 
-  private PreparedStatementCreator makeStatementCreator(String sql,
-      Collection<ISqlValue> sqlValues) {
+  private List<Object> convertSqlValues(List<ISqlValue> sqlValues) {
+    List<Object> values = Lists.newArrayListWithExpectedSize(sqlValues.size());
+    for (ISqlValue sqlValue : sqlValues) {
+      Object value;
+      if (StringUtils.isBlank(sqlValue.getField())) {
+        value = sqlValue.getValue();
+      } else {
+        value = sqlConverter.toSqlValue(messageType, sqlValue.getField(), sqlValue.getValue());
+      }
+      values.add(value);
+    }
+    return values;
+  }
+
+  private PreparedStatementCreator makeStatementCreator(String sql, Collection<Object> values) {
     return new PreparedStatementCreator() {
       @Override
       public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
         PreparedStatement ps = con.prepareStatement(sql);
-        if (sqlValues.isEmpty()) return ps;
+        if (values.isEmpty()) return ps;
         int i = 1;
-        for (ISqlValue sqlValue : sqlValues) {
-          Object value;
-          if (StringUtils.isBlank(sqlValue.getField())) {
-            value = sqlValue.getValue();
-          } else {
-            value = sqlConverter.toSqlValue(messageType, sqlValue.getField(), sqlValue.getValue());
-          }
+        for (Object value : values) {
           ps.setObject(i++, value);
         }
         return ps;
@@ -212,6 +220,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   private PreparedStatementCreator makeInsertCreator(String sql, Collection<String> fields,
       T message) {
+    // TODO: InsertSql & convertSqlValues
     return new PreparedStatementCreator() {
       @Override
       public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -380,13 +389,14 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     checkNotNull(selectSql);
     String sqlTemplate = selectSql.toSqlTemplate(new StringBuilder()).toString();
     List<ISqlValue> sqlValues = selectSql.collectSqlValue(Lists.newArrayList());
+    List<Object> values = convertSqlValues(sqlValues);
     timer.restart();
     try {
-      return this.getJdbcTemplate().query(makeStatementCreator(sqlTemplate, sqlValues), mapper);
+      return this.getJdbcTemplate().query(makeStatementCreator(sqlTemplate, values), mapper);
     } finally {
       sqlLogger.select()
           .info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-              sqlValues, selectSql);
+              values, selectSql);
     }
   }
 
