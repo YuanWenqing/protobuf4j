@@ -417,7 +417,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   ////////////////////////////// update //////////////////////////////
 
   @Override
-  public int updateItem(T newItem, T oldItem, IExpression cond) {
+  public int updateMessage(T newItem, T oldItem, IExpression cond) {
     SetClause setClause = makeSetClause(newItem, oldItem);
     return update(setClause, cond);
   }
