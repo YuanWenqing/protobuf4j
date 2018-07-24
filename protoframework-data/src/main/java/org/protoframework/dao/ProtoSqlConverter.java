@@ -256,6 +256,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       Timestamp ts = (Timestamp) sqlValue;
       return ts.getTime();
     } else {
+      resolveSqlValueType(fd.getJavaType()); // fast fail if not support
       return sqlValue;
     }
   }
@@ -265,7 +266,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       return (int) sqlValue;
     } else {
       throw new TypeMismatchDataAccessException(
-          "should be an int value, sqlValue=" + sqlValue + ", type=" + sqlValue.getClass());
+          "expect an int value, sqlValue=" + sqlValue + ", type=" + sqlValue.getClass());
     }
   }
 
@@ -320,7 +321,10 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
         .collect(Collectors.toList());
   }
 
-  private Function<String, Object> lookupTransform(Descriptors.FieldDescriptor fd) {
+  /**
+   * @see #resolveSqlValueType(Descriptors.FieldDescriptor.JavaType)
+   */
+  protected Function<String, Object> lookupTransform(Descriptors.FieldDescriptor fd) {
     switch (fd.getJavaType()) {
       case BOOLEAN:
         return text -> (Integer.parseInt(Objects.requireNonNull(text)) != 0);

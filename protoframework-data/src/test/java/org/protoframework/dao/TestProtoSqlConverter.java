@@ -3,6 +3,7 @@ package org.protoframework.dao;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.protobuf.Descriptors;
+import com.google.protobuf.MapEntry;
 import org.junit.Test;
 import org.protoframework.core.ProtoMessageHelper;
 import org.protoframework.core.proto.data.TestModel;
@@ -11,6 +12,7 @@ import org.springframework.dao.TypeMismatchDataAccessException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -288,7 +290,8 @@ public class TestProtoSqlConverter {
         sqlConverter.toSqlValue(helperA.getFieldDescriptor("int64_map"), map("", 2)));
     assertEquals("a:2.0;",
         sqlConverter.toSqlValue(helperA.getFieldDescriptor("double_map"), map("a", 2)));
-    assertEquals("0:1;", sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool_map"), map(0, 1)));
+    assertEquals("0:1;",
+        sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool_map"), map(0, 1)));
     assertEquals("a:2;",
         sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma_map"), map("a", 2)));
 
@@ -306,6 +309,130 @@ public class TestProtoSqlConverter {
     }
     try {
       sqlConverter.toSqlValue(helperA.getFieldDescriptor("msgb_map"), map());
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  @Test
+  @SuppressWarnings("rawtype")
+  public void testFromSqlValue() {
+    assertEquals(1, sqlConverter.fromSqlValue(TestModel.MsgA.class, "int32", 1));
+    assertEquals(1, sqlConverter.fromSqlValue(TestModel.MsgA.class, "int64", 1));
+    assertEquals(1L, sqlConverter.fromSqlValue(TestModel.MsgA.class, "int64", 1L));
+    assertEquals(1, sqlConverter.fromSqlValue(TestModel.MsgA.class, "float", 1));
+    assertEquals(1f, sqlConverter.fromSqlValue(TestModel.MsgA.class, "float", 1f));
+    assertEquals(1, sqlConverter.fromSqlValue(TestModel.MsgA.class, "double", 1));
+    assertEquals(1.0, sqlConverter.fromSqlValue(TestModel.MsgA.class, "double", 1.0));
+    assertEquals(true, sqlConverter.fromSqlValue(TestModel.MsgA.class, "bool", 1));
+    assertEquals(false, sqlConverter.fromSqlValue(TestModel.MsgA.class, "bool", 0));
+    assertEquals(TestModel.EnumA.EA0.getValueDescriptor(),
+        sqlConverter.fromSqlValue(TestModel.MsgA.class, "enuma", 0));
+
+    try {
+      sqlConverter.fromSqlValue(TestModel.MsgA.class, "bytes", null);
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      sqlConverter.fromSqlValue(TestModel.MsgA.class, "msgb", null);
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  @Test
+  @SuppressWarnings("rawtype")
+  public void testFromSqlValueRepeated() {
+    List enumas =
+        (List) sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("enuma_arr"), "0,2");
+    assertEquals(2, enumas.size());
+    assertTrue(enumas.get(0) instanceof Descriptors.EnumValueDescriptor);
+    assertEquals(TestModel.EnumA.EA0.name(),
+        ((Descriptors.EnumValueDescriptor) enumas.get(0)).getName());
+
+    assertEquals(Lists.newArrayList(1),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("int32_arr"), "1,"));
+    assertEquals(Lists.newArrayList(1L),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("int64_arr"), "1"));
+    assertEquals(Lists.newArrayList(1f),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("float_arr"), "1"));
+    assertEquals(Lists.newArrayList(1.0),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("double_arr"), "1"));
+    assertEquals(Lists.newArrayList(true),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("bool_arr"), "1"));
+
+    assertEquals(Lists.newArrayList(),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("string_arr"), ""));
+    assertEquals(Lists.newArrayList(""),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("string_arr"), ","));
+    assertEquals(Lists.newArrayList("a"),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("string_arr"), "a"));
+    assertEquals(Lists.newArrayList(","),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("string_arr"), "%2c,"));
+    assertEquals(Lists.newArrayList(","),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("string_arr"), "%2c"));
+    assertEquals(Lists.newArrayList("%"),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("string_arr"), "%25,"));
+
+    try {
+      sqlConverter.fromSqlValue(TestModel.MsgA.class, "int32_arr", 1);
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      sqlConverter.fromSqlValue(TestModel.MsgA.class, "bytes_arr", "a");
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      sqlConverter.fromSqlValue(TestModel.MsgA.class, "msgb_arr", "a");
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testFromSqlValueMap() {
+    List<MapEntry> mapEntries;
+
+    mapEntries = (List<MapEntry>) sqlConverter
+        .fromSqlValue(helperA, helperA.getFieldDescriptor("int64_map"), "");
+    assertEquals(0, mapEntries.size());
+
+    mapEntries = (List<MapEntry>) sqlConverter
+        .fromSqlValue(helperA, helperA.getFieldDescriptor("int64_map"), "a:1");
+    assertEquals(1, mapEntries.size());
+    assertEquals("a", mapEntries.get(0).getKey());
+    assertEquals(1L, mapEntries.get(0).getValue());
+
+    mapEntries = (List<MapEntry>) sqlConverter
+        .fromSqlValue(helperA, helperA.getFieldDescriptor("int64_map"), "a:1;");
+    assertEquals(1, mapEntries.size());
+    assertEquals("a", mapEntries.get(0).getKey());
+    assertEquals(1L, mapEntries.get(0).getValue());
+
+    try {
+      sqlConverter.fromSqlValue(TestModel.MsgA.class, "int32_map", 1);
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      sqlConverter.fromSqlValue(TestModel.MsgA.class, "bytes_map", "a:1");
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      sqlConverter.fromSqlValue(TestModel.MsgA.class, "msgb_map", "a:1");
       fail();
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());
