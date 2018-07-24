@@ -121,7 +121,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
         }
     }
     throw new TypeMismatchDataAccessException(
-        "not support java type: " + javaType + ", value=" + value + ", valueType=" +
+        "fail to convert, fieldType=" + javaType + ", value=`" + value + "`, valueType=" +
             value.getClass().getName());
   }
 
@@ -181,7 +181,8 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       return ((Integer) v) != 0 ? 1 : 0;
     }
     throw new TypeMismatchDataAccessException(
-        "Can't convert bool `" + v + "` of class " + v.getClass().getName());
+        "fail to convert, fieldType=" + Descriptors.FieldDescriptor.JavaType.BOOLEAN + ", value=`" +
+            v + "`, valueType=" + v.getClass().getName());
   }
 
   protected int enumToInt(Object v) {
@@ -195,18 +196,19 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       return ((Number) v).intValue();
     }
     throw new TypeMismatchDataAccessException(
-        "Can't convert enum `" + v + "` of class " + v.getClass().getName());
+        "fail to convert, fieldType=" + Descriptors.FieldDescriptor.JavaType.ENUM + ", value=`" +
+            v + "`, valueType=" + v.getClass().getName());
   }
 
   protected Object toSqlTimestamp(Object v) {
-    if (v.getClass().equals(Long.class)) {
-      return new Timestamp(((Long) v));
+    if (v instanceof Number) {
+      return new Timestamp(((Number) v).longValue());
     } else if (v.getClass().equals(Timestamp.class) || v.getClass().equals(java.sql.Date.class) ||
         v.getClass().equals(java.util.Date.class)) {
       return v;
     }
     throw new TypeMismatchDataAccessException(
-        "Can't convert timestamp `" + v + "` of " + v.getClass().getName());
+        "fail to convert timestamp, value=`" + v + "`, valueType=" + v.getClass().getName());
   }
 
   @Override

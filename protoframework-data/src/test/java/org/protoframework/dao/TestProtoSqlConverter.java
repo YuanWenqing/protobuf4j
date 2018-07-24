@@ -6,6 +6,7 @@ import org.protoframework.core.ProtoMessageHelper;
 import org.protoframework.core.proto.data.TestModel;
 import org.springframework.dao.TypeMismatchDataAccessException;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 import static org.junit.Assert.*;
@@ -22,13 +23,12 @@ public class TestProtoSqlConverter {
       ProtoMessageHelper.getHelper(TestModel.MsgB.class);
 
   @Test
-  public void test() {
+  public void testTableName() {
     assertEquals("msg_a", sqlConverter.tableName(TestModel.MsgA.class));
-    assertFalse(sqlConverter.isTimestampField(helperA.getFieldDescriptor("int64")));
   }
 
   @Test
-  public void testResolveSqlValueType() {
+  public void testResolveSqlValueTypeSimple() {
     assertEquals(int.class, sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("int32")));
     assertEquals(long.class, sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("int64")));
     assertEquals(float.class,
@@ -52,7 +52,32 @@ public class TestProtoSqlConverter {
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());
     }
+  }
 
+  @Test
+  public void testResolveSqlValueTypeRepeated() {
+    assertEquals(String.class,
+        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("int32_arr")));
+    assertEquals(String.class,
+        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("int64_arr")));
+    assertEquals(String.class,
+        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("float_arr")));
+    assertEquals(String.class,
+        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("double_arr")));
+    assertEquals(String.class,
+        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("bool_arr")));
+    assertEquals(String.class,
+        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("string_arr")));
+    assertEquals(String.class,
+        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("enuma_arr")));
+    assertEquals(String.class,
+        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("bytes_arr")));
+    assertEquals(String.class,
+        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("msgb_arr")));
+  }
+
+  @Test
+  public void testResolveSqlValueTypeMap() {
     assertEquals(String.class,
         sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("int32_map")));
     assertEquals(String.class,
@@ -67,28 +92,99 @@ public class TestProtoSqlConverter {
         sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("string_map")));
     assertEquals(String.class,
         sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("enuma_map")));
-
     assertEquals(String.class,
-        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("int32_map")));
+        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("bytes_map")));
     assertEquals(String.class,
-        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("int64_map")));
-    assertEquals(String.class,
-        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("float_map")));
-    assertEquals(String.class,
-        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("double_map")));
-    assertEquals(String.class,
-        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("bool_map")));
-    assertEquals(String.class,
-        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("string_map")));
-    assertEquals(String.class,
-        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("enuma_map")));
+        sqlConverter.resolveSqlValueType(helperA.getFieldDescriptor("msgb_map")));
   }
 
   @Test
   public void testTimestamp() {
+    assertFalse(sqlConverter.isTimestampField(helperA.getFieldDescriptor("float")));
+    assertFalse(sqlConverter.isTimestampField(helperA.getFieldDescriptor("int64")));
+
     Descriptors.FieldDescriptor timeFd = helperB.getFieldDescriptor("create_time");
     assertTrue(sqlConverter.isTimestampField(timeFd));
     assertEquals(Timestamp.class, sqlConverter.resolveSqlValueType(timeFd));
+
+    long millis = System.currentTimeMillis();
+    Timestamp timestamp = new Timestamp(millis);
+    assertEquals(timestamp, sqlConverter.toSqlValue(TestModel.MsgB.class, "create_time", millis));
+    assertEquals(timestamp,
+        sqlConverter.toSqlValue(TestModel.MsgB.class, "create_time", timestamp));
+    Date sqlDate = new Date(millis);
+    assertEquals(sqlDate, sqlConverter.toSqlValue(TestModel.MsgB.class, "create_time", sqlDate));
+    java.util.Date utilDate = new java.util.Date(millis);
+    assertEquals(utilDate, sqlConverter.toSqlValue(TestModel.MsgB.class, "create_time", utilDate));
+
+    try {
+      sqlConverter.toSqlValue(helperB.getFieldDescriptor("create_time"), "");
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testToSqlValueSimple() {
+    assertEquals(1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("int32"), 1));
+    assertEquals(1L, sqlConverter.toSqlValue(helperA.getFieldDescriptor("int64"), 1));
+    assertEquals(1.1f, sqlConverter.toSqlValue(helperA.getFieldDescriptor("float"), 1.1));
+    assertEquals(1.1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("double"), 1.1));
+    assertEquals(1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool"), true));
+    assertEquals(0, sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool"), false));
+    assertEquals("str", sqlConverter.toSqlValue(helperA.getFieldDescriptor("string"), "str"));
+    assertEquals(0,
+        sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma"), TestModel.EnumA.EA0));
+    assertEquals(2,
+        sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma"), TestModel.EnumA.EA2));
+    assertEquals(4,
+        sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma"), TestModel.EnumA.EA4));
+
+    // 兼容
+    assertEquals(1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("int32"), 1.0));
+    assertEquals(1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool"), 2));
+    assertEquals(2, sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma"), 2));
+  }
+
+  @Test
+  public void testToSqlValueTypeMismatch() {
+    try {
+      sqlConverter.toSqlValue(helperA.getFieldDescriptor("int32"), "");
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      sqlConverter.toSqlValue(helperA.getFieldDescriptor("int64"), "");
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      sqlConverter.toSqlValue(helperA.getFieldDescriptor("float"), "");
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      sqlConverter.toSqlValue(helperA.getFieldDescriptor("double"), "");
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool"), "");
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma"), "");
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
   }
 
 }
