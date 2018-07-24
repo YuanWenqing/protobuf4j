@@ -37,6 +37,7 @@ message MsgA {
   map<string, bytes> bytes_map = 27;
   map<string, EnumA> enuma_map = 28;
   map<string, MsgB> msgb_map = 29;
+
 }
 
 enum EnumA {
@@ -47,4 +48,6 @@ enum EnumA {
 
 message MsgB {
   string id = 1;
+
+  int64 create_time = 50;
 }

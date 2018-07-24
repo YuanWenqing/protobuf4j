@@ -65,7 +65,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   protected JdbcTemplate jdbcTemplate;
 
   public ProtoMessageDao(@Nonnull Class<T> messageType) {
-    this(messageType, (IProtoSqlConverter) SqlConverterRegistry.findSqlConverter(messageType),
+    this(messageType,
+        (IProtoSqlConverter) SqlConverterRegistry.getInstance().findSqlConverter(messageType),
         null);
   }
 

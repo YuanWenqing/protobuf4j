@@ -19,8 +19,9 @@ public class ThreadLocalTimer extends ThreadLocal<Stopwatch> {
     return Stopwatch.createUnstarted();
   }
 
-  public void restart() {
+  public ThreadLocalTimer restart() {
     get().reset().start();
+    return this;
   }
 
   /**

@@ -6,7 +6,10 @@ package org.protoframework.dao;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import com.google.protobuf.*;
+import com.google.protobuf.Descriptors;
+import com.google.protobuf.Internal;
+import com.google.protobuf.MapEntry;
+import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.EntityArrays;
 import org.apache.commons.lang3.text.translate.LookupTranslator;
@@ -43,9 +46,9 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   protected static final Splitter.MapSplitter MAP_SPLITTER =
       MAP_ENTRY_SPLITTER.withKeyValueSeparator(MAP_KV_SEP);
 
-  private static final IProtoSqlConverter instance = new ProtoSqlConverter();
+  private static final ProtoSqlConverter instance = new ProtoSqlConverter();
 
-  public static IProtoSqlConverter getInstance() {
+  public static ProtoSqlConverter getInstance() {
     return instance;
   }
 
@@ -78,14 +81,15 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
     }
   }
 
-  @Override
   public boolean isTimestampField(Descriptors.FieldDescriptor fd) {
-    return Descriptors.FieldDescriptor.JavaType.LONG.equals(fd.getJavaType()) &&
+    return !fd.isRepeated() && Descriptors.FieldDescriptor.JavaType.LONG.equals(fd.getJavaType()) &&
         fd.getName().endsWith("_time");
   }
 
   /**
    * 字段值映射：{@code proto type -> sql type}
+   *
+   * @see #resolveSqlValueType(Descriptors.FieldDescriptor.JavaType)
    */
   protected Object toSqlValue(Descriptors.FieldDescriptor.JavaType javaType, Object value) {
     switch (javaType) {
@@ -94,110 +98,139 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       case ENUM:
         return enumToInt(value);
       case INT:
+        if (value instanceof Integer) {
+          return value;
+        }
+        break;
       case LONG:
+        if (value instanceof Long || value instanceof Integer) {
+          return ((Number) value).longValue();
+        }
+        break;
       case FLOAT:
+        if (value instanceof Number) {
+          return ((Number) value).floatValue();
+        }
+        break;
       case DOUBLE:
+        if (value instanceof Number) {
+          return ((Number) value).doubleValue();
+        }
+        break;
       case STRING:
-        return value;
-      default:
-        throw new TypeMismatchDataAccessException(
-            "not support java type: " + javaType + ", value=" + value);
+        if (value instanceof String) {
+          return value;
+        } else {
+          return String.valueOf(value);
+        }
     }
+    throw new TypeMismatchDataAccessException(
+        "fail to convert, fieldType=" + javaType + ", value=`" + value + "`, valueType=" +
+            value.getClass().getName());
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   protected String encodeMapToString(Descriptors.FieldDescriptor fd, Object value) {
     Descriptors.FieldDescriptor keyFd = fd.getMessageType().findFieldByName("key");
     Descriptors.FieldDescriptor valFd = fd.getMessageType().findFieldByName("value");
-    if (value instanceof Map) {
-      Map<?, ?> map = (Map<?, ?>) value;
-      StringBuilder sb = new StringBuilder();
-      for (Map.Entry<?, ?> entry : map.entrySet()) {
-        Object k = toSqlValue(keyFd, entry.getKey());
-        k = MAP_VALUE_ESCAPE.translate(String.valueOf(k));
-        Object v = toSqlValue(valFd, entry.getValue());
-        v = MAP_VALUE_ESCAPE.translate(String.valueOf(v));
-        sb.append(k).append(MAP_KV_SEP).append(v).append(MAP_ENTRY_SEP);
+    try {
+      resolveSqlValueType(valFd.getJavaType()); // fast fail if not support
+      if (value instanceof Map) {
+        Map<?, ?> map = (Map<?, ?>) value;
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+          Object k = toSqlValue(keyFd.getJavaType(), entry.getKey());
+          k = MAP_VALUE_ESCAPE.translate(String.valueOf(k));
+          Object v = toSqlValue(valFd.getJavaType(), entry.getValue());
+          v = MAP_VALUE_ESCAPE.translate(String.valueOf(v));
+          sb.append(k).append(MAP_KV_SEP).append(v).append(MAP_ENTRY_SEP);
+        }
+        return sb.toString();
+      } else if (value instanceof List) {
+        List<? extends MapEntry> list = (List<? extends MapEntry>) value;
+        StringBuilder sb = new StringBuilder();
+        for (MapEntry entry : list) {
+          Object k = toSqlValue(keyFd.getJavaType(), entry.getKey());
+          k = MAP_VALUE_ESCAPE.translate(String.valueOf(k));
+          Object v = toSqlValue(valFd.getJavaType(), entry.getValue());
+          v = MAP_VALUE_ESCAPE.translate(String.valueOf(v));
+          sb.append(k).append(MAP_KV_SEP).append(v).append(MAP_ENTRY_SEP);
+        }
+        return sb.toString();
       }
-      return sb.toString();
-    } else if (value instanceof List) {
-      List<? extends MapEntry> list = (List<? extends MapEntry>) value;
-      StringBuilder sb = new StringBuilder();
-      for (MapEntry entry : list) {
-        Object k = toSqlValue(keyFd, entry.getKey());
-        k = MAP_VALUE_ESCAPE.translate(String.valueOf(k));
-        Object v = toSqlValue(valFd, entry.getValue());
-        v = MAP_VALUE_ESCAPE.translate(String.valueOf(v));
-        sb.append(k).append(MAP_KV_SEP).append(v).append(MAP_ENTRY_SEP);
-      }
-      return sb.toString();
+    } catch (TypeMismatchDataAccessException e) {
+      throw new TypeMismatchDataAccessException(
+          "fail to encode map value, fd=" + fd + ", value=`" + value + "`, valueType=" +
+              value.getClass().getName(), e);
     }
     throw new TypeMismatchDataAccessException(
-        "fail to handle toSqlValue, field=" + fd.getFullName() + ", valueType: " +
+        "fail to encode map value, fd=" + fd + ", value=`" + value + "`, valueType=" +
             value.getClass().getName());
   }
 
   protected String encodeListToString(Descriptors.FieldDescriptor fd, Object value) {
-    if (value instanceof Iterable) {
-      StringBuilder sb = new StringBuilder();
-      Iterable<?> list = (Iterable<?>) value;
-      for (Object item : list) {
-        // 只要有一个元素就有一个分隔符，从而保证元素为string类型时，可以添加空字符串值
-        Object v = toSqlValue(fd.getJavaType(), item);
-        v = LIST_VALUE_ESCAPE.translate(String.valueOf(v));
-        sb.append(v).append(LIST_SEP);
+    try {
+      resolveSqlValueType(fd.getJavaType()); // fast fail if not support
+      if (value instanceof Iterable) {
+        StringBuilder sb = new StringBuilder();
+        Iterable<?> list = (Iterable<?>) value;
+        for (Object item : list) {
+          // 只要有一个元素就有一个分隔符，从而保证元素为string类型时，可以添加空字符串值
+          Object v = toSqlValue(fd.getJavaType(), item);
+          v = LIST_VALUE_ESCAPE.translate(String.valueOf(v));
+          sb.append(v).append(LIST_SEP);
+        }
+        return sb.toString();
       }
-      return sb.toString();
-    } else {
-      return String.valueOf(value);
+    } catch (TypeMismatchDataAccessException e) {
+      throw new TypeMismatchDataAccessException(
+          "fail to encode list value, fd=" + fd + ", value=`" + value + "`, valueType=" +
+              value.getClass().getName(), e);
     }
+    throw new TypeMismatchDataAccessException(
+        "fail to encode list value, fd=" + fd + ", value=`" + value + "`, valueType=" +
+            value.getClass().getName());
   }
 
   protected int boolToInt(Object v) {
-    if (v.getClass().equals(boolean.class)) {
-      return (boolean) v ? 1 : 0;
-    }
     if (v.getClass().equals(Boolean.class)) {
       return (Boolean) v ? 1 : 0;
     }
-    if (v.getClass().equals(int.class)) {
-      return ((int) v) != 0 ? 1 : 0;
-    }
     if (v.getClass().equals(Integer.class)) {
-      return ((Integer) v) != 0 ? 1 : 0;
+      int i = (Integer) v;
+      if (i == 0 || i == 1) {
+        return i;
+      }
     }
     throw new TypeMismatchDataAccessException(
-        "Can't convert bool `" + v + "` of class " + v.getClass().getName());
+        "fail to convert, fieldType=" + Descriptors.FieldDescriptor.JavaType.BOOLEAN + ", value=`" +
+            v + "`, valueType=" + v.getClass().getName());
   }
 
   protected int enumToInt(Object v) {
-    if (v instanceof ProtocolMessageEnum) {
-      return ((ProtocolMessageEnum) v).getNumber();
-    }
+//    if (v instanceof ProtocolMessageEnum) {
+//      return ((ProtocolMessageEnum) v).getNumber();
+//    }
     if (v instanceof Internal.EnumLite) {
       return ((Internal.EnumLite) v).getNumber();
-    }
-    if (v.getClass().equals(int.class)) {
-      return (int) v;
     }
     if (v instanceof Number) {
       return ((Number) v).intValue();
     }
     throw new TypeMismatchDataAccessException(
-        "Can't convert enum `" + v + "` of class " + v.getClass().getName());
+        "fail to convert, fieldType=" + Descriptors.FieldDescriptor.JavaType.ENUM + ", value=`" +
+            v + "`, valueType=" + v.getClass().getName());
   }
 
   protected Object toSqlTimestamp(Object v) {
-    if (v.getClass().equals(long.class)) {
-      return new Timestamp((long) v);
-    } else if (v.getClass().equals(Long.class)) {
+    if (v instanceof Long) {
       return new Timestamp(((Long) v));
     } else if (v.getClass().equals(Timestamp.class) || v.getClass().equals(java.sql.Date.class) ||
         v.getClass().equals(java.util.Date.class)) {
       return v;
     }
     throw new TypeMismatchDataAccessException(
-        "Can't convert timestamp `" + v + "` of " + v.getClass().getName());
+        "fail to convert timestamp, value=`" + v + "`, valueType=" + v.getClass().getName());
   }
 
   @Override
@@ -226,16 +259,17 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       Timestamp ts = (Timestamp) sqlValue;
       return ts.getTime();
     } else {
+      resolveSqlValueType(fd.getJavaType()); // fast fail if not support
       return sqlValue;
     }
   }
 
   protected int parseInt(Object sqlValue) {
-    if (sqlValue.getClass().equals(int.class) || sqlValue.getClass().equals(Integer.class)) {
+    if (sqlValue.getClass().equals(Integer.class)) {
       return (int) sqlValue;
     } else {
       throw new TypeMismatchDataAccessException(
-          "should be an int value, sqlValue=" + sqlValue + ", type=" + sqlValue.getClass());
+          "expect an int value, sqlValue=" + sqlValue + ", type=" + sqlValue.getClass());
     }
   }
 
@@ -290,7 +324,10 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
         .collect(Collectors.toList());
   }
 
-  private Function<String, Object> lookupTransform(Descriptors.FieldDescriptor fd) {
+  /**
+   * @see #resolveSqlValueType(Descriptors.FieldDescriptor.JavaType)
+   */
+  protected Function<String, Object> lookupTransform(Descriptors.FieldDescriptor fd) {
     switch (fd.getJavaType()) {
       case BOOLEAN:
         return text -> (Integer.parseInt(Objects.requireNonNull(text)) != 0);
@@ -317,7 +354,24 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   public Class<?> resolveSqlValueType(Descriptors.FieldDescriptor fd) {
     // map/list 使用string拼接
     if (fd.isMapField() || fd.isRepeated()) return String.class;
-    switch (fd.getJavaType()) {
+    // 特殊处理时间field
+    if (isTimestampField(fd)) {
+      return Timestamp.class;
+    }
+    try {
+      return resolveSqlValueType(fd.getJavaType());
+    } catch (TypeMismatchDataAccessException e) {
+      throw new TypeMismatchDataAccessException("field=" + fd, e);
+    }
+  }
+
+  /**
+   * 处理{@code JavaType}到对应{@code sqlValue}类型的映射
+   *
+   * @see #toSqlValue(Descriptors.FieldDescriptor.JavaType, Object)
+   */
+  protected Class<?> resolveSqlValueType(Descriptors.FieldDescriptor.JavaType javaType) {
+    switch (javaType) {
       case BOOLEAN:
         return int.class;
       case STRING:
@@ -329,18 +383,13 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       case INT:
         return int.class;
       case LONG:
-        // 特殊处理时间field
-        if (isTimestampField(fd)) {
-          return Timestamp.class;
-        }
         return long.class;
       case ENUM:
         return int.class;
       case MESSAGE:
       case BYTE_STRING:
       default:
-        throw new TypeMismatchDataAccessException(
-            "Not support " + fd.getJavaType() + " of " + fd.getFullName());
+        throw new TypeMismatchDataAccessException("fail to resolve sql value type for " + javaType);
     }
   }
 

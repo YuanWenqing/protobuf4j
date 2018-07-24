@@ -12,12 +12,16 @@ import static com.google.common.base.Preconditions.*;
  * date: 2018/7/15
  */
 public class SqlConverterRegistry {
-  public static final SqlConverterRegistry instance = buildRegistry();
+  private static final SqlConverterRegistry instance = buildRegistry();
 
   private static SqlConverterRegistry buildRegistry() {
     SqlConverterRegistry registry = new SqlConverterRegistry();
     registry.register(Message.class, ProtoSqlConverter.getInstance());
     return registry;
+  }
+
+  public static SqlConverterRegistry getInstance() {
+    return instance;
   }
 
   private final ConcurrentHashMap<Class<?>, ISqlConverter<?>> cache;
@@ -33,10 +37,10 @@ public class SqlConverterRegistry {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> ISqlConverter<? super T> findSqlConverter(@Nonnull Class<T> beanClass) {
+  public <T> ISqlConverter<? super T> findSqlConverter(@Nonnull Class<T> beanClass) {
     checkNotNull(beanClass);
-    if (instance.cache.containsKey(beanClass)) {
-      return (ISqlConverter<? super T>) instance.cache.get(beanClass);
+    if (this.cache.containsKey(beanClass)) {
+      return (ISqlConverter<? super T>) this.cache.get(beanClass);
     }
     Class<?> superClass = beanClass.getSuperclass();
     if (superClass == null) {
@@ -44,13 +48,13 @@ public class SqlConverterRegistry {
     }
     ISqlConverter<?> converter = findSqlConverter(superClass);
     if (converter != null) {
-      instance.cache.putIfAbsent(beanClass, converter);
+      this.cache.putIfAbsent(beanClass, converter);
       return (ISqlConverter<? super T>) converter;
     }
     for (Class<?> intf : beanClass.getInterfaces()) {
       converter = findSqlConverter(intf);
       if (converter != null) {
-        instance.cache.putIfAbsent(beanClass, converter);
+        this.cache.putIfAbsent(beanClass, converter);
         return (ISqlConverter<? super T>) converter;
       }
     }
