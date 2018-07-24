@@ -11,6 +11,7 @@ import org.springframework.dao.TypeMismatchDataAccessException;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,6 +119,8 @@ public class TestProtoSqlConverter {
     assertEquals(timestamp, sqlConverter.toSqlValue(TestModel.MsgB.class, "create_time", millis));
     assertEquals(timestamp,
         sqlConverter.toSqlValue(TestModel.MsgB.class, "create_time", timestamp));
+    assertEquals(millis, sqlConverter.fromSqlValue(TestModel.MsgB.class, "create_time", timestamp));
+
     Date sqlDate = new Date(millis);
     assertEquals(sqlDate, sqlConverter.toSqlValue(TestModel.MsgB.class, "create_time", sqlDate));
     java.util.Date utilDate = new java.util.Date(millis);
@@ -139,6 +142,7 @@ public class TestProtoSqlConverter {
     assertEquals(1.1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("double"), 1.1));
     assertEquals(1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool"), true));
     assertEquals(0, sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool"), false));
+    assertEquals("1", sqlConverter.toSqlValue(helperA.getFieldDescriptor("string"), 1));
     assertEquals("str", sqlConverter.toSqlValue(helperA.getFieldDescriptor("string"), "str"));
     assertEquals(0,
         sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma"), TestModel.EnumA.EA0));
@@ -331,6 +335,12 @@ public class TestProtoSqlConverter {
         sqlConverter.fromSqlValue(TestModel.MsgA.class, "enuma", 0));
 
     try {
+      sqlConverter.fromSqlValue(TestModel.MsgA.class, "bool", 1.0);
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
       sqlConverter.fromSqlValue(TestModel.MsgA.class, "bytes", null);
       fail();
     } catch (TypeMismatchDataAccessException e) {
@@ -364,7 +374,11 @@ public class TestProtoSqlConverter {
         sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("double_arr"), "1"));
     assertEquals(Lists.newArrayList(true),
         sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("bool_arr"), "1"));
+    assertEquals(Lists.newArrayList(false),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("bool_arr"), "0"));
 
+    assertEquals(Lists.newArrayList(),
+        sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("string_arr"), null));
     assertEquals(Lists.newArrayList(),
         sqlConverter.fromSqlValue(helperA, helperA.getFieldDescriptor("string_arr"), ""));
     assertEquals(Lists.newArrayList(""),
@@ -401,6 +415,9 @@ public class TestProtoSqlConverter {
   @SuppressWarnings("unchecked")
   @Test
   public void testFromSqlValueMap() {
+    assertEquals(Collections.emptyList(),
+        sqlConverter.fromSqlValue(TestModel.MsgA.class, "int32_map", null));
+
     List<MapEntry> mapEntries;
 
     mapEntries = (List<MapEntry>) sqlConverter

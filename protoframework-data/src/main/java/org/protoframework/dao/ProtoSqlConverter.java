@@ -6,7 +6,10 @@ package org.protoframework.dao;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import com.google.protobuf.*;
+import com.google.protobuf.Descriptors;
+import com.google.protobuf.Internal;
+import com.google.protobuf.MapEntry;
+import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.EntityArrays;
 import org.apache.commons.lang3.text.translate.LookupTranslator;
@@ -205,9 +208,9 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   }
 
   protected int enumToInt(Object v) {
-    if (v instanceof ProtocolMessageEnum) {
-      return ((ProtocolMessageEnum) v).getNumber();
-    }
+//    if (v instanceof ProtocolMessageEnum) {
+//      return ((ProtocolMessageEnum) v).getNumber();
+//    }
     if (v instanceof Internal.EnumLite) {
       return ((Internal.EnumLite) v).getNumber();
     }
