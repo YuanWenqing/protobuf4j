@@ -128,6 +128,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   protected String encodeMapToString(Descriptors.FieldDescriptor fd, Object value) {
     Descriptors.FieldDescriptor keyFd = fd.getMessageType().findFieldByName("key");
     Descriptors.FieldDescriptor valFd = fd.getMessageType().findFieldByName("value");
+    resolveSqlValueType(valFd.getJavaType()); // fast fail if not support
     if (value instanceof Map) {
       Map<?, ?> map = (Map<?, ?>) value;
       StringBuilder sb = new StringBuilder();
@@ -157,6 +158,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   }
 
   protected String encodeListToString(Descriptors.FieldDescriptor fd, Object value) {
+    resolveSqlValueType(fd.getJavaType()); // fast fail if not support
     if (value instanceof Iterable) {
       StringBuilder sb = new StringBuilder();
       Iterable<?> list = (Iterable<?>) value;
@@ -331,7 +333,15 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   public Class<?> resolveSqlValueType(Descriptors.FieldDescriptor fd) {
     // map/list 使用string拼接
     if (fd.isMapField() || fd.isRepeated()) return String.class;
-    switch (fd.getJavaType()) {
+    // 特殊处理时间field
+    if (isTimestampField(fd)) {
+      return Timestamp.class;
+    }
+    return resolveSqlValueType(fd.getJavaType());
+  }
+
+  protected Class<?> resolveSqlValueType(Descriptors.FieldDescriptor.JavaType javaType) {
+    switch (javaType) {
       case BOOLEAN:
         return int.class;
       case STRING:
@@ -343,18 +353,13 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       case INT:
         return int.class;
       case LONG:
-        // 特殊处理时间field
-        if (isTimestampField(fd)) {
-          return Timestamp.class;
-        }
         return long.class;
       case ENUM:
         return int.class;
       case MESSAGE:
       case BYTE_STRING:
       default:
-        throw new TypeMismatchDataAccessException(
-            "Not support " + fd.getJavaType() + " of " + fd.getFullName());
+        throw new TypeMismatchDataAccessException("fail to resolve sql value type for " + javaType);
     }
   }
 

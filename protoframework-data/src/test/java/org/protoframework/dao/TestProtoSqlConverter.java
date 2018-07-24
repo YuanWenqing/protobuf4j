@@ -1,6 +1,7 @@
 package org.protoframework.dao;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.protobuf.Descriptors;
 import org.junit.Test;
 import org.protoframework.core.ProtoMessageHelper;
@@ -152,7 +153,7 @@ public class TestProtoSqlConverter {
   @Test
   public void testToSqlValueTypeMismatch() {
     try {
-      sqlConverter.toSqlValue(helperA.getFieldDescriptor("int32"), "");
+      sqlConverter.toSqlValue(helperA.getFieldDescriptor("int32"), 1.1);
       fail();
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());
@@ -191,6 +192,10 @@ public class TestProtoSqlConverter {
 
   @Test
   public void testToSqlValueRepeated() {
+    assertEquals("",
+        sqlConverter.toSqlValue(helperA.getFieldDescriptor("int32_arr"), Lists.newArrayList()));
+    assertEquals("",
+        sqlConverter.toSqlValue(helperA.getFieldDescriptor("int32_arr"), Sets.newHashSet()));
     assertEquals("1,2,",
         sqlConverter.toSqlValue(helperA.getFieldDescriptor("int32_arr"), Lists.newArrayList(1, 2)));
     assertEquals("1,2,", sqlConverter
@@ -221,6 +226,25 @@ public class TestProtoSqlConverter {
         sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool_arr"), Lists.newArrayList(0, 1)));
     assertEquals("2,",
         sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma_arr"), Lists.newArrayList(2)));
+
+    try {
+      sqlConverter.toSqlValue(helperA.getFieldDescriptor("int32_arr"), 1);
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      sqlConverter.toSqlValue(helperA.getFieldDescriptor("bytes_arr"), Lists.newArrayList());
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      sqlConverter.toSqlValue(helperA.getFieldDescriptor("msgb_arr"), Lists.newArrayList());
+      fail();
+    } catch (TypeMismatchDataAccessException e) {
+      System.out.println(e.getMessage());
+    }
   }
 
 }
