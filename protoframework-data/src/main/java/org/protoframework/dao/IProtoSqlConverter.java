@@ -15,11 +15,6 @@ public interface IProtoSqlConverter extends ISqlConverter<Message> {
   Object toSqlValue(Descriptors.FieldDescriptor fd, Object value);
 
   /**
-   * 判断{@code fd}是否是一个时间戳字段
-   */
-  boolean isTimestampField(Descriptors.FieldDescriptor fd);
-
-  /**
    * 将sql类型的值{@code sqlValue}转换为{@code fd}字段的类型的值
    */
   <M extends Message> Object fromSqlValue(ProtoMessageHelper<M> helper,

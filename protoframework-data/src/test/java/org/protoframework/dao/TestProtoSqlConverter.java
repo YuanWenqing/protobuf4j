@@ -1,5 +1,6 @@
 package org.protoframework.dao;
 
+import com.google.common.collect.Lists;
 import com.google.protobuf.Descriptors;
 import org.junit.Test;
 import org.protoframework.core.ProtoMessageHelper;
@@ -16,7 +17,7 @@ import static org.junit.Assert.*;
  * @date: 2018/7/23
  */
 public class TestProtoSqlConverter {
-  private IProtoSqlConverter sqlConverter = ProtoSqlConverter.getInstance();
+  private ProtoSqlConverter sqlConverter = ProtoSqlConverter.getInstance();
   private ProtoMessageHelper<TestModel.MsgA> helperA =
       ProtoMessageHelper.getHelper(TestModel.MsgA.class);
   private ProtoMessageHelper<TestModel.MsgB> helperB =
@@ -142,8 +143,9 @@ public class TestProtoSqlConverter {
         sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma"), TestModel.EnumA.EA4));
 
     // 兼容
-    assertEquals(1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("int32"), 1.0));
-    assertEquals(1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool"), 2));
+    assertEquals(1L, sqlConverter.toSqlValue(helperA.getFieldDescriptor("int64"), 1));
+    assertEquals(1f, sqlConverter.toSqlValue(helperA.getFieldDescriptor("float"), 1));
+    assertEquals(1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool"), 1));
     assertEquals(2, sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma"), 2));
   }
 
@@ -185,6 +187,40 @@ public class TestProtoSqlConverter {
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());
     }
+  }
+
+  @Test
+  public void testToSqlValueRepeated() {
+    assertEquals("1,2,",
+        sqlConverter.toSqlValue(helperA.getFieldDescriptor("int32_arr"), Lists.newArrayList(1, 2)));
+    assertEquals("1,2,", sqlConverter
+        .toSqlValue(helperA.getFieldDescriptor("int64_arr"), Lists.newArrayList(1L, 2L)));
+    assertEquals("1.1,2.2,", sqlConverter
+        .toSqlValue(helperA.getFieldDescriptor("float_arr"), Lists.newArrayList(1.1f, 2.2f)));
+    assertEquals("1.1,2.2,", sqlConverter
+        .toSqlValue(helperA.getFieldDescriptor("double_arr"), Lists.newArrayList(1.1, 2.2)));
+    assertEquals("1,0,", sqlConverter
+        .toSqlValue(helperA.getFieldDescriptor("bool_arr"), Lists.newArrayList(true, false)));
+    assertEquals(",a,", sqlConverter
+        .toSqlValue(helperA.getFieldDescriptor("string_arr"), Lists.newArrayList("", "a")));
+    assertEquals(",",
+        sqlConverter.toSqlValue(helperA.getFieldDescriptor("string_arr"), Lists.newArrayList("")));
+    assertEquals("%2c,",
+        sqlConverter.toSqlValue(helperA.getFieldDescriptor("string_arr"), Lists.newArrayList(",")));
+    assertEquals("%2c%25,", sqlConverter
+        .toSqlValue(helperA.getFieldDescriptor("string_arr"), Lists.newArrayList(",%")));
+    assertEquals("2,0,", sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma_arr"),
+        Lists.newArrayList(TestModel.EnumA.EA2, TestModel.EnumA.EA0)));
+
+    // 兼容
+    assertEquals("1,2,",
+        sqlConverter.toSqlValue(helperA.getFieldDescriptor("int64_arr"), Lists.newArrayList(1, 2)));
+    assertEquals("1.0,2.0,", sqlConverter
+        .toSqlValue(helperA.getFieldDescriptor("double_arr"), Lists.newArrayList(1, 2)));
+    assertEquals("0,1,",
+        sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool_arr"), Lists.newArrayList(0, 1)));
+    assertEquals("2,",
+        sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma_arr"), Lists.newArrayList(2)));
   }
 
 }

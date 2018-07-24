@@ -43,9 +43,9 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   protected static final Splitter.MapSplitter MAP_SPLITTER =
       MAP_ENTRY_SPLITTER.withKeyValueSeparator(MAP_KV_SEP);
 
-  private static final IProtoSqlConverter instance = new ProtoSqlConverter();
+  private static final ProtoSqlConverter instance = new ProtoSqlConverter();
 
-  public static IProtoSqlConverter getInstance() {
+  public static ProtoSqlConverter getInstance() {
     return instance;
   }
 
@@ -78,9 +78,8 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
     }
   }
 
-  @Override
   public boolean isTimestampField(Descriptors.FieldDescriptor fd) {
-    return Descriptors.FieldDescriptor.JavaType.LONG.equals(fd.getJavaType()) &&
+    return !fd.isRepeated() && Descriptors.FieldDescriptor.JavaType.LONG.equals(fd.getJavaType()) &&
         fd.getName().endsWith("_time");
   }
 
@@ -94,12 +93,12 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       case ENUM:
         return enumToInt(value);
       case INT:
-        if (value instanceof Number) {
-          return ((Number) value).intValue();
+        if (value instanceof Integer) {
+          return value;
         }
         break;
       case LONG:
-        if (value instanceof Number) {
+        if (value instanceof Long || value instanceof Integer) {
           return ((Number) value).longValue();
         }
         break;
@@ -153,7 +152,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       return sb.toString();
     }
     throw new TypeMismatchDataAccessException(
-        "fail to handle toSqlValue, field=" + fd.getFullName() + ", valueType: " +
+        "fail to convert map value, fd=" + fd + ", value=`" + value + "`, valueType=" +
             value.getClass().getName());
   }
 
@@ -168,9 +167,10 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
         sb.append(v).append(LIST_SEP);
       }
       return sb.toString();
-    } else {
-      return String.valueOf(value);
     }
+    throw new TypeMismatchDataAccessException(
+        "fail to convert list value, fd=" + fd + ", value=`" + value + "`, valueType=" +
+            value.getClass().getName());
   }
 
   protected int boolToInt(Object v) {
@@ -178,7 +178,10 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       return (Boolean) v ? 1 : 0;
     }
     if (v.getClass().equals(Integer.class)) {
-      return ((Integer) v) != 0 ? 1 : 0;
+      int i = (Integer) v;
+      if (i == 0 || i == 1) {
+        return i;
+      }
     }
     throw new TypeMismatchDataAccessException(
         "fail to convert, fieldType=" + Descriptors.FieldDescriptor.JavaType.BOOLEAN + ", value=`" +
@@ -201,8 +204,8 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   }
 
   protected Object toSqlTimestamp(Object v) {
-    if (v instanceof Number) {
-      return new Timestamp(((Number) v).longValue());
+    if (v instanceof Long) {
+      return new Timestamp(((Long) v));
     } else if (v.getClass().equals(Timestamp.class) || v.getClass().equals(java.sql.Date.class) ||
         v.getClass().equals(java.util.Date.class)) {
       return v;
