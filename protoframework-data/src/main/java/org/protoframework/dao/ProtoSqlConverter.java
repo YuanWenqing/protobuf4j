@@ -94,15 +94,35 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       case ENUM:
         return enumToInt(value);
       case INT:
+        if (value instanceof Number) {
+          return ((Number) value).intValue();
+        }
+        break;
       case LONG:
+        if (value instanceof Number) {
+          return ((Number) value).longValue();
+        }
+        break;
       case FLOAT:
+        if (value instanceof Number) {
+          return ((Number) value).floatValue();
+        }
+        break;
       case DOUBLE:
+        if (value instanceof Number) {
+          return ((Number) value).doubleValue();
+        }
+        break;
       case STRING:
-        return value;
-      default:
-        throw new TypeMismatchDataAccessException(
-            "not support java type: " + javaType + ", value=" + value);
+        if (value instanceof String) {
+          return value;
+        } else {
+          return String.valueOf(value);
+        }
     }
+    throw new TypeMismatchDataAccessException(
+        "not support java type: " + javaType + ", value=" + value + ", valueType=" +
+            value.getClass().getName());
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
@@ -154,14 +174,8 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   }
 
   protected int boolToInt(Object v) {
-    if (v.getClass().equals(boolean.class)) {
-      return (boolean) v ? 1 : 0;
-    }
     if (v.getClass().equals(Boolean.class)) {
       return (Boolean) v ? 1 : 0;
-    }
-    if (v.getClass().equals(int.class)) {
-      return ((int) v) != 0 ? 1 : 0;
     }
     if (v.getClass().equals(Integer.class)) {
       return ((Integer) v) != 0 ? 1 : 0;
@@ -177,9 +191,6 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
     if (v instanceof Internal.EnumLite) {
       return ((Internal.EnumLite) v).getNumber();
     }
-    if (v.getClass().equals(int.class)) {
-      return (int) v;
-    }
     if (v instanceof Number) {
       return ((Number) v).intValue();
     }
@@ -188,9 +199,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   }
 
   protected Object toSqlTimestamp(Object v) {
-    if (v.getClass().equals(long.class)) {
-      return new Timestamp((long) v);
-    } else if (v.getClass().equals(Long.class)) {
+    if (v.getClass().equals(Long.class)) {
       return new Timestamp(((Long) v));
     } else if (v.getClass().equals(Timestamp.class) || v.getClass().equals(java.sql.Date.class) ||
         v.getClass().equals(java.util.Date.class)) {
@@ -231,7 +240,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   }
 
   protected int parseInt(Object sqlValue) {
-    if (sqlValue.getClass().equals(int.class) || sqlValue.getClass().equals(Integer.class)) {
+    if (sqlValue.getClass().equals(Integer.class)) {
       return (int) sqlValue;
     } else {
       throw new TypeMismatchDataAccessException(
