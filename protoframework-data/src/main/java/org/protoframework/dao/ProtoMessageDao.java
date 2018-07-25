@@ -1,9 +1,5 @@
 package org.protoframework.dao;
 
-/**
- * Created by tuqc on 15-3-17.
- */
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -89,10 +85,12 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.sqlLogger = new DaoSqlLogger(messageHelper.getDescriptor().getFullName());
   }
 
+  @Override
   public Class<T> getMessageType() {
     return messageType;
   }
 
+  @Override
   public String getTableName() {
     return tableName;
   }
@@ -101,10 +99,12 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     return messageHelper;
   }
 
+  @Override
   public RowMapper<T> getMessageMapper() {
     return messageMapper;
   }
 
+  @Override
   public JdbcTemplate getJdbcTemplate() {
     return jdbcTemplate;
   }

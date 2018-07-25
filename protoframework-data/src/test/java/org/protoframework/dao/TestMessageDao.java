@@ -31,14 +31,14 @@ public class TestMessageDao {
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
-  private IPrimaryKeyMessageDao<Long, TestModel.DbMsg> dao;
+  private PriKeyProtoMessageDao<Long, TestModel.DbMsg> dao;
   private final String primaryKey = "id";
   private TestModel.DbMsg msgTemplate;
 
   @Before
   public void setup() {
-    dao = new PrimaryProtoMessageDao<>(TestModel.DbMsg.class, primaryKey);
-    ((PrimaryProtoMessageDao<Long, TestModel.DbMsg>) dao).setJdbcTemplate(jdbcTemplate);
+    dao = new PriKeyProtoMessageDao<>(TestModel.DbMsg.class, primaryKey);
+    dao.setJdbcTemplate(jdbcTemplate);
 
     msgTemplate =
         TestModel.DbMsg.newBuilder().setInt32V(32).setInt64V(64).setFloatV(1.23f).setDoubleV(2.345)
@@ -63,8 +63,15 @@ public class TestMessageDao {
   }
 
   @Test
-  public void testSelect() {
+  public void testDao() {
     assertEquals(primaryKey, dao.getPrimaryKey());
+    assertEquals(TestModel.DbMsg.class, dao.getMessageType());
+    assertEquals("db_msg", dao.getTableName());
+    assertTrue(dao.getMessageMapper() instanceof ProtoMessageRowMapper);
+  }
+
+  @Test
+  public void testSelect() {
 
     TestModel.DbMsg msg = dao.selectOneByPrimaryKey(1L);
     assertNotNull(msg);

@@ -3,6 +3,7 @@ package org.protoframework.dao;
 import org.protoframework.sql.*;
 import org.protoframework.sql.clause.SetClause;
 import org.protoframework.sql.clause.WhereClause;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import javax.annotation.Nonnull;
@@ -15,6 +16,13 @@ import java.util.Map;
  * 基本的接口
  */
 public interface IMessageDao<T> {
+  Class<T> getMessageType();
+
+  String getTableName();
+
+  RowMapper<T> getMessageMapper();
+
+  JdbcTemplate getJdbcTemplate();
 
   /**
    * 新增一条数据
