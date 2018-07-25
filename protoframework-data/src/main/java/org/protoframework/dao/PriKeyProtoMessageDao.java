@@ -36,6 +36,7 @@ public class PriKeyProtoMessageDao<K, T extends Message> extends ProtoMessageDao
     return selectOne(FieldValues.eq(primaryKey, key));
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public Map<K, T> selectMultiByPrimaryKey(Collection<K> keys) {
     if (keys.isEmpty()) {

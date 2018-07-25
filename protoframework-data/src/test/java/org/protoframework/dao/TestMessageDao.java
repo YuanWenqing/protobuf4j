@@ -53,13 +53,13 @@ public class TestMessageDao {
             setCreateTime(System.currentTimeMillis()).build();
   }
 
-  private void prepare(String strValue, int num) {
+  private int[] prepare(String strValue, int num) {
     List<TestModel.DbMsg> msgs = Lists.newArrayListWithExpectedSize(num);
     for (int i = 0; i < num; i++) {
       TestModel.DbMsg msg = TestModel.DbMsg.newBuilder().setStringV(strValue).setInt32V(i).build();
       msgs.add(msg);
     }
-    dao.insertMulti(msgs);
+    return dao.insertMulti(msgs);
   }
 
   @Test
@@ -119,7 +119,11 @@ public class TestMessageDao {
   @Test
   public void testMulti() {
     // insert multi
-    prepare("testMulti", 3);
+    int[] rowArr = prepare("testMulti", 3);
+    assertEquals(3, rowArr.length);
+    for (int i = 0; i < rowArr.length; i++) {
+      assertEquals(1, rowArr[i]);
+    }
     // retrieve inserted data
     List<TestModel.DbMsg> msgs = dao.selectAll(FieldValues.eq("string_v", "testMulti"));
     assertEquals(3, msgs.size());
@@ -230,7 +234,8 @@ public class TestMessageDao {
     String sql = "insert into db_msg (int64_v) values (?)";
     long time = System.currentTimeMillis();
     RawSql rawSql = new RawSql(sql, Lists.newArrayList(time));
-    dao.doRawSql(rawSql);
+    int rows = dao.doRawSql(rawSql);
+    assertEquals(1, rows);
     assertTrue(dao.selectAll(FieldValues.eq("int64_v", time)).size() > 0);
   }
 }

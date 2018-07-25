@@ -157,7 +157,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   ////////////////////////////// raw sql //////////////////////////////
 
   @Override
-  public int doRawSql(RawSql rawSql) {
+  public int doRawSql(@Nonnull RawSql rawSql) {
     return execSqlAndLog(rawSql, sqlLogger.raw());
   }
 
@@ -356,7 +356,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   }
 
   @Override
-  public T selectOne(WhereClause where) {
+  public T selectOne(@Nonnull WhereClause where) {
     checkNotNull(where);
     if (where.getPagination() == null) {
       where.limit(1);
@@ -387,7 +387,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   }
 
   @Override
-  public <V> List<V> doSelect(@Nonnull SelectSql selectSql, RowMapper<V> mapper) {
+  public <V> List<V> doSelect(@Nonnull SelectSql selectSql, @Nonnull RowMapper<V> mapper) {
     checkNotNull(selectSql);
     String sqlTemplate = selectSql.toSqlTemplate(new StringBuilder()).toString();
     List<ISqlValue> sqlValues = selectSql.collectSqlValue(Lists.newArrayList());
@@ -411,7 +411,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   }
 
   @Override
-  public int doDelete(DeleteSql deleteSql) {
+  public int doDelete(@Nonnull DeleteSql deleteSql) {
     checkNotNull(deleteSql);
     return execSqlAndLog(deleteSql, sqlLogger.delete());
   }
