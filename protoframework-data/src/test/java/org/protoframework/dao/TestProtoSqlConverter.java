@@ -255,7 +255,7 @@ public class TestProtoSqlConverter {
     }
   }
 
-  @SuppressWarnings("rawtype")
+  @SuppressWarnings({"rawtype", "unchecked"})
   private Map map(Object... kv) {
     Map map = new LinkedHashMap();
     if (kv == null || kv.length == 0) {
