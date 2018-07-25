@@ -102,7 +102,7 @@ public class TestMessageDao {
   public void testInsertIgnore() {
     // ignore
     TestModel.DbMsg msg = TestModel.DbMsg.newBuilder().setId(1).build();
-    assertFalse(dao.insertIgnore(msg));
+    assertEquals(0, dao.insertIgnore(msg));
     int[] row = dao.insertIgnoreMulti(Lists.newArrayList(msg, msg));
     assertEquals(2, row.length);
     assertArrayEquals(new int[]{0, 0}, row);
@@ -111,7 +111,7 @@ public class TestMessageDao {
     final long now = System.currentTimeMillis();
     msg = TestModel.DbMsg.newBuilder().setInt64V(now).setCreateTime(now)
         .setStringV("testInsertIgnore").build();
-    assertTrue(dao.insertIgnore(msg));
+    assertEquals(1, dao.insertIgnore(msg));
     row = dao.insertIgnoreMulti(Lists.newArrayList(msg, msg.toBuilder().setId(1).build()));
     assertEquals(2, row.length);
     assertArrayEquals(new int[]{1, 0}, row);
@@ -154,11 +154,12 @@ public class TestMessageDao {
     int rows = dao.deleteByPrimaryKey(id);
     assertEquals(1, rows);
     assertEquals(count, dao.selectAll().size());
+    assertEquals(1, dao.insert(TestModel.DbMsg.getDefaultInstance()));
   }
 
   @Test
   public void testInsertAndFail() {
-    assertTrue(dao.insert(msgTemplate));
+    assertEquals(1, dao.insert(msgTemplate));
     try {
       dao.insert(TestModel.DbMsg.newBuilder().setId(1).build());
       fail();

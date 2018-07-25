@@ -167,10 +167,9 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
    * 插入记录
    */
   @Override
-  public boolean insert(@Nonnull T message) {
+  public int insert(@Nonnull T message) {
     checkNotNull(message);
-    int rows = doInsert(SQL_INSERT_TEMPLATE, message, null);
-    return rows > 0;
+    return doInsert(SQL_INSERT_TEMPLATE, message, null);
   }
 
   @Override
@@ -185,14 +184,10 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     return keyHolder.getKey();
   }
 
-  /**
-   * 插入记录。如果记录不存在，插入；如果记录已经存在，什么也不做，直接返回。
-   */
   @Override
-  public boolean insertIgnore(@Nonnull T message) {
+  public int insertIgnore(@Nonnull T message) {
     checkNotNull(message);
-    int rows = doInsert(SQL_INSERT_IGNORE_TEMPLATE, message, null);
-    return rows > 0;
+    return doInsert(SQL_INSERT_IGNORE_TEMPLATE, message, null);
   }
 
   /**
@@ -200,9 +195,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
    */
   protected int doInsert(String sqlTemplate, T message, KeyHolder keyHolder) {
     Set<String> fields = getInsertFields(message);
-    if (fields.isEmpty()) {
-      throw new RuntimeException("empty message to insert into " + tableName);
-    }
     final String sql = String.format(sqlTemplate, this.tableName, StringUtils.join(fields, ","),
         StringUtils.repeat("?", ",", fields.size()));
     PreparedStatementCreator creator = makeInsertCreator(sql, fields, message);

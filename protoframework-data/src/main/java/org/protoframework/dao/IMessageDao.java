@@ -27,9 +27,9 @@ public interface IMessageDao<T> {
   /**
    * 新增一条数据
    *
-   * @return 是否成功
+   * @return 插入的条数
    */
-  boolean insert(@Nonnull T message);
+  int insert(@Nonnull T message);
 
   /**
    * 新增一条数据并返回主键
@@ -41,9 +41,9 @@ public interface IMessageDao<T> {
   /**
    * 新增一条数据，唯一键冲突时会忽略，导致新增失败
    *
-   * @return 是否成功
+   * @return 插入的条数
    */
-  boolean insertIgnore(@Nonnull T message);
+  int insertIgnore(@Nonnull T message);
 
   /**
    * 批量新增多条数据
