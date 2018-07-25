@@ -145,7 +145,7 @@ public interface IMessageDao<T> {
   /**
    * @return 影响的数据条数
    */
-  int doSql(@Nonnull RawSql rawSql);
+  int doRawSql(@Nonnull RawSql rawSql);
 
   /**
    * 根据条件count

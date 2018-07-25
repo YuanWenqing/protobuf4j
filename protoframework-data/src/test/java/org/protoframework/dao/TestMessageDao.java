@@ -1,14 +1,23 @@
 package org.protoframework.dao;
 
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.protoframework.core.ProtoMessageHelper;
 import org.protoframework.core.proto.data.TestModel;
+import org.protoframework.sql.FieldValues;
+import org.protoframework.sql.IExpression;
+import org.protoframework.sql.RawSql;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -24,21 +33,41 @@ public class TestMessageDao {
 
   private IPrimaryKeyMessageDao<Long, TestModel.DbMsg> dao;
   private final String primaryKey = "id";
+  private TestModel.DbMsg msgTemplate;
 
   @Before
   public void setup() {
     dao = new PrimaryProtoMessageDao<>(TestModel.DbMsg.class, primaryKey);
     ((PrimaryProtoMessageDao<Long, TestModel.DbMsg>) dao).setJdbcTemplate(jdbcTemplate);
+
+    msgTemplate =
+        TestModel.DbMsg.newBuilder().setInt32V(32).setInt64V(64).setFloatV(1.23f).setDoubleV(2.345)
+            .setBoolV(true).setStringV("string").setEnumaV(TestModel.EnumA.EA2).addInt32Arr(1)
+            .addInt32Arr(2).addInt64Arr(100).addInt64Arr(200).addFloatArr(0.123f)
+            .addDoubleArr(0.987).addBoolArr(false).addBoolArr(true).addStringArr("%")
+            .addStringArr(",").addEnumaArr(TestModel.EnumA.EA0).addEnumaArr(TestModel.EnumA.EA2)
+            .addEnumaArr(TestModel.EnumA.EA4).putInt32Map("a", 2).putInt64Map("%", 100)
+            .putFloatMap(";", 0333f).putDoubleMap(",", 0.222).putBoolMap(1, true)
+            .putBoolMap(0, false).putStringMap("%", "%").putStringMap(";", ";%")
+            .putStringMap("%;", "%;").putEnumaMap("a", TestModel.EnumA.EA4).
+            setCreateTime(System.currentTimeMillis()).build();
   }
 
-  @Test
-  public void testDaoInfo() {
-    assertEquals(primaryKey, dao.getPrimaryKey());
+  private void prepare(String strValue, int num) {
+    List<TestModel.DbMsg> msgs = Lists.newArrayListWithExpectedSize(num);
+    for (int i = 0; i < num; i++) {
+      TestModel.DbMsg msg = TestModel.DbMsg.newBuilder().setStringV(strValue).setInt32V(i).build();
+      msgs.add(msg);
+    }
+    dao.insertMulti(msgs);
   }
 
   @Test
   public void testSelect() {
+    assertEquals(primaryKey, dao.getPrimaryKey());
+
     TestModel.DbMsg msg = dao.selectOneByPrimaryKey(1L);
+    assertNotNull(msg);
     System.out.println(ProtoMessageHelper.printToString(msg));
     assertEquals(1L, msg.getId());
     assertEquals(10, msg.getInt32V());
@@ -46,4 +75,155 @@ public class TestMessageDao {
     assertTrue(0 < msg.getCreateTime() && msg.getCreateTime() <= System.currentTimeMillis());
   }
 
+  @Test
+  public void testUpdate() {
+    TestModel.DbMsg oldItem = dao.selectOneByPrimaryKey(1L);
+    assertNotNull(oldItem);
+    TestModel.DbMsg newItem =
+        oldItem.toBuilder().addInt32Arr(1).setCreateTime(oldItem.getCreateTime() + 100).build();
+    int rows = dao.updateMessageByPrimaryKey(newItem, oldItem);
+    assertEquals(1, rows);
+    TestModel.DbMsg msg = dao.selectOneByPrimaryKey(1L);
+    assertNotNull(msg);
+    assertEquals(oldItem.getInt32ArrCount() + 1, msg.getInt32ArrCount());
+    assertEquals(1, msg.getInt32Arr(oldItem.getInt32ArrCount()));
+    assertEquals(oldItem.getCreateTime() + 100, msg.getCreateTime());
+  }
+
+  @Test
+  public void testInsertIgnore() {
+    // ignore
+    TestModel.DbMsg msg = TestModel.DbMsg.newBuilder().setId(1).build();
+    assertFalse(dao.insertIgnore(msg));
+    int[] row = dao.insertIgnoreMulti(Lists.newArrayList(msg, msg));
+    assertEquals(2, row.length);
+    assertArrayEquals(new int[]{0, 0}, row);
+
+    // not ignore
+    final long now = System.currentTimeMillis();
+    msg = TestModel.DbMsg.newBuilder().setInt64V(now).setCreateTime(now)
+        .setStringV("testInsertIgnore").build();
+    assertTrue(dao.insertIgnore(msg));
+    row = dao.insertIgnoreMulti(Lists.newArrayList(msg, msg.toBuilder().setId(1).build()));
+    assertEquals(2, row.length);
+    assertArrayEquals(new int[]{1, 0}, row);
+  }
+
+  @Test
+  public void testMulti() {
+    // insert multi
+    prepare("testMulti", 3);
+    // retrieve inserted data
+    List<TestModel.DbMsg> msgs = dao.selectAll(FieldValues.eq("string_v", "testMulti"));
+    assertEquals(3, msgs.size());
+    List<Long> ids = Lists.transform(msgs, TestModel.DbMsg::getId);
+    // select multi
+    Map<Long, TestModel.DbMsg> map = dao.selectMultiByPrimaryKey(ids);
+    assertEquals(3, msgs.size());
+    // delete multi
+    int rows = dao.deleteMultiByPrimaryKey(ids);
+    assertEquals(3, rows);
+    // assert after delete
+    msgs = dao.selectAll(FieldValues.eq("string_v", "testMulti"));
+    assertEquals(0, msgs.size());
+    map = dao.selectMultiByPrimaryKey(ids);
+    assertEquals(0, msgs.size());
+    rows = dao.delete(FieldValues.eq("string_v", "testMulti"));
+    assertEquals(0, rows);
+  }
+
+  @Test
+  public void testInsertAndDelete() {
+    int count = dao.selectAll().size();
+    long id = dao.insertReturnKey(msgTemplate).longValue();
+    TestModel.DbMsg msg = dao.selectOneByPrimaryKey(id);
+    assertEquals(msgTemplate, msg.toBuilder().clearId().build());
+    assertEquals(count + 1, dao.selectAll().size());
+    int rows = dao.deleteByPrimaryKey(id);
+    assertEquals(1, rows);
+    assertEquals(count, dao.selectAll().size());
+  }
+
+  @Test
+  public void testInsertAndFail() {
+    assertTrue(dao.insert(msgTemplate));
+    try {
+      dao.insert(TestModel.DbMsg.newBuilder().setId(1).build());
+      fail();
+    } catch (Exception e) {
+      System.out.println(e.getClass().getName() + ": " + e.getMessage());
+    }
+  }
+
+  @Test
+  public void testIterator() {
+    prepare("testIterator", 4);
+
+    Iterator<TestModel.DbMsg> iter1 = dao.selectAll().iterator();
+    Iterator<TestModel.DbMsg> iter2 = dao.iterator(2);
+    while (iter1.hasNext()) {
+      assertTrue(iter2.hasNext());
+      assertEquals(iter1.next(), iter2.next());
+    }
+    assertFalse(iter2.hasNext());
+
+    IExpression cond = FieldValues.eq("string_v", "testIterator");
+    iter1 = dao.selectAll(cond).iterator();
+    iter2 = dao.iterator(cond, 2);
+    while (iter1.hasNext()) {
+      assertTrue(iter2.hasNext());
+      assertEquals(iter1.next(), iter2.next());
+    }
+    assertFalse(iter2.hasNext());
+
+    iter2 = dao.iterator(FieldValues.lt("id", 0), 100);
+    assertFalse(iter2.hasNext());
+  }
+
+  @Test
+  public void testAggregate() {
+    int num = 7;
+    prepare("testAggregate", num);
+    IExpression cond = FieldValues.eq("string_v", "testAggregate");
+    IExpression expr = FieldValues.add("int32_v", 1);
+
+    int expectCount = dao.selectAll().size();
+    assertEquals(expectCount, dao.count(null));
+
+    expectCount = dao.selectAll(cond).size();
+    assertEquals(expectCount, dao.count(cond));
+
+    int sum = 0;
+    for (int i = 0; i < num; i++) {
+      sum += i;
+    }
+    assertEquals(sum, dao.sum("int32_v", cond));
+    assertEquals(sum + num * 1, dao.sum(expr, cond));
+
+    assertEquals(num - 1, (int) dao.max("int32_v", cond));
+    assertEquals(num, (int) dao.max(expr, cond, new SingleColumnRowMapper<Integer>()));
+    assertNull(dao.max("int32_v", FieldValues.eq("string_v", "aaaaaaaaaaaaa")));
+
+    assertEquals(0, (int) dao.min("int32_v", cond));
+    assertEquals(1, (int) dao.min(expr, cond, new SingleColumnRowMapper<Integer>()));
+
+    prepare("testAggregate1", 3);
+    Map<String, Integer> map = dao.groupCount("string_v");
+    System.out.println(map);
+    assertEquals(num, map.get("testAggregate").intValue());
+    assertEquals(3, map.get("testAggregate1").intValue());
+    map = dao.groupCount("string_v", cond);
+    System.out.println(map);
+    assertEquals(1, map.size());
+    assertEquals(num, map.get("testAggregate").intValue());
+  }
+
+  @Test
+  public void testDoSql() {
+    String sql = "insert into db_msg (int64_v) values (?)";
+    long time = System.currentTimeMillis();
+    RawSql rawSql = new RawSql(sql, Lists.newArrayList(time));
+    dao.doRawSql(rawSql);
+    assertTrue(dao.selectAll(FieldValues.eq("int64_v", time)).size() > 0);
+  }
 }

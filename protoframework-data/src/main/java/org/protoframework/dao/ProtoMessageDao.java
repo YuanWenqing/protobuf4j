@@ -157,7 +157,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   ////////////////////////////// raw sql //////////////////////////////
 
   @Override
-  public int doSql(RawSql rawSql) {
+  public int doRawSql(RawSql rawSql) {
     return execSqlAndLog(rawSql, sqlLogger.raw());
   }
 
