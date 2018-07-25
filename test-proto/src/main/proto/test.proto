@@ -51,3 +51,34 @@ message MsgB {
 
   int64 create_time = 50;
 }
+
+// 用于dao测试的数据结构
+message DbMsg {
+  int64 id = 1;
+
+  int32 int32_v = 2;
+  int64 int64_v = 3;
+  float float_v = 4;
+  double double_v = 5;
+  bool bool_v = 6;
+  string string_v = 7;
+  EnumA enuma_v = 8;
+
+  repeated int32 int32_arr = 11;
+  repeated int64 int64_arr = 12;
+  repeated float float_arr = 13;
+  repeated double double_arr = 14;
+  repeated bool bool_arr = 15;
+  repeated string string_arr = 16;
+  repeated EnumA enuma_arr = 17;
+
+  map<string, int32> int32_map = 21;
+  map<string, int64> int64_map = 22;
+  map<string, float> float_map = 23;
+  map<string, double> double_map = 24;
+  map<int32, bool> bool_map = 25;
+  map<string, string> string_map = 26;
+  map<string, EnumA> enuma_map = 27;
+
+  int64 create_time = 50;
+}
