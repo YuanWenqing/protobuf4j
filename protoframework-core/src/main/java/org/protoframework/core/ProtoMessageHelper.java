@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
@@ -41,6 +42,16 @@ public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
     Preconditions.checkNotNull(messageOrBuilder);
     return (ProtoMessageHelper<T>) getHelper(
         messageOrBuilder.getDefaultInstanceForType().getClass());
+  }
+
+  /**
+   * @see #toString(Message)
+   */
+  public static String printToString(@Nullable Message message) {
+    if (message == null) {
+      return "null";
+    }
+    return getHelper(message).toString(message);
   }
 
   private static final String METHOD_GET_DESCRIPTOR = "getDescriptor";

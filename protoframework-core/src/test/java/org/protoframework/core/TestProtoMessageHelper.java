@@ -249,6 +249,8 @@ public class TestProtoMessageHelper {
 
   @Test
   public void testToString() {
+    System.out.println(ProtoMessageHelper.printToString(null));
+    System.out.println(ProtoMessageHelper.printToString(MsgsForTest.allSetMsgA));
     System.out.println("null: " + helper.toString(null));
     System.out.println("empty: " + helper.toString(TestModel.MsgA.getDefaultInstance()));
     System.out.println("MsgsForTest.allSetMsgA: " + helper.toString(MsgsForTest.allSetMsgA));
