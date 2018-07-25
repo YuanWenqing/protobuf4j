@@ -36,6 +36,11 @@ subprojects {
     apply plugin: "java"
     apply plugin: "jacoco"
 
+    jacocoTestReport.dependsOn(test)
+    jacocoTestReport << {
+        println jacocoTestReport.reports.html.entryPoint
+    }
+
     // build dir change to out
     project.buildDir = "out"
 
