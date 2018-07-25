@@ -250,6 +250,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     Set<String> used = getInsertFields(messages);
     final String sql = String.format(sqlTemplate, this.tableName, StringUtils.join(used, ","),
         StringUtils.repeat("?", ",", used.size()));
+    timer.restart();
     try {
       return this.getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
         @Override
