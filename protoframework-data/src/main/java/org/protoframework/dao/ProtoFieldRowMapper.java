@@ -26,8 +26,14 @@ public class ProtoFieldRowMapper<F> implements RowMapper<F> {
 
   public ProtoFieldRowMapper(@Nonnull ProtoMessageHelper<?> messageHelper,
       @Nonnull IProtoSqlConverter sqlConverter, @Nonnull FieldDescriptor fd) {
+    if (fd.isRepeated()) {
+      throw new UnsupportedOperationException(
+          "not supported for repeated field, field=" + fd.getFullName());
+    }
     if (fd.getJavaType().equals(FieldDescriptor.JavaType.ENUM)) {
-      throw new RuntimeException("not supported for enum field, field=" + fd.getFullName());
+      throw new UnsupportedOperationException(
+          "not supported for enum field, field=" + fd.getFullName() + ", enumType=" +
+              fd.getEnumType().getFullName());
     }
     this.messageHelper = messageHelper;
     this.sqlConverter = sqlConverter;

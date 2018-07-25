@@ -9,6 +9,7 @@ import org.protoframework.core.proto.data.TestModel;
 import org.protoframework.sql.FieldValues;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.RawSql;
+import org.protoframework.sql.clause.WhereClause;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -73,7 +74,6 @@ public class TestMessageDao {
 
   @Test
   public void testSelect() {
-
     TestModel.DbMsg msg = dao.selectOneByPrimaryKey(1L);
     assertNotNull(msg);
     System.out.println(ProtoMessageHelper.printToString(msg));
@@ -81,6 +81,9 @@ public class TestMessageDao {
     assertEquals(10, msg.getInt32V());
     assertEquals(100L, msg.getInt64V());
     assertTrue(0 < msg.getCreateTime() && msg.getCreateTime() <= System.currentTimeMillis());
+
+    assertNull(dao.selectOneByPrimaryKey(-1L));
+    assertNotNull(dao.selectOne(new WhereClause()));
   }
 
   @Test
@@ -96,6 +99,8 @@ public class TestMessageDao {
     assertEquals(oldItem.getInt32ArrCount() + 1, msg.getInt32ArrCount());
     assertEquals(1, msg.getInt32Arr(oldItem.getInt32ArrCount()));
     assertEquals(oldItem.getCreateTime() + 100, msg.getCreateTime());
+
+    assertEquals(0, dao.updateMessageByPrimaryKey(msg, msg));
   }
 
   @Test
@@ -113,6 +118,7 @@ public class TestMessageDao {
         .setStringV("testInsertIgnore").build();
     assertEquals(1, dao.insertIgnore(msg));
     row = dao.insertIgnoreMulti(Lists.newArrayList(msg, msg.toBuilder().setId(1).build()));
+    // TODO: 这里在h2 db上会插入一个id=0的数据，有问题
     assertEquals(2, row.length);
     assertArrayEquals(new int[]{1, 0}, row);
   }
@@ -191,6 +197,9 @@ public class TestMessageDao {
 
     iter2 = dao.iterator(FieldValues.lt("id", 0), 100);
     assertFalse(iter2.hasNext());
+
+    iter2 = dao.iterator(new WhereClause().limit(0));
+    assertFalse(iter2.hasNext());
   }
 
   @Test
@@ -239,5 +248,21 @@ public class TestMessageDao {
     int rows = dao.doRawSql(rawSql);
     assertEquals(1, rows);
     assertTrue(dao.selectAll(FieldValues.eq("int64_v", time)).size() > 0);
+  }
+
+  @Test
+  public void testNotSupport() {
+    try {
+      dao.max("enuma_v", null);
+      fail();
+    } catch (UnsupportedOperationException e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      dao.max("int32_arr", null);
+      fail();
+    } catch (UnsupportedOperationException e) {
+      System.out.println(e.getMessage());
+    }
   }
 }
