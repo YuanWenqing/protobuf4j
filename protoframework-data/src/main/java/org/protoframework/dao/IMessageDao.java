@@ -135,15 +135,6 @@ public interface IMessageDao<T> {
    *
    * @return 更新的数据条数
    */
-  default int update(@Nonnull SetClause setClause) {
-    return update(setClause, null);
-  }
-
-  /**
-   * 根据条件更新字段
-   *
-   * @return 更新的数据条数
-   */
   int update(@Nonnull SetClause setClause, @Nullable IExpression cond);
 
   /**
