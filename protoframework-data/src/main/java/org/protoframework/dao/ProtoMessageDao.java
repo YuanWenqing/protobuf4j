@@ -1,9 +1,5 @@
 package org.protoframework.dao;
 
-/**
- * Created by tuqc on 15-3-17.
- */
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -89,10 +85,12 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.sqlLogger = new DaoSqlLogger(messageHelper.getDescriptor().getFullName());
   }
 
+  @Override
   public Class<T> getMessageType() {
     return messageType;
   }
 
+  @Override
   public String getTableName() {
     return tableName;
   }
@@ -101,10 +99,12 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     return messageHelper;
   }
 
+  @Override
   public RowMapper<T> getMessageMapper() {
     return messageMapper;
   }
 
+  @Override
   public JdbcTemplate getJdbcTemplate() {
     return jdbcTemplate;
   }
@@ -157,7 +157,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   ////////////////////////////// raw sql //////////////////////////////
 
   @Override
-  public int doSql(RawSql rawSql) {
+  public int doRawSql(@Nonnull RawSql rawSql) {
     return execSqlAndLog(rawSql, sqlLogger.raw());
   }
 
@@ -167,10 +167,9 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
    * 插入记录
    */
   @Override
-  public boolean insert(@Nonnull T message) {
+  public int insert(@Nonnull T message) {
     checkNotNull(message);
-    int rows = doInsert(SQL_INSERT_TEMPLATE, message, null);
-    return rows > 0;
+    return doInsert(SQL_INSERT_TEMPLATE, message, null);
   }
 
   @Override
@@ -185,14 +184,10 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     return keyHolder.getKey();
   }
 
-  /**
-   * 插入记录。如果记录不存在，插入；如果记录已经存在，什么也不做，直接返回。
-   */
   @Override
-  public boolean insertIgnore(@Nonnull T message) {
+  public int insertIgnore(@Nonnull T message) {
     checkNotNull(message);
-    int rows = doInsert(SQL_INSERT_IGNORE_TEMPLATE, message, null);
-    return rows > 0;
+    return doInsert(SQL_INSERT_IGNORE_TEMPLATE, message, null);
   }
 
   /**
@@ -200,9 +195,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
    */
   protected int doInsert(String sqlTemplate, T message, KeyHolder keyHolder) {
     Set<String> fields = getInsertFields(message);
-    if (fields.isEmpty()) {
-      throw new RuntimeException("empty message to insert into " + tableName);
-    }
     final String sql = String.format(sqlTemplate, this.tableName, StringUtils.join(fields, ","),
         StringUtils.repeat("?", ",", fields.size()));
     PreparedStatementCreator creator = makeInsertCreator(sql, fields, message);
@@ -250,6 +242,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     Set<String> used = getInsertFields(messages);
     final String sql = String.format(sqlTemplate, this.tableName, StringUtils.join(used, ","),
         StringUtils.repeat("?", ",", used.size()));
+    timer.restart();
     try {
       return this.getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
         @Override
@@ -355,7 +348,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   }
 
   @Override
-  public T selectOne(WhereClause where) {
+  public T selectOne(@Nonnull WhereClause where) {
     checkNotNull(where);
     if (where.getPagination() == null) {
       where.limit(1);
@@ -386,7 +379,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   }
 
   @Override
-  public <V> List<V> doSelect(@Nonnull SelectSql selectSql, RowMapper<V> mapper) {
+  public <V> List<V> doSelect(@Nonnull SelectSql selectSql, @Nonnull RowMapper<V> mapper) {
     checkNotNull(selectSql);
     String sqlTemplate = selectSql.toSqlTemplate(new StringBuilder()).toString();
     List<ISqlValue> sqlValues = selectSql.collectSqlValue(Lists.newArrayList());
@@ -410,7 +403,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   }
 
   @Override
-  public int doDelete(DeleteSql deleteSql) {
+  public int doDelete(@Nonnull DeleteSql deleteSql) {
     checkNotNull(deleteSql);
     return execSqlAndLog(deleteSql, sqlLogger.delete());
   }

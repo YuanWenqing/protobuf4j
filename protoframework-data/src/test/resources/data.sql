@@ -1,0 +1,1 @@
+INSERT INTO db_msg (id,int32_v,int64_v) values (1,10,100);

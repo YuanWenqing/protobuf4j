@@ -3,6 +3,7 @@ package org.protoframework.dao;
 import org.protoframework.sql.*;
 import org.protoframework.sql.clause.SetClause;
 import org.protoframework.sql.clause.WhereClause;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import javax.annotation.Nonnull;
@@ -15,13 +16,20 @@ import java.util.Map;
  * 基本的接口
  */
 public interface IMessageDao<T> {
+  Class<T> getMessageType();
+
+  String getTableName();
+
+  RowMapper<T> getMessageMapper();
+
+  JdbcTemplate getJdbcTemplate();
 
   /**
    * 新增一条数据
    *
-   * @return 是否成功
+   * @return 插入的条数
    */
-  boolean insert(@Nonnull T message);
+  int insert(@Nonnull T message);
 
   /**
    * 新增一条数据并返回主键
@@ -33,9 +41,9 @@ public interface IMessageDao<T> {
   /**
    * 新增一条数据，唯一键冲突时会忽略，导致新增失败
    *
-   * @return 是否成功
+   * @return 插入的条数
    */
-  boolean insertIgnore(@Nonnull T message);
+  int insertIgnore(@Nonnull T message);
 
   /**
    * 批量新增多条数据
@@ -135,15 +143,6 @@ public interface IMessageDao<T> {
    *
    * @return 更新的数据条数
    */
-  default int update(@Nonnull SetClause setClause) {
-    return update(setClause, null);
-  }
-
-  /**
-   * 根据条件更新字段
-   *
-   * @return 更新的数据条数
-   */
   int update(@Nonnull SetClause setClause, @Nullable IExpression cond);
 
   /**
@@ -154,7 +153,7 @@ public interface IMessageDao<T> {
   /**
    * @return 影响的数据条数
    */
-  int doSql(@Nonnull RawSql rawSql);
+  int doRawSql(@Nonnull RawSql rawSql);
 
   /**
    * 根据条件count

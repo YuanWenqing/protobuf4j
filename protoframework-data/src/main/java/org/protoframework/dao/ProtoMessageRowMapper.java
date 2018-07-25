@@ -96,6 +96,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
 
     for (int index = 1; index <= columnCount; index++) {
       String column = JdbcUtils.lookupColumnName(rsmd, index);
+      column = column.toLowerCase(); // TODO: always got upper case, but why?
       FieldDescriptor fd = this.messageHelper.getFieldDescriptor(column);
       if (fd != null) {
         Object value = null;
