@@ -128,8 +128,7 @@ project(':protoframework-data') {
         testCompile project(":test-proto") // dao testcase use this
         testCompile 'org.springframework:spring-context:4.3.18.RELEASE'
         testCompile 'org.springframework:spring-test:4.3.18.RELEASE'
-        testCompile 'org.hsqldb:hsqldb:2.4.0' // embedded derby database and jdbc driver
-
+        testCompile 'com.h2database:h2:1.4.197' // embedded h2 database and jdbc driver
     }
 }
 project(':protoframework-grpc') {
