@@ -116,16 +116,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.jdbcTemplate = jdbcTemplate;
   }
 
-  private int execSqlAndLog(ISqlStatement sqlStatement, Logger logger) {
-    SqlStatementExecution execution = new SqlStatementExecution(sqlStatement);
-    timer.restart();
-    try {
-      return this.jdbcTemplate.update(execution.getStatementCreator());
-    } finally {
-      execution.log(logger, timer.stop(TimeUnit.MILLISECONDS));
-    }
-  }
-
   private List<Object> convertSqlValues(List<ISqlValue> sqlValues) {
     List<Object> values = Lists.newArrayListWithExpectedSize(sqlValues.size());
     for (ISqlValue sqlValue : sqlValues) {
@@ -144,7 +134,13 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   @Override
   public int doRawSql(@Nonnull RawSql rawSql) {
-    return execSqlAndLog(rawSql, sqlLogger.raw());
+    SqlStatementExecution execution = new SqlStatementExecution(rawSql);
+    timer.restart();
+    try {
+      return this.jdbcTemplate.update(execution.getStatementCreator());
+    } finally {
+      execution.log(sqlLogger.raw(), timer.stop(TimeUnit.MILLISECONDS));
+    }
   }
 
   ////////////////////////////// insert //////////////////////////////
@@ -191,7 +187,13 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   }
 
   public int doInsert(@Nonnull InsertSql insertSql) {
-    return execSqlAndLog(insertSql, sqlLogger.insert());
+    SqlStatementExecution execution = new SqlStatementExecution(insertSql);
+    timer.restart();
+    try {
+      return this.jdbcTemplate.update(execution.getStatementCreator());
+    } finally {
+      execution.log(sqlLogger.insert(), timer.stop(TimeUnit.MILLISECONDS));
+    }
   }
 
   @Override
@@ -367,7 +369,13 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   @Override
   public int doDelete(@Nonnull DeleteSql deleteSql) {
     checkNotNull(deleteSql);
-    return execSqlAndLog(deleteSql, sqlLogger.delete());
+    SqlStatementExecution execution = new SqlStatementExecution(deleteSql);
+    timer.restart();
+    try {
+      return this.jdbcTemplate.update(execution.getStatementCreator());
+    } finally {
+      execution.log(sqlLogger.delete(), timer.stop(TimeUnit.MILLISECONDS));
+    }
   }
 
   ////////////////////////////// update //////////////////////////////
@@ -402,7 +410,13 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     if (updateSql.getSet().isEmpty()) {
       return 0;
     }
-    return execSqlAndLog(updateSql, sqlLogger.update());
+    SqlStatementExecution execution = new SqlStatementExecution(updateSql);
+    timer.restart();
+    try {
+      return this.jdbcTemplate.update(execution.getStatementCreator());
+    } finally {
+      execution.log(sqlLogger.update(), timer.stop(TimeUnit.MILLISECONDS));
+    }
   }
 
   ////////////////////////////// aggregate ////////////////////////////
