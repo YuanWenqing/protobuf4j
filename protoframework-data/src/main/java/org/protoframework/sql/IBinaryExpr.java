@@ -5,7 +5,7 @@ package org.protoframework.sql;
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public interface IBinaryExpr<T extends ISqlOperation> extends IExpression {
+public interface IBinaryExpr<T extends ISqlOperator> extends IExpression {
   /**
    * 左表达式
    */

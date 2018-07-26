@@ -3,7 +3,7 @@ package org.protoframework.sql.expr;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
-import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.ISqlOperator;
 import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
@@ -57,7 +57,7 @@ public class ValueCollection extends AbstractExpression {
   }
 
   @Override
-  public int comparePrecedence(@Nonnull ISqlOperation outerOp) {
+  public int comparePrecedence(@Nonnull ISqlOperator outerOp) {
     return 1;
   }
 

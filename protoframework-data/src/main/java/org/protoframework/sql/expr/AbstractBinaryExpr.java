@@ -2,7 +2,7 @@ package org.protoframework.sql.expr;
 
 import org.protoframework.sql.IBinaryExpr;
 import org.protoframework.sql.IExpression;
-import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.ISqlOperator;
 import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
@@ -15,7 +15,7 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/16
  */
-public abstract class AbstractBinaryExpr<T extends ISqlOperation> extends AbstractExpression
+public abstract class AbstractBinaryExpr<T extends ISqlOperator> extends AbstractExpression
     implements IBinaryExpr<T> {
   private static final String WRAP_LEFT = "(";
   private static final String WRAP_RIGHT = ")";
@@ -33,7 +33,7 @@ public abstract class AbstractBinaryExpr<T extends ISqlOperation> extends Abstra
   }
 
   @Override
-  public int comparePrecedence(@Nonnull ISqlOperation outerOp) {
+  public int comparePrecedence(@Nonnull ISqlOperator outerOp) {
     // 默认：运算符不同，就需要包裹括号
     return Objects.equals(getOp(), outerOp) ? 0 : -1;
   }

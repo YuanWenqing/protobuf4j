@@ -9,9 +9,7 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public interface ISqlOperation {
-  String WRAP_LEFT = "(";
-  String WRAP_RIGHT = ")";
+public interface ISqlOperator {
 
   /**
    * 构造sql语句中的运算符形式，两边包括必要的空格

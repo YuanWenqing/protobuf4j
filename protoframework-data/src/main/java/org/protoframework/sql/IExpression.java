@@ -18,7 +18,7 @@ public interface IExpression extends ISqlObject {
    * @param outerOp 外部运算符
    * @return 1: 表达式优先级高于外部运算符；0：相同；-1：表达式优先级低于外部运算符
    */
-  int comparePrecedence(@Nonnull ISqlOperation outerOp);
+  int comparePrecedence(@Nonnull ISqlOperator outerOp);
 
   IExpression and(IExpression right);
 

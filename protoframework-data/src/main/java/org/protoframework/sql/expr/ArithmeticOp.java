@@ -1,12 +1,12 @@
 package org.protoframework.sql.expr;
 
-import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.ISqlOperator;
 
 /**
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public enum ArithmeticOp implements ISqlOperation {
+public enum ArithmeticOp implements ISqlOperator {
   ADD("+"),
 
   SUBTRACT("-"),
