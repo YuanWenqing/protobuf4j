@@ -20,7 +20,10 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -170,7 +173,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   public Number insertReturnKey(@Nonnull T message) {
     checkNotNull(message);
     KeyHolder keyHolder = new GeneratedKeyHolder();
-    int rows = doInsert(SQL_INSERT_TEMPLATE, message, keyHolder);
+    // TODO: get key
+    int rows = doInsert(buildInsertSql(message));
     if (rows == 0) {
       throw new RuntimeException(
           "fail to insert into " + tableName + ": " + messageHelper.toString(message));
@@ -188,40 +192,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   public int doInsert(@Nonnull InsertSql insertSql) {
     return execSqlAndLog(insertSql, sqlLogger.insert());
-  }
-
-  /**
-   * Warn: 实例化的dao中的方法不建议直接使用该方法
-   */
-  protected int doInsert(String sqlTemplate, T message, KeyHolder keyHolder) {
-    Set<String> fields = getInsertFields(message);
-    final String sql = String.format(sqlTemplate, this.tableName, StringUtils.join(fields, ","),
-        StringUtils.repeat("?", ",", fields.size()));
-    PreparedStatementCreator creator = makeInsertCreator(sql, fields, message);
-    timer.restart();
-    try {
-      if (keyHolder == null) {
-        return jdbcTemplate.update(creator);
-      } else {
-        return jdbcTemplate.update(creator, keyHolder);
-      }
-    } finally {
-      sqlLogger.insert().info("cost={}, {}, message: {}", timer.stop(TimeUnit.MILLISECONDS), sql,
-          messageHelper.toString(message));
-    }
-  }
-
-  private PreparedStatementCreator makeInsertCreator(String sql, Collection<String> fields,
-      T message) {
-    // TODO: InsertSql & convertSqlValues
-    return new PreparedStatementCreator() {
-      @Override
-      public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-        PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        setValuesInner(ps, message, fields);
-        return ps;
-      }
-    };
   }
 
   @Override
@@ -261,10 +231,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
           .info("cost={}, {}, multi messages: {}", timer.stop(TimeUnit.MILLISECONDS), sql,
               Lists.transform(messages, messageHelper::toString));
     }
-  }
-
-  private LinkedHashSet<String> getInsertFields(T message) {
-    return getInsertFields(Collections.singletonList(message));
   }
 
   private LinkedHashSet<String> getInsertFields(Collection<T> messages) {
