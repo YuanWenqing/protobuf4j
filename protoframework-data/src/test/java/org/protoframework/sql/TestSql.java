@@ -187,4 +187,33 @@ public class TestSql {
     List<ISqlValue> sqlValues = sql.collectSqlValue(Lists.newArrayList());
     assertEquals(1, sqlValues.size());
   }
+
+  @Test
+  public void testInsert() {
+    InsertSql sql;
+
+    sql = QueryCreator.insertInto("aa");
+    System.out.println(sql);
+    assertEquals("aa", sql.getTable().getTableName());
+    assertEquals("INSERT INTO aa () VALUES ()", sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("INSERT INTO aa () VALUES ()", sql.toSolidSql(new StringBuilder()).toString());
+    assertTrue(sql.collectSqlValue(Lists.newArrayList()).isEmpty());
+
+    sql.addField("b", 1);
+    System.out.println(sql);
+    assertEquals("INSERT INTO aa (b) VALUES (?)",
+        sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("INSERT INTO aa (b) VALUES (1)", sql.toSolidSql(new StringBuilder()).toString());
+
+    sql.addField("c", FieldValues.add("a", 2));
+    System.out.println(sql);
+    assertEquals("INSERT INTO aa (b,c) VALUES (?,a+?)",
+        sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("INSERT INTO aa (b,c) VALUES (1,a+2)",
+        sql.toSolidSql(new StringBuilder()).toString());
+    List<ISqlValue> sqlValues = sql.collectSqlValue(Lists.newArrayList());
+    assertEquals(2, sqlValues.size());
+    assertEquals(1, sqlValues.get(0).getValue());
+    assertEquals(2, sqlValues.get(1).getValue());
+  }
 }

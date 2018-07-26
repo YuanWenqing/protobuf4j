@@ -67,4 +67,7 @@ public abstract class QueryCreator {
     return new UpdateSql(table(table));
   }
 
+  public static InsertSql insertInto(String table) {
+    return new InsertSql(table(table));
+  }
 }
