@@ -20,10 +20,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -572,7 +569,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       return new PreparedStatementCreator() {
         @Override
         public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-          PreparedStatement ps = con.prepareStatement(sqlTemplate);
+          PreparedStatement ps = con.prepareStatement(sqlTemplate, Statement.RETURN_GENERATED_KEYS);
           if (values.isEmpty()) return ps;
           int i = 1;
           for (Object value : values) {
@@ -584,8 +581,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     }
 
     public void log(Logger logger, long cost) {
-      sqlLogger.select().info("cost={}, {}, values: {}, {}", cost, this.sqlTemplate, this.values,
-          this.sqlStatement);
+      logger.info("cost={}, {}, values: {}, {}", cost, this.sqlTemplate, this.values,
+          this.sqlStatement.toString().replace("\n", " "));
     }
   }
 }
