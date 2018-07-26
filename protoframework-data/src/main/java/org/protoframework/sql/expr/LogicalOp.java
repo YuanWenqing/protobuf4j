@@ -10,7 +10,7 @@ import static com.google.common.base.Preconditions.*;
  * @date: 2018/7/11
  */
 
-public enum LogicalOp implements ISqlOperation<LogicalExpr> {
+public enum LogicalOp implements ISqlOperation {
   AND(" AND "),
   OR(" OR "),
   XOR(" XOR "),

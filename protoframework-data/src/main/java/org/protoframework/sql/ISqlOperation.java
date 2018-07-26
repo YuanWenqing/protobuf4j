@@ -6,11 +6,10 @@ import static com.google.common.base.Preconditions.*;
  * 访问者模式解耦具体表达式的sql语句构造逻辑
  * <p>
  *
- * @param <T> 处理的表达式类型
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public interface ISqlOperation<T extends IBinaryExpr> {
+public interface ISqlOperation {
   String WRAP_LEFT = "(";
   String WRAP_RIGHT = ")";
 

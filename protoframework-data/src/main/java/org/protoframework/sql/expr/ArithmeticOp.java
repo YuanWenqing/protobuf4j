@@ -6,7 +6,7 @@ import org.protoframework.sql.ISqlOperation;
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public enum ArithmeticOp implements ISqlOperation<ArithmeticExpr> {
+public enum ArithmeticOp implements ISqlOperation {
   ADD("+"),
 
   SUBTRACT("-"),

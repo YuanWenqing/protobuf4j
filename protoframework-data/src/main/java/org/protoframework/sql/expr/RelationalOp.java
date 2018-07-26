@@ -10,7 +10,7 @@ import static com.google.common.base.Preconditions.*;
  * @date: 2018/7/11
  */
 
-public enum RelationalOp implements ISqlOperation<RelationalExpr> {
+public enum RelationalOp implements ISqlOperation {
   EQ("="),
   NE("!="),
   GT(">"),
