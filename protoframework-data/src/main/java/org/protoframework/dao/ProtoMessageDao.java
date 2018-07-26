@@ -114,15 +114,12 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   }
 
   private int execSqlAndLog(ISqlStatement sqlStatement, Logger logger) {
-    String sqlTemplate = sqlStatement.toSqlTemplate(new StringBuilder()).toString();
-    List<ISqlValue> sqlValues = sqlStatement.collectSqlValue(Lists.newArrayList());
-    List<Object> values = convertSqlValues(sqlValues);
+    SqlStatementExecution execution = new SqlStatementExecution(sqlStatement);
     timer.restart();
     try {
-      return this.jdbcTemplate.update(makeStatementCreator(sqlTemplate, values));
+      return this.jdbcTemplate.update(execution.getStatementCreator());
     } finally {
-      logger.info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-          values, sqlStatement);
+      execution.log(logger, timer.stop(TimeUnit.MILLISECONDS));
     }
   }
 
@@ -140,20 +137,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     return values;
   }
 
-  private PreparedStatementCreator makeStatementCreator(String sql, Collection<Object> values) {
-    return new PreparedStatementCreator() {
-      @Override
-      public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-        PreparedStatement ps = con.prepareStatement(sql);
-        if (values.isEmpty()) return ps;
-        int i = 1;
-        for (Object value : values) {
-          ps.setObject(i++, value);
-        }
-        return ps;
-      }
-    };
-  }
   ////////////////////////////// raw sql //////////////////////////////
 
   @Override
@@ -381,16 +364,12 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   @Override
   public <V> List<V> doSelect(@Nonnull SelectSql selectSql, @Nonnull RowMapper<V> mapper) {
     checkNotNull(selectSql);
-    String sqlTemplate = selectSql.toSqlTemplate(new StringBuilder()).toString();
-    List<ISqlValue> sqlValues = selectSql.collectSqlValue(Lists.newArrayList());
-    List<Object> values = convertSqlValues(sqlValues);
+    SqlStatementExecution execution = new SqlStatementExecution(selectSql);
     timer.restart();
     try {
-      return this.jdbcTemplate.query(makeStatementCreator(sqlTemplate, values), mapper);
+      return this.jdbcTemplate.query(execution.getStatementCreator(), mapper);
     } finally {
-      sqlLogger.select()
-          .info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-              values, selectSql);
+      execution.log(sqlLogger.select(), timer.stop(TimeUnit.MILLISECONDS));
     }
   }
 
@@ -578,6 +557,39 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       }
       int count = rs.getInt(2);
       return Pair.of(k, count);
+    }
+  }
+
+  private class SqlStatementExecution {
+    private final ISqlStatement sqlStatement;
+    private final String sqlTemplate;
+    private final List<Object> values;
+
+    public SqlStatementExecution(ISqlStatement sqlStatement) {
+      this.sqlStatement = sqlStatement;
+      this.sqlTemplate = sqlStatement.toSqlTemplate(new StringBuilder()).toString();
+      List<ISqlValue> sqlValues = sqlStatement.collectSqlValue(Lists.newArrayList());
+      this.values = ProtoMessageDao.this.convertSqlValues(sqlValues);
+    }
+
+    public PreparedStatementCreator getStatementCreator() {
+      return new PreparedStatementCreator() {
+        @Override
+        public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+          PreparedStatement ps = con.prepareStatement(sqlTemplate);
+          if (values.isEmpty()) return ps;
+          int i = 1;
+          for (Object value : values) {
+            ps.setObject(i++, value);
+          }
+          return ps;
+        }
+      };
+    }
+
+    public void log(Logger logger, long cost) {
+      sqlLogger.select().info("cost={}, {}, values: {}, {}", cost, this.sqlTemplate, this.values,
+          this.sqlStatement);
     }
   }
 }
