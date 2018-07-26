@@ -119,7 +119,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     List<Object> values = convertSqlValues(sqlValues);
     timer.restart();
     try {
-      return this.getJdbcTemplate().update(makeStatementCreator(sqlTemplate, values));
+      return this.jdbcTemplate.update(makeStatementCreator(sqlTemplate, values));
     } finally {
       logger.info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
           values, sqlStatement);
@@ -201,9 +201,9 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     timer.restart();
     try {
       if (keyHolder == null) {
-        return getJdbcTemplate().update(creator);
+        return jdbcTemplate.update(creator);
       } else {
-        return getJdbcTemplate().update(creator, keyHolder);
+        return jdbcTemplate.update(creator, keyHolder);
       }
     } finally {
       sqlLogger.insert().info("cost={}, {}, message: {}", timer.stop(TimeUnit.MILLISECONDS), sql,
@@ -244,7 +244,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
         StringUtils.repeat("?", ",", used.size()));
     timer.restart();
     try {
-      return this.getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
+      return this.jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         @Override
         public void setValues(PreparedStatement ps, int i) throws SQLException {
           T message = messages.get(i);
@@ -386,7 +386,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     List<Object> values = convertSqlValues(sqlValues);
     timer.restart();
     try {
-      return this.getJdbcTemplate().query(makeStatementCreator(sqlTemplate, values), mapper);
+      return this.jdbcTemplate.query(makeStatementCreator(sqlTemplate, values), mapper);
     } finally {
       sqlLogger.select()
           .info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,

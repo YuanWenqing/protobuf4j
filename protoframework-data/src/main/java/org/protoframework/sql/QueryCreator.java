@@ -11,6 +11,8 @@ import org.protoframework.sql.expr.Value;
  * @date: 2018/7/16
  */
 public abstract class QueryCreator {
+  private QueryCreator() {
+  }
 
   public static ISqlValue sqlValue(Object value) {
     if (value instanceof ISqlValue) {
@@ -67,4 +69,7 @@ public abstract class QueryCreator {
     return new UpdateSql(table(table));
   }
 
+  public static InsertSql insertInto(String table) {
+    return new InsertSql(table(table));
+  }
 }

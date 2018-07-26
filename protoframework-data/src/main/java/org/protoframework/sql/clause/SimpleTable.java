@@ -19,7 +19,7 @@ public class SimpleTable extends AbstractSqlStatement implements ITableRef {
 
   public SimpleTable(String tableName) {
     checkArgument(StringUtils.isNotBlank(tableName));
-    this.tableName = tableName;
+    this.tableName = tableName.trim();
   }
 
   @Override

@@ -55,23 +55,23 @@ public abstract class AbstractBinaryExpr<T extends ISqlOperation> extends Abstra
 
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    if (this.getLeft() != null) {
-      boolean needWrap = this.getLeft().comparePrecedence(this.getOp()) < 0;
+    if (this.left != null) {
+      boolean needWrap = this.left.comparePrecedence(this.op) < 0;
       if (needWrap) {
         sb.append(WRAP_LEFT);
       }
-      this.getLeft().toSqlTemplate(sb);
+      this.left.toSqlTemplate(sb);
       if (needWrap) {
         sb.append(WRAP_RIGHT);
       }
     }
-    sb.append(this.getOp().getOp());
-    if (this.getRight() != null) {
-      boolean needWrap = this.getRight().comparePrecedence(this.getOp()) < 0;
+    sb.append(this.op.getOp());
+    if (this.right != null) {
+      boolean needWrap = this.right.comparePrecedence(this.op) < 0;
       if (needWrap) {
         sb.append(WRAP_LEFT);
       }
-      this.getRight().toSqlTemplate(sb);
+      this.right.toSqlTemplate(sb);
       if (needWrap) {
         sb.append(WRAP_RIGHT);
       }
@@ -81,23 +81,23 @@ public abstract class AbstractBinaryExpr<T extends ISqlOperation> extends Abstra
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    if (this.getLeft() != null) {
-      boolean needWrap = this.getLeft().comparePrecedence(this.getOp()) < 0;
+    if (this.left != null) {
+      boolean needWrap = this.left.comparePrecedence(this.op) < 0;
       if (needWrap) {
         sb.append(WRAP_LEFT);
       }
-      this.getLeft().toSolidSql(sb);
+      this.left.toSolidSql(sb);
       if (needWrap) {
         sb.append(WRAP_RIGHT);
       }
     }
-    sb.append(this.getOp().getOp());
-    if (this.getRight() != null) {
-      boolean needWrap = this.getRight().comparePrecedence(this.getOp()) < 0;
+    sb.append(this.op.getOp());
+    if (this.right != null) {
+      boolean needWrap = this.right.comparePrecedence(this.op) < 0;
       if (needWrap) {
         sb.append(WRAP_LEFT);
       }
-      this.getRight().toSolidSql(sb);
+      this.right.toSolidSql(sb);
       if (needWrap) {
         sb.append(WRAP_RIGHT);
       }
@@ -107,11 +107,11 @@ public abstract class AbstractBinaryExpr<T extends ISqlOperation> extends Abstra
 
   @Override
   public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
-    if (this.getLeft() != null) {
-      this.getLeft().collectSqlValue(sqlValues);
+    if (this.left != null) {
+      this.left.collectSqlValue(sqlValues);
     }
-    if (this.getRight() != null) {
-      this.getRight().collectSqlValue(sqlValues);
+    if (this.right != null) {
+      this.right.collectSqlValue(sqlValues);
     }
     return sqlValues;
   }
