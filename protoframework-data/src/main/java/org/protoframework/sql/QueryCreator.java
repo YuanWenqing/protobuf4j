@@ -11,6 +11,8 @@ import org.protoframework.sql.expr.Value;
  * @date: 2018/7/16
  */
 public abstract class QueryCreator {
+  private QueryCreator() {
+  }
 
   public static ISqlValue sqlValue(Object value) {
     if (value instanceof ISqlValue) {

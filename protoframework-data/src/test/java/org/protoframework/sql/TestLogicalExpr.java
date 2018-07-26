@@ -57,6 +57,8 @@ public class TestLogicalExpr {
       assertEquals(LogicalOp.NOT, expr.getOp());
       assertEquals("NOT a", expr.toSqlTemplate(new StringBuilder()).toString());
       assertEquals("NOT a", expr.toSolidSql(new StringBuilder()).toString());
+      sqlValues = expr.collectSqlValue(Lists.newArrayList());
+      assertEquals(0, sqlValues.size());
     }
   }
 

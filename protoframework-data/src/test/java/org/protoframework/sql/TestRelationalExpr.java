@@ -269,6 +269,6 @@ public class TestRelationalExpr {
     expr = RelationalExpr.lt(FieldFields.eq("a", "b"), FieldFields.and("c", "d"));
     System.out.println(expr);
     assertEquals("(a=b)<(c AND d)", expr.toSqlTemplate(new StringBuilder()).toString());
-
   }
+
 }

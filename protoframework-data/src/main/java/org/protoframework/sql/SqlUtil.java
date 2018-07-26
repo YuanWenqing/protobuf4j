@@ -14,7 +14,10 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/15
  */
-public class SqlUtil {
+public abstract class SqlUtil {
+  private SqlUtil() {
+  }
+
   public static final SelectExpr SELECT_STAR = new SelectExpr(new RawExpr("*")) {
     @Override
     public SelectExpr setAlias(String alias) {

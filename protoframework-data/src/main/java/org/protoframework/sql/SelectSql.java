@@ -18,7 +18,7 @@ public class SelectSql extends AbstractSqlStatement {
   private SelectClause select;
   private WhereClause where;
 
-  public SelectSql(FromClause from) {
+  public SelectSql(@Nonnull FromClause from) {
     this.from = from;
   }
 
@@ -79,16 +79,12 @@ public class SelectSql extends AbstractSqlStatement {
     if (select != null) {
       select.toSolidSql(sb);
     }
-    if (from != null) {
-      if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
-        sb.append(" ");
-      }
-      from.toSolidSql(sb);
+    if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
+      sb.append(" ");
     }
+    from.toSolidSql(sb);
     if (where != null) {
-      if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
-        sb.append(" ");
-      }
+      sb.append(" ");
       where.toSolidSql(sb);
     }
     return sb;
@@ -99,9 +95,7 @@ public class SelectSql extends AbstractSqlStatement {
     if (select != null) {
       select.collectSqlValue(sqlValues);
     }
-    if (from != null) {
-      from.collectSqlValue(sqlValues);
-    }
+    from.collectSqlValue(sqlValues);
     if (where != null) {
       where.collectSqlValue(sqlValues);
     }

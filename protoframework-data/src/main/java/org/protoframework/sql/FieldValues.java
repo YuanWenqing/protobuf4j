@@ -11,6 +11,8 @@ import java.util.Collection;
  * @date: 2018/7/16
  */
 public abstract class FieldValues {
+  private FieldValues() {
+  }
 
   public static RelationalExpr eq(String field, Object value) {
     return RelationalExpr.eq(Column.of(field), Value.of(value, field));

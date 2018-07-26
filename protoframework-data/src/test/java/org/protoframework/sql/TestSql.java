@@ -16,12 +16,13 @@ public class TestSql {
   public void testSelect() {
     SelectSql sql;
 
-    sql = QueryCreator.selectFrom("t");
+    sql = QueryCreator.selectFrom("t ");
     System.out.println(sql);
     assertNotNull(sql.getFrom());
     assertNull(sql.getSelect());
     assertNull(sql.getWhere());
     assertEquals("FROM t", sql.toSolidSql(new StringBuilder()).toString());
+    assertTrue(sql.collectSqlValue(Lists.newArrayList()).isEmpty());
 
     sql.select();
     System.out.println(sql);
@@ -67,6 +68,7 @@ public class TestSql {
     assertNull(sql.getSet());
     assertNull(sql.getWhere());
     assertEquals("UPDATE t", sql.toSolidSql(new StringBuilder()).toString());
+    assertTrue(sql.collectSqlValue(Lists.newArrayList()).isEmpty());
 
     sql.set();
     System.out.println(sql);
@@ -110,7 +112,9 @@ public class TestSql {
     System.out.println(sql);
     assertNotNull(sql.getFrom());
     assertNull(sql.getWhere());
+    assertEquals("DELETE FROM t", sql.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("DELETE FROM t", sql.toSolidSql(new StringBuilder()).toString());
+    assertTrue(sql.collectSqlValue(Lists.newArrayList()).isEmpty());
 
     sql.where();
     System.out.println(sql);

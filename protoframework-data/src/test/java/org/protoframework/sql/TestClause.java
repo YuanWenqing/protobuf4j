@@ -143,6 +143,11 @@ public class TestClause {
     System.out.println(clause);
     assertEquals("GROUP BY c", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("GROUP BY c", clause.toSolidSql(new StringBuilder()).toString());
+
+    clause = new WhereClause();
+    clause.orderBy();
+    clause.groupBy();
+    assertTrue(clause.collectSqlValue(Lists.newArrayList()).isEmpty());
   }
 
   @Test

@@ -12,6 +12,8 @@ import org.protoframework.sql.expr.RelationalExpr;
  * @date: 2018/7/16
  */
 public abstract class FieldFields {
+  private FieldFields() {
+  }
 
   public static RelationalExpr eq(String left, String right) {
     return RelationalExpr.eq(Column.of(left), Column.of(right));
