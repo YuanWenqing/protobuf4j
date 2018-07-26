@@ -16,7 +16,7 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public class RawSql extends AbstractSqlObject {
+public class RawSql extends AbstractSqlObject implements ISqlStatement {
 
   private final String sql;
   private final List<Object> values;

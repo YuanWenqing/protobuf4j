@@ -113,16 +113,16 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.jdbcTemplate = jdbcTemplate;
   }
 
-  private int execSqlAndLog(ISqlObject sqlObject, Logger logger) {
-    String sqlTemplate = sqlObject.toSqlTemplate(new StringBuilder()).toString();
-    List<ISqlValue> sqlValues = sqlObject.collectSqlValue(Lists.newArrayList());
+  private int execSqlAndLog(ISqlStatement sqlStatement, Logger logger) {
+    String sqlTemplate = sqlStatement.toSqlTemplate(new StringBuilder()).toString();
+    List<ISqlValue> sqlValues = sqlStatement.collectSqlValue(Lists.newArrayList());
     List<Object> values = convertSqlValues(sqlValues);
     timer.restart();
     try {
       return this.jdbcTemplate.update(makeStatementCreator(sqlTemplate, values));
     } finally {
       logger.info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-          values, sqlObject);
+          values, sqlStatement);
     }
   }
 
