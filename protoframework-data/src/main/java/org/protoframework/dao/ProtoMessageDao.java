@@ -151,7 +151,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   @Override
   public int insert(@Nonnull T message) {
     checkNotNull(message);
-    return doInsert(buildInsertSql(message));
+    return doInsert(buildInsertSql(message), null);
   }
 
   protected InsertSql buildInsertSql(@Nonnull T message) {
@@ -169,8 +169,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   public Number insertReturnKey(@Nonnull T message) {
     checkNotNull(message);
     KeyHolder keyHolder = new GeneratedKeyHolder();
-    // TODO: get key
-    int rows = doInsert(buildInsertSql(message));
+    int rows = doInsert(buildInsertSql(message), keyHolder);
     if (rows == 0) {
       throw new RuntimeException(
           "fail to insert into " + tableName + ": " + messageHelper.toString(message));
@@ -183,14 +182,19 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     checkNotNull(message);
     InsertSql insertSql = buildInsertSql(message);
     insertSql.setIgnore(true);
-    return doInsert(insertSql);
+    return doInsert(insertSql, null);
   }
 
-  public int doInsert(@Nonnull InsertSql insertSql) {
+  @Override
+  public int doInsert(@Nonnull InsertSql insertSql, @Nullable KeyHolder keyHolder) {
     SqlStatementExecution execution = new SqlStatementExecution(insertSql);
     timer.restart();
     try {
-      return this.jdbcTemplate.update(execution.getStatementCreator());
+      if (keyHolder == null) {
+        return this.jdbcTemplate.update(execution.getStatementCreator());
+      } else {
+        return this.jdbcTemplate.update(execution.getStatementCreator(), keyHolder);
+      }
     } finally {
       execution.log(sqlLogger.insert(), timer.stop(TimeUnit.MILLISECONDS));
     }
