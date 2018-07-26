@@ -152,7 +152,18 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   @Override
   public int insert(@Nonnull T message) {
     checkNotNull(message);
-    return doInsert(SQL_INSERT_TEMPLATE, message, null);
+    return doInsert(buildInsertSql(message));
+  }
+
+  protected InsertSql buildInsertSql(@Nonnull T message) {
+    InsertSql insertSql = QueryCreator.insertInto(tableName);
+    for (FieldDescriptor fd : messageHelper.getFieldDescriptorList()) {
+      if (messageHelper.isFieldSet(message, fd.getName())) {
+        Object value = messageHelper.getFieldValue(message, fd.getName());
+        insertSql.addField(fd.getName(), value);
+      }
+    }
+    return insertSql;
   }
 
   @Override
@@ -170,7 +181,13 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   @Override
   public int insertIgnore(@Nonnull T message) {
     checkNotNull(message);
-    return doInsert(SQL_INSERT_IGNORE_TEMPLATE, message, null);
+    InsertSql insertSql = buildInsertSql(message);
+    insertSql.setIgnore(true);
+    return doInsert(insertSql);
+  }
+
+  public int doInsert(@Nonnull InsertSql insertSql) {
+    return execSqlAndLog(insertSql, sqlLogger.insert());
   }
 
   /**

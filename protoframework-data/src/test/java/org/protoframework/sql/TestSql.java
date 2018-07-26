@@ -219,5 +219,12 @@ public class TestSql {
     assertEquals(2, sqlValues.size());
     assertEquals(1, sqlValues.get(0).getValue());
     assertEquals(2, sqlValues.get(1).getValue());
+
+    sql.setIgnore(true);
+    System.out.println(sql);
+    assertEquals("INSERT IGNORE INTO aa (b,c) VALUES (?,a+?)",
+        sql.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("INSERT IGNORE INTO aa (b,c) VALUES (1,a+2)",
+        sql.toSolidSql(new StringBuilder()).toString());
   }
 }

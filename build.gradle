@@ -41,6 +41,10 @@ subprojects {
         println jacocoTestReport.reports.html.entryPoint
     }
 
+    test << {
+        println test.reports.html.entryPoint
+    }
+
     // build dir change to out
     project.buildDir = "out"
 
