@@ -1,7 +1,7 @@
 package org.protoframework.sql.expr;
 
 import org.apache.commons.lang3.StringUtils;
-import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.ISqlOperator;
 import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
@@ -33,7 +33,7 @@ public class Column extends AbstractExpression {
   }
 
   @Override
-  public int comparePrecedence(@Nonnull ISqlOperation outerOp) {
+  public int comparePrecedence(@Nonnull ISqlOperator outerOp) {
     return 1;
   }
 

@@ -1,7 +1,7 @@
 package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
-import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.AbstractSqlObject;
 import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public abstract class PaginationClause extends AbstractSqlStatement {
+public abstract class PaginationClause extends AbstractSqlObject {
   protected final int limit;
 
   public PaginationClause(int limit) {

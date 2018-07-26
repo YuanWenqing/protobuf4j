@@ -1,7 +1,7 @@
 package org.protoframework.sql.expr;
 
 import org.protoframework.sql.IExpression;
-import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.ISqlOperator;
 import org.protoframework.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
@@ -12,6 +12,9 @@ import java.util.List;
  * @date: 2018/7/11
  */
 public class BetweenExpr extends AbstractExpression {
+  private static final String WRAP_LEFT = "(";
+  private static final String WRAP_RIGHT = ")";
+
   private final IExpression min;
   private final IExpression max;
 
@@ -29,7 +32,7 @@ public class BetweenExpr extends AbstractExpression {
   }
 
   @Override
-  public int comparePrecedence(@Nonnull ISqlOperation outerOp) {
+  public int comparePrecedence(@Nonnull ISqlOperator outerOp) {
     return 1;
   }
 
@@ -37,20 +40,20 @@ public class BetweenExpr extends AbstractExpression {
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
     boolean needWrap = min.comparePrecedence(LogicalOp.AND) < 0;
     if (needWrap) {
-      sb.append(ISqlOperation.WRAP_LEFT);
+      sb.append(WRAP_LEFT);
     }
     min.toSqlTemplate(sb);
     if (needWrap) {
-      sb.append(ISqlOperation.WRAP_RIGHT);
+      sb.append(WRAP_RIGHT);
     }
     sb.append(" AND ");
     needWrap = max.comparePrecedence(LogicalOp.AND) < 0;
     if (needWrap) {
-      sb.append(ISqlOperation.WRAP_LEFT);
+      sb.append(WRAP_LEFT);
     }
     max.toSqlTemplate(sb);
     if (needWrap) {
-      sb.append(ISqlOperation.WRAP_RIGHT);
+      sb.append(WRAP_RIGHT);
     }
     return sb;
   }
@@ -59,20 +62,20 @@ public class BetweenExpr extends AbstractExpression {
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
     boolean needWrap = min.comparePrecedence(LogicalOp.AND) < 0;
     if (needWrap) {
-      sb.append(ISqlOperation.WRAP_LEFT);
+      sb.append(WRAP_LEFT);
     }
     min.toSolidSql(sb);
     if (needWrap) {
-      sb.append(ISqlOperation.WRAP_RIGHT);
+      sb.append(WRAP_RIGHT);
     }
     sb.append(" AND ");
     needWrap = max.comparePrecedence(LogicalOp.AND) < 0;
     if (needWrap) {
-      sb.append(ISqlOperation.WRAP_LEFT);
+      sb.append(WRAP_LEFT);
     }
     max.toSolidSql(sb);
     if (needWrap) {
-      sb.append(ISqlOperation.WRAP_RIGHT);
+      sb.append(WRAP_RIGHT);
     }
     return sb;
   }

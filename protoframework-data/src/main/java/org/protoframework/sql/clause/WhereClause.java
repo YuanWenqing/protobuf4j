@@ -1,6 +1,6 @@
 package org.protoframework.sql.clause;
 
-import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.AbstractSqlObject;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.QueryCreator;
@@ -12,7 +12,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public class WhereClause extends AbstractSqlStatement {
+public class WhereClause extends AbstractSqlObject {
   private IExpression cond;
   private OrderByClause orderBy;
   private GroupByClause groupBy;

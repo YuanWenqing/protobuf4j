@@ -1,6 +1,6 @@
 package org.protoframework.sql.clause;
 
-import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.AbstractSqlObject;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.expr.Column;
@@ -14,7 +14,7 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/14
  */
-public class SetExpr extends AbstractSqlStatement {
+public class SetExpr extends AbstractSqlObject {
   private final Column column;
   private final IExpression valueExpr;
 

@@ -1,6 +1,6 @@
 package org.protoframework.sql.expr;
 
-import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.AbstractSqlObject;
 import org.protoframework.sql.IExpression;
 
 /**
@@ -9,7 +9,7 @@ import org.protoframework.sql.IExpression;
  * @author: yuanwq
  * @date: 2018/7/16
  */
-public abstract class AbstractExpression extends AbstractSqlStatement implements IExpression {
+public abstract class AbstractExpression extends AbstractSqlObject implements IExpression {
   @Override
   public IExpression and(IExpression right) {
     return LogicalExpr.and(this, right);
