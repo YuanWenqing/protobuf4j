@@ -211,9 +211,9 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   }
 
   /**
-   * Warn: 实例化的dao中的方法不建议直接使用该方法
+   * TODO: 抽象
    */
-  protected int[] doInsertMulti(String sqlTemplate, List<T> messages) {
+  private int[] doInsertMulti(String sqlTemplate, List<T> messages) {
     if (messages.isEmpty()) return new int[0];
     Set<String> used = getInsertFields(messages);
     final String sql = String.format(sqlTemplate, this.tableName, StringUtils.join(used, ","),
@@ -224,7 +224,13 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
         @Override
         public void setValues(PreparedStatement ps, int i) throws SQLException {
           T message = messages.get(i);
-          setValuesInner(ps, message, used);
+          int j = 1;
+          for (String name : used) {
+            FieldDescriptor fd = messageHelper.getFieldDescriptor(name);
+            Object value = messageHelper.getFieldValue(message, name);
+            value = sqlConverter.toSqlValue(fd, value);
+            ps.setObject(j++, value);
+          }
         }
 
         @Override
@@ -249,17 +255,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       }
     }
     return fields;
-  }
-
-  private void setValuesInner(PreparedStatement ps, T message, Collection<String> fields)
-      throws SQLException {
-    int j = 1;
-    for (String name : fields) {
-      FieldDescriptor fd = messageHelper.getFieldDescriptor(name);
-      Object value = messageHelper.getFieldValue(message, name);
-      value = sqlConverter.toSqlValue(fd, value);
-      ps.setObject(j++, value);
-    }
   }
 
   ////////////////////////////// iterator //////////////////////////////
