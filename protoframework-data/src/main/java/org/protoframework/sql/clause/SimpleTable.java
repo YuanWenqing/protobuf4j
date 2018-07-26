@@ -1,7 +1,7 @@
 package org.protoframework.sql.clause;
 
 import org.apache.commons.lang3.StringUtils;
-import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.AbstractSqlObject;
 import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.ITableRef;
 
@@ -14,7 +14,7 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/16
  */
-public class SimpleTable extends AbstractSqlStatement implements ITableRef {
+public class SimpleTable extends AbstractSqlObject implements ITableRef {
   private final String tableName;
 
   public SimpleTable(String tableName) {

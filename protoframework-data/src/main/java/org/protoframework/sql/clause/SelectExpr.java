@@ -2,7 +2,7 @@ package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
-import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.AbstractSqlObject;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public class SelectExpr extends AbstractSqlStatement {
+public class SelectExpr extends AbstractSqlObject {
 
   private final IExpression expression;
   private String alias;

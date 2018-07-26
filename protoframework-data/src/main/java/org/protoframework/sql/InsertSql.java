@@ -12,7 +12,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/26
  */
-public class InsertSql extends AbstractSqlStatement {
+public class InsertSql extends AbstractSqlObject {
   private final ITableRef table;
   private final LinkedHashMap<String, IExpression> insertFields = Maps.newLinkedHashMap();
 

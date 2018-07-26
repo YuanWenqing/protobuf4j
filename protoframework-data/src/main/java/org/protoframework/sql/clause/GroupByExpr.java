@@ -1,6 +1,6 @@
 package org.protoframework.sql.clause;
 
-import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.AbstractSqlObject;
 import org.protoframework.sql.Direction;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public class GroupByExpr extends AbstractSqlStatement {
+public class GroupByExpr extends AbstractSqlObject {
   private final IExpression expression;
   private final Direction direction;
 

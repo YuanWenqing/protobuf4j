@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public interface IExpression extends ISqlStatement {
+public interface IExpression extends ISqlObject {
 
   /**
    * 比较该表达式与外部运算符{@code outerOp}的优先级

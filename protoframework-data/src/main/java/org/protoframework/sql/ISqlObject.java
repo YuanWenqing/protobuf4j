@@ -7,7 +7,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public interface ISqlStatement {
+public interface ISqlObject {
   /**
    * 构造jdbc所用的sqlTemplate
    *
