@@ -70,6 +70,7 @@ public class TestMessageDao {
     assertEquals("db_msg", dao.getTableName());
     assertTrue(dao.getMessageMapper() instanceof ProtoMessageRowMapper);
     assertEquals(TestModel.DbMsg.class, dao.getMessageHelper().getType());
+    assertEquals(jdbcTemplate, dao.getJdbcTemplate());
   }
 
   @Test

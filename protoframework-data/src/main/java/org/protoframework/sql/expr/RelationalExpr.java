@@ -1,7 +1,7 @@
 package org.protoframework.sql.expr;
 
 import org.protoframework.sql.IExpression;
-import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.ISqlOperator;
 
 import javax.annotation.Nonnull;
 
@@ -72,7 +72,7 @@ public class RelationalExpr extends AbstractBinaryExpr<RelationalOp> {
   }
 
   @Override
-  public int comparePrecedence(@Nonnull ISqlOperation outerOp) {
+  public int comparePrecedence(@Nonnull ISqlOperator outerOp) {
     // 关系表达式嵌套在逻辑表达式中不需要括号，其他都需要
     if (outerOp instanceof LogicalOp) {
       return 1;

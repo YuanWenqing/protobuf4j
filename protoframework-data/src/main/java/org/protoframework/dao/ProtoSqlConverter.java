@@ -39,7 +39,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   protected static final LookupTranslator MAP_VALUE_UNESCAPE =
       new LookupTranslator(EntityArrays.invert(MAP_LOOKUP));
   // not omit empty string
-  protected static Splitter LIST_SPLITTER = Splitter.on(LIST_SEP);
+  protected static final Splitter LIST_SPLITTER = Splitter.on(LIST_SEP);
   // omit empty string, 因为entry至少包含一个“:”分隔符，不可能为空
   protected static final Splitter MAP_ENTRY_SPLITTER =
       Splitter.on(MAP_ENTRY_SEP).omitEmptyStrings();

@@ -19,7 +19,7 @@ buildscript {
 // project setting
 subprojects {
     group = "org.protoframework"
-    version = "0.6.0"
+    version = "0.7.0"
 
     repositories {
         mavenLocal()
@@ -39,6 +39,10 @@ subprojects {
     jacocoTestReport.dependsOn(test)
     jacocoTestReport << {
         println jacocoTestReport.reports.html.entryPoint
+    }
+
+    test << {
+        println test.reports.html.entryPoint
     }
 
     // build dir change to out

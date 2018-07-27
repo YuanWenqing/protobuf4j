@@ -1,7 +1,7 @@
 package org.protoframework.sql.expr;
 
 import org.protoframework.sql.IExpression;
-import org.protoframework.sql.ISqlOperation;
+import org.protoframework.sql.ISqlOperator;
 
 import static com.google.common.base.Preconditions.*;
 
@@ -10,7 +10,7 @@ import static com.google.common.base.Preconditions.*;
  * @date: 2018/7/11
  */
 
-public enum LogicalOp implements ISqlOperation<LogicalExpr> {
+public enum LogicalOp implements ISqlOperator {
   AND(" AND "),
   OR(" OR "),
   XOR(" XOR "),

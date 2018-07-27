@@ -2,7 +2,7 @@ package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.AbstractSqlObject;
 import org.protoframework.sql.IExpression;
 import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.SqlUtil;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public class SelectClause extends AbstractSqlStatement {
+public class SelectClause extends AbstractSqlObject {
   private final List<SelectExpr> selectExprs = Lists.newArrayList();
 
   public List<SelectExpr> getSelectExprs() {

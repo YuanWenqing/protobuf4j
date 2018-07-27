@@ -12,7 +12,7 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/15
  */
-public class UpdateSql extends AbstractSqlStatement {
+public class UpdateSql extends AbstractSqlObject implements ISqlStatement {
   private final ITableRef table;
   private SetClause set;
   private WhereClause where;

@@ -7,7 +7,7 @@ package org.protoframework.sql;
  * @author: yuanwq
  * @date: 2018/7/15
  */
-public abstract class AbstractSqlStatement implements ISqlStatement {
+public abstract class AbstractSqlObject implements ISqlObject {
   @Override
   public String toString() {
     StringBuilder sb = this.toSolidSql(new StringBuilder());

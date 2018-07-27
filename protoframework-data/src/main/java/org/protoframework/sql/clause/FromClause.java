@@ -1,7 +1,7 @@
 package org.protoframework.sql.clause;
 
 import com.google.common.base.Preconditions;
-import org.protoframework.sql.AbstractSqlStatement;
+import org.protoframework.sql.AbstractSqlObject;
 import org.protoframework.sql.ISqlValue;
 import org.protoframework.sql.ITableRef;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public class FromClause extends AbstractSqlStatement {
+public class FromClause extends AbstractSqlObject {
   private final ITableRef tableRef;
 
   public FromClause(@Nonnull ITableRef tableRef) {

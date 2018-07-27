@@ -12,9 +12,10 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/26
  */
-public class InsertSql extends AbstractSqlStatement {
+public class InsertSql extends AbstractSqlObject implements ISqlStatement {
   private final ITableRef table;
   private final LinkedHashMap<String, IExpression> insertFields = Maps.newLinkedHashMap();
+  private boolean ignore = false;
 
   public InsertSql(@Nonnull ITableRef table) {
     this.table = table;
@@ -33,9 +34,22 @@ public class InsertSql extends AbstractSqlStatement {
     return this;
   }
 
+  public boolean isIgnore() {
+    return ignore;
+  }
+
+  public InsertSql setIgnore(boolean ignore) {
+    this.ignore = ignore;
+    return this;
+  }
+
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    sb.append("INSERT INTO ");
+    if (isIgnore()) {
+      sb.append("INSERT IGNORE INTO ");
+    } else {
+      sb.append("INSERT INTO ");
+    }
     table.toSqlTemplate(sb);
     sb.append(" (").append(StringUtils.join(insertFields.keySet(), ",")).append(") VALUES (");
     boolean first = true;
@@ -53,7 +67,11 @@ public class InsertSql extends AbstractSqlStatement {
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    sb.append("INSERT INTO ");
+    if (isIgnore()) {
+      sb.append("INSERT IGNORE INTO ");
+    } else {
+      sb.append("INSERT INTO ");
+    }
     table.toSolidSql(sb);
     sb.append(" (").append(StringUtils.join(insertFields.keySet(), ",")).append(") VALUES (");
     boolean first = true;

@@ -5,6 +5,7 @@ import org.protoframework.sql.clause.SetClause;
 import org.protoframework.sql.clause.WhereClause;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.KeyHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,6 +45,11 @@ public interface IMessageDao<T> {
    * @return 插入的条数
    */
   int insertIgnore(@Nonnull T message);
+
+  /**
+   * insert sql
+   */
+  int doInsert(@Nonnull InsertSql insertSql, @Nullable KeyHolder keyHolder);
 
   /**
    * 批量新增多条数据

@@ -13,7 +13,7 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/15
  */
-public class SelectSql extends AbstractSqlStatement {
+public class SelectSql extends AbstractSqlObject implements ISqlStatement {
   private final FromClause from;
   private SelectClause select;
   private WhereClause where;

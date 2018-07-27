@@ -113,19 +113,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.jdbcTemplate = jdbcTemplate;
   }
 
-  private int execSqlAndLog(ISqlStatement sqlStatement, Logger logger) {
-    String sqlTemplate = sqlStatement.toSqlTemplate(new StringBuilder()).toString();
-    List<ISqlValue> sqlValues = sqlStatement.collectSqlValue(Lists.newArrayList());
-    List<Object> values = convertSqlValues(sqlValues);
-    timer.restart();
-    try {
-      return this.jdbcTemplate.update(makeStatementCreator(sqlTemplate, values));
-    } finally {
-      logger.info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-          values, sqlStatement);
-    }
-  }
-
   private List<Object> convertSqlValues(List<ISqlValue> sqlValues) {
     List<Object> values = Lists.newArrayListWithExpectedSize(sqlValues.size());
     for (ISqlValue sqlValue : sqlValues) {
@@ -140,25 +127,17 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     return values;
   }
 
-  private PreparedStatementCreator makeStatementCreator(String sql, Collection<Object> values) {
-    return new PreparedStatementCreator() {
-      @Override
-      public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-        PreparedStatement ps = con.prepareStatement(sql);
-        if (values.isEmpty()) return ps;
-        int i = 1;
-        for (Object value : values) {
-          ps.setObject(i++, value);
-        }
-        return ps;
-      }
-    };
-  }
   ////////////////////////////// raw sql //////////////////////////////
 
   @Override
   public int doRawSql(@Nonnull RawSql rawSql) {
-    return execSqlAndLog(rawSql, sqlLogger.raw());
+    SqlStatementExecution execution = new SqlStatementExecution(rawSql);
+    timer.restart();
+    try {
+      return this.jdbcTemplate.update(execution.getStatementCreator());
+    } finally {
+      execution.log(sqlLogger.raw(), timer.stop(TimeUnit.MILLISECONDS));
+    }
   }
 
   ////////////////////////////// insert //////////////////////////////
@@ -169,14 +148,25 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   @Override
   public int insert(@Nonnull T message) {
     checkNotNull(message);
-    return doInsert(SQL_INSERT_TEMPLATE, message, null);
+    return doInsert(buildInsertSql(message), null);
+  }
+
+  protected InsertSql buildInsertSql(@Nonnull T message) {
+    InsertSql insertSql = QueryCreator.insertInto(tableName);
+    for (FieldDescriptor fd : messageHelper.getFieldDescriptorList()) {
+      if (messageHelper.isFieldSet(message, fd.getName())) {
+        Object value = messageHelper.getFieldValue(message, fd.getName());
+        insertSql.addField(fd.getName(), value);
+      }
+    }
+    return insertSql;
   }
 
   @Override
   public Number insertReturnKey(@Nonnull T message) {
     checkNotNull(message);
     KeyHolder keyHolder = new GeneratedKeyHolder();
-    int rows = doInsert(SQL_INSERT_TEMPLATE, message, keyHolder);
+    int rows = doInsert(buildInsertSql(message), keyHolder);
     if (rows == 0) {
       throw new RuntimeException(
           "fail to insert into " + tableName + ": " + messageHelper.toString(message));
@@ -187,41 +177,24 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   @Override
   public int insertIgnore(@Nonnull T message) {
     checkNotNull(message);
-    return doInsert(SQL_INSERT_IGNORE_TEMPLATE, message, null);
+    InsertSql insertSql = buildInsertSql(message);
+    insertSql.setIgnore(true);
+    return doInsert(insertSql, null);
   }
 
-  /**
-   * Warn: 实例化的dao中的方法不建议直接使用该方法
-   */
-  protected int doInsert(String sqlTemplate, T message, KeyHolder keyHolder) {
-    Set<String> fields = getInsertFields(message);
-    final String sql = String.format(sqlTemplate, this.tableName, StringUtils.join(fields, ","),
-        StringUtils.repeat("?", ",", fields.size()));
-    PreparedStatementCreator creator = makeInsertCreator(sql, fields, message);
+  @Override
+  public int doInsert(@Nonnull InsertSql insertSql, @Nullable KeyHolder keyHolder) {
+    SqlStatementExecution execution = new SqlStatementExecution(insertSql);
     timer.restart();
     try {
       if (keyHolder == null) {
-        return jdbcTemplate.update(creator);
+        return this.jdbcTemplate.update(execution.getStatementCreator());
       } else {
-        return jdbcTemplate.update(creator, keyHolder);
+        return this.jdbcTemplate.update(execution.getStatementCreator(), keyHolder);
       }
     } finally {
-      sqlLogger.insert().info("cost={}, {}, message: {}", timer.stop(TimeUnit.MILLISECONDS), sql,
-          messageHelper.toString(message));
+      execution.log(sqlLogger.insert(), timer.stop(TimeUnit.MILLISECONDS));
     }
-  }
-
-  private PreparedStatementCreator makeInsertCreator(String sql, Collection<String> fields,
-      T message) {
-    // TODO: InsertSql & convertSqlValues
-    return new PreparedStatementCreator() {
-      @Override
-      public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-        PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        setValuesInner(ps, message, fields);
-        return ps;
-      }
-    };
   }
 
   @Override
@@ -235,9 +208,9 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   }
 
   /**
-   * Warn: 实例化的dao中的方法不建议直接使用该方法
+   * TODO: 抽象
    */
-  protected int[] doInsertMulti(String sqlTemplate, List<T> messages) {
+  private int[] doInsertMulti(String sqlTemplate, List<T> messages) {
     if (messages.isEmpty()) return new int[0];
     Set<String> used = getInsertFields(messages);
     final String sql = String.format(sqlTemplate, this.tableName, StringUtils.join(used, ","),
@@ -248,7 +221,13 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
         @Override
         public void setValues(PreparedStatement ps, int i) throws SQLException {
           T message = messages.get(i);
-          setValuesInner(ps, message, used);
+          int j = 1;
+          for (String name : used) {
+            FieldDescriptor fd = messageHelper.getFieldDescriptor(name);
+            Object value = messageHelper.getFieldValue(message, name);
+            value = sqlConverter.toSqlValue(fd, value);
+            ps.setObject(j++, value);
+          }
         }
 
         @Override
@@ -263,10 +242,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     }
   }
 
-  private LinkedHashSet<String> getInsertFields(T message) {
-    return getInsertFields(Collections.singletonList(message));
-  }
-
   private LinkedHashSet<String> getInsertFields(Collection<T> messages) {
     LinkedHashSet<String> fields = Sets.newLinkedHashSet();
     for (T message : messages) {
@@ -277,17 +252,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       }
     }
     return fields;
-  }
-
-  private void setValuesInner(PreparedStatement ps, T message, Collection<String> fields)
-      throws SQLException {
-    int j = 1;
-    for (String name : fields) {
-      FieldDescriptor fd = messageHelper.getFieldDescriptor(name);
-      Object value = messageHelper.getFieldValue(message, name);
-      value = sqlConverter.toSqlValue(fd, value);
-      ps.setObject(j++, value);
-    }
   }
 
   ////////////////////////////// iterator //////////////////////////////
@@ -381,16 +345,12 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   @Override
   public <V> List<V> doSelect(@Nonnull SelectSql selectSql, @Nonnull RowMapper<V> mapper) {
     checkNotNull(selectSql);
-    String sqlTemplate = selectSql.toSqlTemplate(new StringBuilder()).toString();
-    List<ISqlValue> sqlValues = selectSql.collectSqlValue(Lists.newArrayList());
-    List<Object> values = convertSqlValues(sqlValues);
+    SqlStatementExecution execution = new SqlStatementExecution(selectSql);
     timer.restart();
     try {
-      return this.jdbcTemplate.query(makeStatementCreator(sqlTemplate, values), mapper);
+      return this.jdbcTemplate.query(execution.getStatementCreator(), mapper);
     } finally {
-      sqlLogger.select()
-          .info("cost={}, {}, values: {}, {}", timer.stop(TimeUnit.MILLISECONDS), sqlTemplate,
-              values, selectSql);
+      execution.log(sqlLogger.select(), timer.stop(TimeUnit.MILLISECONDS));
     }
   }
 
@@ -405,7 +365,13 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
   @Override
   public int doDelete(@Nonnull DeleteSql deleteSql) {
     checkNotNull(deleteSql);
-    return execSqlAndLog(deleteSql, sqlLogger.delete());
+    SqlStatementExecution execution = new SqlStatementExecution(deleteSql);
+    timer.restart();
+    try {
+      return this.jdbcTemplate.update(execution.getStatementCreator());
+    } finally {
+      execution.log(sqlLogger.delete(), timer.stop(TimeUnit.MILLISECONDS));
+    }
   }
 
   ////////////////////////////// update //////////////////////////////
@@ -440,7 +406,13 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     if (updateSql.getSet().isEmpty()) {
       return 0;
     }
-    return execSqlAndLog(updateSql, sqlLogger.update());
+    SqlStatementExecution execution = new SqlStatementExecution(updateSql);
+    timer.restart();
+    try {
+      return this.jdbcTemplate.update(execution.getStatementCreator());
+    } finally {
+      execution.log(sqlLogger.update(), timer.stop(TimeUnit.MILLISECONDS));
+    }
   }
 
   ////////////////////////////// aggregate ////////////////////////////
@@ -578,6 +550,39 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       }
       int count = rs.getInt(2);
       return Pair.of(k, count);
+    }
+  }
+
+  private class SqlStatementExecution {
+    private final ISqlStatement sqlStatement;
+    private final String sqlTemplate;
+    private final List<Object> values;
+
+    public SqlStatementExecution(ISqlStatement sqlStatement) {
+      this.sqlStatement = sqlStatement;
+      this.sqlTemplate = sqlStatement.toSqlTemplate(new StringBuilder()).toString();
+      List<ISqlValue> sqlValues = sqlStatement.collectSqlValue(Lists.newArrayList());
+      this.values = ProtoMessageDao.this.convertSqlValues(sqlValues);
+    }
+
+    public PreparedStatementCreator getStatementCreator() {
+      return new PreparedStatementCreator() {
+        @Override
+        public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+          PreparedStatement ps = con.prepareStatement(sqlTemplate, Statement.RETURN_GENERATED_KEYS);
+          if (values.isEmpty()) return ps;
+          int i = 1;
+          for (Object value : values) {
+            ps.setObject(i++, value);
+          }
+          return ps;
+        }
+      };
+    }
+
+    public void log(Logger logger, long cost) {
+      logger.info("cost={}, {}, values: {}, {}", cost, this.sqlTemplate, this.values,
+          this.sqlStatement.toString().replace("\n", " "));
     }
   }
 }
