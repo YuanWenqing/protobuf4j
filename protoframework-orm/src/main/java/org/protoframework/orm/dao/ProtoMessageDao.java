@@ -109,6 +109,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     return jdbcTemplate;
   }
 
+  @Override
   public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }

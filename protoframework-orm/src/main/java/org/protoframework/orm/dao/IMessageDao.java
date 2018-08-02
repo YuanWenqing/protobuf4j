@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * 基本的接口
  */
-public interface IMessageDao<T> {
+public interface IMessageDao<T> extends JdbcTemplateAware {
   Class<T> getMessageType();
 
   String getTableName();
