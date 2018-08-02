@@ -1,7 +1,6 @@
 package org.protoframework.orm.dao;
 
 import org.protoframework.orm.sql.*;
-import org.protoframework.sql.*;
 import org.protoframework.orm.sql.clause.SetClause;
 import org.protoframework.orm.sql.clause.WhereClause;
 import org.springframework.jdbc.core.JdbcTemplate;

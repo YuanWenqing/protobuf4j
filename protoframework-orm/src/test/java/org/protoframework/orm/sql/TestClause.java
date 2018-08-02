@@ -3,7 +3,6 @@ package org.protoframework.orm.sql;
 import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.protoframework.orm.sql.clause.*;
-import org.protoframework.sql.clause.*;
 import org.protoframework.orm.sql.expr.ArithmeticExpr;
 import org.protoframework.orm.sql.expr.Column;
 import org.protoframework.orm.sql.expr.Value;

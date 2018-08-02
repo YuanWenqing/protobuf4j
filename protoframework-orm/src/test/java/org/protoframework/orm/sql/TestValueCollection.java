@@ -3,7 +3,6 @@ package org.protoframework.orm.sql;
 import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.protoframework.orm.sql.expr.*;
-import org.protoframework.sql.expr.*;
 
 import java.util.Collections;
 import java.util.List;

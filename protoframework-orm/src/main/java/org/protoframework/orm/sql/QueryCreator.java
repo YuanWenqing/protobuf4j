@@ -3,7 +3,6 @@ package org.protoframework.orm.sql;
 import org.protoframework.orm.sql.clause.*;
 import org.protoframework.orm.sql.expr.Column;
 import org.protoframework.orm.sql.expr.Value;
-import org.protoframework.sql.clause.*;
 
 /**
  * 构建sql语句元素的util

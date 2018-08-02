@@ -10,7 +10,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.protoframework.core.ProtoMessageHelper;
 import org.protoframework.orm.sql.*;
 import org.protoframework.orm.sql.clause.*;
-import org.protoframework.sql.*;
 import org.protoframework.orm.sql.expr.RawExpr;
 import org.protoframework.util.ThreadLocalTimer;
 import org.slf4j.Logger;
