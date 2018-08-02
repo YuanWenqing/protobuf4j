@@ -114,7 +114,7 @@ project(':protoframework-core') {
         testCompile project(":test-proto")
     }
 }
-project(':protoframework-data') {
+project(':protoframework-orm') {
     apply plugin: 'maven-publish'
 
     dependencies {
