@@ -1,12 +1,13 @@
 package org.protoframework.orm.spring;
 
 import org.apache.commons.lang3.StringUtils;
-import org.protoframework.orm.dao.IMessageDao;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.sql.DataSource;
 
 import static com.google.common.base.Preconditions.*;
 
@@ -29,11 +30,16 @@ public class DataSourceRoutingPostProcessor implements BeanPostProcessor {
     if (routing != null) {
       checkArgument(StringUtils.isNotBlank(routing.value()),
           "Blank value of DataSourceRouting on " + bean.getClass().getName());
-      if (!(bean instanceof IMessageDao)) {
-        throw new BeanNotOfRequiredTypeException(beanName, IMessageDao.class, bean.getClass());
+      if (bean instanceof JdbcTemplateAware) {
+        JdbcTemplate jdbcTemplate = jdbcRoutingResolver.findJdbcTemplate(routing.value());
+        ((JdbcTemplateAware) bean).setJdbcTemplate(jdbcTemplate);
+      } else if (bean instanceof DataSourceAware) {
+        DataSource dataSource = jdbcRoutingResolver.findDataSource(routing.value());
+        ((DataSourceAware) bean).setDataSource(dataSource);
+      } else {
+        throw new BeanNotOfRequiredTypeException(beanName, JdbcTemplateAware.class,
+            bean.getClass());
       }
-      JdbcTemplate jdbcTemplate = jdbcRoutingResolver.findJdbcTemplate(routing.value());
-      ((IMessageDao) bean).setJdbcTemplate(jdbcTemplate);
     }
     return bean;
   }

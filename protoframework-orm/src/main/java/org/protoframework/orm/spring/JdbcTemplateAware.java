@@ -1,4 +1,4 @@
-package org.protoframework.orm.dao;
+package org.protoframework.orm.spring;
 
 import org.springframework.beans.factory.Aware;
 import org.springframework.jdbc.core.JdbcTemplate;
