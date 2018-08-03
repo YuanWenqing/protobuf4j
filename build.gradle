@@ -122,6 +122,7 @@ project(':protoframework-orm') {
 
         // db
         compile 'org.springframework:spring-jdbc:4.3.18.RELEASE'
+        compile 'org.springframework:spring-context:4.3.18.RELEASE'
 
         // util
         compile 'org.apache.commons:commons-lang3:3.4'
@@ -135,7 +136,6 @@ project(':protoframework-orm') {
 //        compile 'org.slf4j:slf4j-api:1.7.25'
 
         testCompile project(":test-proto") // dao testcase use this
-        testCompile 'org.springframework:spring-context:4.3.18.RELEASE'
         testCompile 'org.springframework:spring-test:4.3.18.RELEASE'
         testCompile 'com.h2database:h2:1.4.197' // embedded h2 database and jdbc driver
     }
