@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.*;
 public class DataSourceRoutingPostProcessor implements BeanPostProcessor {
   private JdbcRoutingResolver jdbcRoutingResolver;
 
-  public void setJdbcRoutingResolver(JdbcRoutingResolver jdbcRoutingResolver) {
+  public DataSourceRoutingPostProcessor(JdbcRoutingResolver jdbcRoutingResolver) {
     this.jdbcRoutingResolver = jdbcRoutingResolver;
   }
 

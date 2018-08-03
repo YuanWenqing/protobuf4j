@@ -3,8 +3,8 @@ package org.protoframework.orm.spring;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,13 +36,12 @@ public class JdbcRoutingResolver implements ApplicationContextAware {
       return applicationContext.getBean(beanId, JdbcTemplate.class);
     } catch (NoSuchBeanDefinitionException e) {
       DataSource dataSource = findDataSource(name);
-      JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-      BeanDefinition jdbcBean = new GenericBeanDefinition();
-      jdbcBean.setBeanClassName(JdbcTemplate.class.getName());
+      BeanDefinition jdbcBean = BeanDefinitionBuilder.genericBeanDefinition(JdbcTemplate.class)
+          .addConstructorArgValue(dataSource).getBeanDefinition();
       DefaultListableBeanFactory factory =
           (DefaultListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
       factory.registerBeanDefinition(beanId, jdbcBean);
-      return jdbcTemplate;
+      return applicationContext.getBean(beanId, JdbcTemplate.class);
     }
   }
 }
