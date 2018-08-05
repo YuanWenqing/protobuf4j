@@ -124,6 +124,8 @@ project(':protoframework-orm') {
         compile 'org.springframework:spring-jdbc:4.3.18.RELEASE'
         compile 'org.springframework:spring-context:4.3.18.RELEASE'
 
+        compile('org.mybatis:mybatis-spring:1.3.2')
+
         // util
         compile 'org.apache.commons:commons-lang3:3.4'
         compile 'com.google.guava:guava:18.0'
