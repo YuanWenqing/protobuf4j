@@ -14,6 +14,7 @@ import org.protoframework.orm.sql.expr.RawExpr;
 import org.protoframework.util.ThreadLocalTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -33,7 +34,7 @@ import static com.google.common.base.Preconditions.*;
  * @param <T> 访问的数据表的数据元素类型
  * @author yuanwq
  */
-public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
+public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, InitializingBean {
   protected static final ThreadLocalTimer timer = new ThreadLocalTimer();
   protected static final String SQL_INSERT_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s);";
   protected static final String SQL_INSERT_IGNORE_TEMPLATE =
@@ -83,6 +84,11 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.daoLogger = LoggerFactory
         .getLogger(getClass().getName() + "#" + messageHelper.getDescriptor().getFullName());
     this.sqlLogger = new DaoSqlLogger(messageHelper.getDescriptor().getFullName());
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    checkNotNull(jdbcTemplate, "null jdbcTemplate");
   }
 
   @Override

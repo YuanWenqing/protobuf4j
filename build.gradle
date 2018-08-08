@@ -36,6 +36,10 @@ subprojects {
     apply plugin: "java"
     apply plugin: "jacoco"
 
+    jar << {
+        println jar.archivePath
+    }
+
     jacocoTestReport.dependsOn(test)
     jacocoTestReport << {
         println jacocoTestReport.reports.html.entryPoint
@@ -51,19 +55,36 @@ subprojects {
     dependencies {
 
         // Nullable & NonNull
-        compile 'com.google.code.findbugs:jsr305:3.0.0'
+        implementation('com.google.code.findbugs:jsr305:3.0.0')
 
         // test
-        testCompile 'junit:junit:4.12'
+        testImplementation('junit:junit:4.12')
 
     }
 }
 project(':test-proto') { // 测试用的proto module
+    // https://github.com/google/protobuf-gradle-plugin
     apply plugin: "com.google.protobuf"
     protobuf {
         generatedFilesBaseDir = "$projectDir/gen/"
+        def userhome = System.properties['user.home']
+        plugins {
+            // define a codegen plugin named as `naming`
+            naming {
+                path = "$userhome/.protobuf/naming.py"
+            }
+        }
         generateProtoTasks {
             ofSourceSet('main')
+            // all() returns the collection of all protoc tasks
+            all().each { task ->
+                // Here you can configure the task by name of each codegen plugin
+                task.plugins {
+                    naming {
+                        outputSubDir = "java"
+                    }
+                }
+            }
         }
     }
     clean {
@@ -75,7 +96,7 @@ project(':test-proto') { // 测试用的proto module
 
     dependencies {
         // protobuf
-        compile 'com.google.protobuf:protobuf-java:3.6.0'
+        implementation('com.google.protobuf:protobuf-java:3.6.0')
     }
 }
 project(':protoframework-core') {
@@ -98,52 +119,67 @@ project(':protoframework-core') {
     dependencies {
 
         // protobuf
-        compile 'com.google.protobuf:protobuf-java:3.6.0'
+        implementation('com.google.protobuf:protobuf-java:3.6.0')
 
         // spring
-        compile 'org.springframework:spring-core:4.3.18.RELEASE'
-//        compile 'org.springframework:spring-beans:4.3.18.RELEASE'
+        implementation('org.springframework:spring-core:4.3.18.RELEASE')
+//        implementation('org.springframework:spring-beans:4.3.18.RELEASE')
 
         // util
-        compile 'org.apache.commons:commons-lang3:3.4'
-        compile 'com.google.guava:guava:18.0'
+        implementation('org.apache.commons:commons-lang3:3.7')
+        implementation('com.google.guava:guava:25.1-jre')
 
         // json
-        compile 'com.hubspot.jackson:jackson-datatype-protobuf:0.9.9-jackson2.9-proto3'
+        implementation('com.hubspot.jackson:jackson-datatype-protobuf:0.9.9-jackson2.9-proto3')
 
-        testCompile project(":test-proto")
+        testImplementation(project(":test-proto"))
     }
 }
 project(':protoframework-orm') {
     apply plugin: 'maven-publish'
 
     dependencies {
-        compile project(":protoframework-core")
+        implementation(project(":protoframework-core"))
+
+        // protobuf
+        implementation('com.google.protobuf:protobuf-java:3.6.0')
 
         // db
-        compile 'org.springframework:spring-jdbc:4.3.18.RELEASE'
-        compile 'org.springframework:spring-context:4.3.18.RELEASE'
+        implementation('org.springframework:spring-jdbc:4.3.18.RELEASE')
+        implementation('org.springframework:spring-context:4.3.18.RELEASE')
 
         // util
-        compile 'org.apache.commons:commons-lang3:3.4'
-        compile 'com.google.guava:guava:18.0'
+        implementation('org.apache.commons:commons-lang3:3.7')
+        implementation('com.google.guava:guava:25.1-jre')
 
         // log
-        compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.0'
+        implementation('org.apache.logging.log4j:log4j-slf4j-impl:2.11.0')
         // log4j-slf4j-impl会自动引入下面的几个依赖
-//        compile 'org.apache.logging.log4j:log4j-core:2.11.0'
-//        compile 'org.apache.logging.log4j:log4j-api:2.11.0'
-//        compile 'org.slf4j:slf4j-api:1.7.25'
+//        implementation('org.apache.logging.log4j:log4j-core:2.11.0')
+//        implementation('org.apache.logging.log4j:log4j-api:2.11.0')
+//        implementation('org.slf4j:slf4j-api:1.7.25')
 
-        testCompile project(":test-proto") // dao testcase use this
-        testCompile 'org.springframework:spring-test:4.3.18.RELEASE'
-        testCompile 'com.h2database:h2:1.4.197' // embedded h2 database and jdbc driver
+        testImplementation(project(":test-proto")) // dao testcase use this
+        testImplementation('org.springframework:spring-test:4.3.18.RELEASE')
+        testImplementation('com.h2database:h2:1.4.197') // embedded h2 database and jdbc driver
+    }
+}
+project(':orm-starter') {
+    apply plugin: 'maven-publish'
+
+    archivesBaseName = "orm-spring-boot-starter"
+
+    dependencies {
+        implementation(project(":protoframework-orm"))
+
+        // spring
+        implementation('org.springframework:spring-context:4.3.18.RELEASE')
     }
 }
 project(':protoframework-grpc') {
     dependencies {
 
-        compile 'io.grpc:grpc-all:1.13.1'
+        implementation('io.grpc:grpc-all:1.13.1')
 
     }
 }
@@ -158,6 +194,7 @@ configure(subprojects.findAll {
     project.publishing.publications {
         mavenJava(MavenPublication) {
             from components.java
+            artifactId project.archivesBaseName
             version project.version
 
             artifact sourcesJar
