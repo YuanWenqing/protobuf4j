@@ -157,6 +157,15 @@ project(':protoframework-orm') {
         testCompile 'com.h2database:h2:1.4.197' // embedded h2 database and jdbc driver
     }
 }
+project(':orm-starter') {
+    apply plugin: 'maven-publish'
+
+    archivesBaseName = "orm-spring-boot-starter"
+
+    dependencies {
+        compile project(":protoframework-orm")
+    }
+}
 project(':protoframework-grpc') {
     dependencies {
 
