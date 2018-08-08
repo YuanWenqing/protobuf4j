@@ -36,6 +36,10 @@ subprojects {
     apply plugin: "java"
     apply plugin: "jacoco"
 
+    jar << {
+        println jar.archivePath
+    }
+
     jacocoTestReport.dependsOn(test)
     jacocoTestReport << {
         println jacocoTestReport.reports.html.entryPoint
@@ -184,6 +188,7 @@ configure(subprojects.findAll {
     project.publishing.publications {
         mavenJava(MavenPublication) {
             from components.java
+            artifactId project.archivesBaseName
             version project.version
 
             artifact sourcesJar
