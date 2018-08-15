@@ -8,6 +8,7 @@ import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.core.ProtoMessageHelper;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.ConditionalConverter;
@@ -25,6 +26,7 @@ public class ProtoMessageConverter
     implements ConverterFactory<String, Message>, ConditionalConverter, InitializingBean {
   private ObjectMapper objectMapper;
 
+  @Autowired
   public void setObjectMapper(ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
   }

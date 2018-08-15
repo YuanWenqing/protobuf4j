@@ -19,7 +19,7 @@ buildscript {
 // project setting
 subprojects {
     group = "org.protoframework"
-    version = "0.7.0"
+    version = "0.7.4"
 
     repositories {
         mavenLocal()
