@@ -108,16 +108,12 @@ project(':protoframework-core') {
         // protobuf
         api('com.google.protobuf:protobuf-java:3.6.0')
 
-        // spring
-        implementation('org.springframework:spring-core:4.3.18.RELEASE')
-//        implementation('org.springframework:spring-beans:4.3.18.RELEASE')
-
         // util
-        implementation('org.apache.commons:commons-lang3:3.7')
-        implementation('com.google.guava:guava:25.1-jre')
+        api('org.apache.commons:commons-lang3:3.7')
+        api('com.google.guava:guava:25.1-jre')
 
         // json
-        implementation('com.hubspot.jackson:jackson-datatype-protobuf:0.9.9-jackson2.9-proto3')
+        api('com.hubspot.jackson:jackson-datatype-protobuf:0.9.9-jackson2.9-proto3')
 
         testImplementation(project(":test-proto"))
     }
@@ -129,12 +125,8 @@ project(':protoframework-orm') {
         api(project(":protoframework-core"))
 
         // db
-        api('org.springframework:spring-jdbc:4.3.18.RELEASE')
-        api('org.springframework:spring-context:4.3.18.RELEASE')
-
-        // util
-        implementation('org.apache.commons:commons-lang3:3.7')
-        implementation('com.google.guava:guava:25.1-jre')
+        api('org.springframework:spring-jdbc:5.0.7.RELEASE')
+        api('org.springframework:spring-context:5.0.7.RELEASE')
 
         // log
         implementation('org.apache.logging.log4j:log4j-slf4j-impl:2.11.0')
@@ -144,7 +136,7 @@ project(':protoframework-orm') {
 //        implementation('org.slf4j:slf4j-api:1.7.25')
 
         testImplementation(project(":test-proto")) // dao testcase use this
-        testImplementation('org.springframework:spring-test:4.3.18.RELEASE')
+        testImplementation('org.springframework:spring-test:5.0.7.RELEASE')
         testImplementation('com.h2database:h2:1.4.197') // embedded h2 database and jdbc driver
     }
 }
@@ -157,7 +149,10 @@ project(':orm-starter') {
         api(project(":protoframework-orm"))
 
         // spring
-        api('org.springframework:spring-context:4.3.18.RELEASE')
+//        api('org.springframework:spring-context:5.0.7.RELEASE')
+
+        // test
+        testImplementation(project(":test-proto"))
     }
 }
 project(':protoframework-grpc') {

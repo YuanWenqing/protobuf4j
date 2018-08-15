@@ -3,6 +3,7 @@ package org.protoframework.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.protoframework.core.proto.data.TestModel;
+import org.protoframework.test.MsgsForTest;
 
 import java.io.IOException;
 

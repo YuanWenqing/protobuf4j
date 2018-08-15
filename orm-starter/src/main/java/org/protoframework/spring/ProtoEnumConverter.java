@@ -1,4 +1,4 @@
-package org.protoframework.core.spring;
+package org.protoframework.spring;
 
 import com.google.protobuf.ProtocolMessageEnum;
 import org.apache.commons.lang3.StringUtils;

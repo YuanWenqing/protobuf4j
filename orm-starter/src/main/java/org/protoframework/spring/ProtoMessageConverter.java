@@ -1,7 +1,7 @@
 /**
  * @author yuanwq, date: 2017年2月17日
  */
-package org.protoframework.core.spring;
+package org.protoframework.spring;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Message;

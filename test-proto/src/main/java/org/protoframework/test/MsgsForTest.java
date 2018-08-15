@@ -1,4 +1,4 @@
-package org.protoframework.core;
+package org.protoframework.test;
 
 import com.google.protobuf.ByteString;
 import org.protoframework.core.proto.data.TestModel;
