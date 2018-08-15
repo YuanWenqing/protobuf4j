@@ -1,9 +1,9 @@
-package org.protoframework.core.spring;
+package org.protoframework.spring;
 
 import org.junit.Test;
-import org.protoframework.core.MsgsForTest;
 import org.protoframework.core.ProtobufObjectMapper;
 import org.protoframework.core.proto.data.TestModel;
+import org.protoframework.test.MsgsForTest;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 

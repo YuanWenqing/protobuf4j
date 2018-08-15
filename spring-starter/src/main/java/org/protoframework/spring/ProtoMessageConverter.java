@@ -1,12 +1,13 @@
 /**
  * @author yuanwq, date: 2017年2月17日
  */
-package org.protoframework.core.spring;
+package org.protoframework.spring;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.core.ProtoMessageHelper;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.ConditionalConverter;
@@ -15,15 +16,22 @@ import org.springframework.core.convert.converter.ConverterFactory;
 
 import java.io.IOException;
 
+import static com.google.common.base.Preconditions.*;
+
 /**
  * @author yuanwq
  */
 public class ProtoMessageConverter
-    implements ConverterFactory<String, Message>, ConditionalConverter {
+    implements ConverterFactory<String, Message>, ConditionalConverter, InitializingBean {
   private ObjectMapper objectMapper;
 
   public void setObjectMapper(ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    checkNotNull(objectMapper, "no ObjectMapper set");
   }
 
   @Override

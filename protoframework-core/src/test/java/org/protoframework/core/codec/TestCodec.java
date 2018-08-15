@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
-import org.protoframework.core.MsgsForTest;
+import org.protoframework.test.MsgsForTest;
 import org.protoframework.core.proto.data.TestModel;
 
 import java.io.IOException;
