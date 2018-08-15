@@ -140,10 +140,10 @@ project(':protoframework-orm') {
         testImplementation('com.h2database:h2:1.4.197') // embedded h2 database and jdbc driver
     }
 }
-project(':orm-starter') {
+project(':spring-starter') {
     apply plugin: 'maven-publish'
 
-    archivesBaseName = "orm-spring-boot-starter"
+    archivesBaseName = "protoframework-spring-boot-starter"
 
     dependencies {
         api(project(":protoframework-orm"))
