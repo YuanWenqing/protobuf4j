@@ -148,8 +148,9 @@ project(':spring-starter') {
     dependencies {
         api(project(":protoframework-orm"))
 
-        // spring
-//        api('org.springframework:spring-context:5.0.7.RELEASE')
+        // https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/index.html#boot-features-custom-starter-module-autoconfigure
+        // 生成自动配置有关的配置项
+        annotationProcessor('org.springframework.boot:spring-boot-autoconfigure-processor:2.0.3.RELEASE')
 
         // test
         testImplementation(project(":test-proto"))
