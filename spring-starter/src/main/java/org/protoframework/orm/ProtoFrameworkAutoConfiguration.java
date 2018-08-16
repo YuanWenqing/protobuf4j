@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @date: 2018/8/8
  */
 @Configuration
-public class OrmAutoConfiguration {
+public class ProtoFrameworkAutoConfiguration {
 
   @Bean
   public JdbcRoutingResolver jdbcRoutingResolver() {
