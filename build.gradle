@@ -6,8 +6,8 @@ buildscript {
             name "nexus"
             url "https://nexus.ilovelook.cn/repository/maven-public/"
             credentials {
-                username "deployment"
-                password "X605deploy"
+                username "${'nexus.username'}"
+                password "${'nexus.password'}"
             }
         }
     }
@@ -27,8 +27,8 @@ subprojects {
             name "nexus"
             url "https://nexus.ilovelook.cn/repository/maven-public/"
             credentials {
-                username "deployment"
-                password "X605deploy"
+                username "${'nexus.username'}"
+                password "${'nexus.password'}"
             }
         }
     }
