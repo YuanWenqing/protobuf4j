@@ -167,24 +167,26 @@ project(':protoframework-grpc') {
 configure(subprojects.findAll {
     it.plugins.hasPlugin('maven-publish')
 }) {
-    project.task('sourcesJar', type: Jar) {
-        from sourceSets.main.allJava
-        classifier = 'sources'
-    }
-    project.publishing.publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifactId project.archivesBaseName
-            version project.version
-
-            artifact sourcesJar
+    afterEvaluate {
+        project.task('sourcesJar', type: Jar) {
+            from sourceSets.main.allJava
+            classifier = 'sources'
         }
-    }
-    project.task('local') {
-        dependsOn publishToMavenLocal
-        doLast {
-            def pub = publishing.publications.mavenJava
-            println "artifact: ${pub.groupId}:${pub.artifactId}:${pub.version}"
+        project.publishing.publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifactId project.archivesBaseName
+                version project.version
+
+                artifact sourcesJar
+            }
+        }
+        project.task('local') {
+            dependsOn publishToMavenLocal
+            doLast {
+                def pub = publishing.publications.mavenJava
+                println "artifact: ${pub.groupId}:${pub.artifactId}:${pub.version}"
+            }
         }
     }
 }
