@@ -1,11 +1,11 @@
 
 dependencies {
     api(project(":protoframework-core"))
-    api(project(":multi-datasource"))
 
     // db
     api("org.springframework:spring-jdbc:${springVersion}")
     api("org.springframework:spring-context:${springVersion}")
+    api("top.fangwz.springboot:multi-datasource:0.2.0")
 
     // log
     implementation('org.apache.logging.log4j:log4j-slf4j-impl:2.11.0')
