@@ -18,6 +18,7 @@ buildscript {
 
 ext {
     springBootVersion = '2.0.3.RELEASE'
+    springVersion = '5.0.7.RELEASE'
 }
 
 // project setting
@@ -53,9 +54,6 @@ subprojects {
     test << {
         println test.reports.html.entryPoint
     }
-
-    // build dir change to out
-    project.buildDir = "out"
 
     dependencies {
 

@@ -5,8 +5,8 @@ dependencies {
     api(project(":protoframework-core"))
 
     // db
-    api('org.springframework:spring-jdbc:5.0.7.RELEASE')
-    api('org.springframework:spring-context:5.0.7.RELEASE')
+    api("org.springframework:spring-jdbc:${springVersion}")
+    api("org.springframework:spring-context:${springVersion}")
 
     // log
     implementation('org.apache.logging.log4j:log4j-slf4j-impl:2.11.0')
@@ -16,6 +16,6 @@ dependencies {
 //        implementation('org.slf4j:slf4j-api:1.7.25')
 
     testImplementation(project(":test-proto")) // dao testcase use this
-    testImplementation('org.springframework:spring-test:5.0.7.RELEASE')
+    testImplementation("org.springframework:spring-test:${springVersion}")
     testImplementation('com.h2database:h2:1.4.197') // embedded h2 database and jdbc driver
 }
