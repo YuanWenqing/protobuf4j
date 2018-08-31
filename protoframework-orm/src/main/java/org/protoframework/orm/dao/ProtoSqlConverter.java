@@ -5,14 +5,15 @@ package org.protoframework.orm.dao;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Internal;
 import com.google.protobuf.MapEntry;
 import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.translate.EntityArrays;
-import org.apache.commons.lang3.text.translate.LookupTranslator;
+import org.apache.commons.text.translate.EntityArrays;
+import org.apache.commons.text.translate.LookupTranslator;
 import org.protoframework.core.ProtoMessageHelper;
 import org.springframework.dao.TypeMismatchDataAccessException;
 
@@ -30,11 +31,28 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   protected static final String LIST_SEP = ",";
   protected static final String MAP_KV_SEP = ":";
   protected static final String MAP_ENTRY_SEP = ";";
-  protected static final String[][] LIST_LOOKUP = {{",", "%2c"}, {"%", "%25"}};
+  protected static final Map<CharSequence, CharSequence> LIST_LOOKUP;
+
+  static {
+    ImmutableMap.Builder<CharSequence, CharSequence> builder = ImmutableMap.builder();
+    builder.put(",", "%2c");
+    builder.put("%", "%25");
+    LIST_LOOKUP = builder.build();
+  }
+
   protected static final LookupTranslator LIST_VALUE_ESCAPE = new LookupTranslator(LIST_LOOKUP);
   protected static final LookupTranslator LIST_VALUE_UNESCAPE =
       new LookupTranslator(EntityArrays.invert(LIST_LOOKUP));
-  protected static final String[][] MAP_LOOKUP = {{":", "%3a"}, {";", "%3b"}, {"%", "%25"}};
+  protected static final Map<CharSequence, CharSequence> MAP_LOOKUP;
+
+  static {
+    ImmutableMap.Builder<CharSequence, CharSequence> builder = ImmutableMap.builder();
+    builder.put(":", "%3a");
+    builder.put(";", "%3b");
+    builder.put("%", "%25");
+    MAP_LOOKUP = builder.build();
+  }
+
   protected static final LookupTranslator MAP_VALUE_ESCAPE = new LookupTranslator(MAP_LOOKUP);
   protected static final LookupTranslator MAP_VALUE_UNESCAPE =
       new LookupTranslator(EntityArrays.invert(MAP_LOOKUP));

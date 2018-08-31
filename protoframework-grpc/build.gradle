@@ -1,0 +1,6 @@
+
+dependencies {
+
+    implementation('io.grpc:grpc-all:1.13.1')
+
+}

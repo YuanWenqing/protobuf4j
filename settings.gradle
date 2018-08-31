@@ -4,5 +4,4 @@ include 'test-proto'
 include 'protoframework-core'
 include 'protoframework-orm'
 include 'protoframework-grpc'
-include 'spring-starter'
-
+include 'protoframework-spring'

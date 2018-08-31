@@ -1,6 +1,5 @@
 package org.protoframework.orm.dao;
 
-import org.protoframework.orm.spring.JdbcTemplateAware;
 import org.protoframework.orm.sql.*;
 import org.protoframework.orm.sql.clause.SetClause;
 import org.protoframework.orm.sql.clause.WhereClause;
@@ -17,12 +16,14 @@ import java.util.Map;
 /**
  * 基本的接口
  */
-public interface IMessageDao<T> extends JdbcTemplateAware {
+public interface IMessageDao<T> {
   Class<T> getMessageType();
 
   String getTableName();
 
   RowMapper<T> getMessageMapper();
+
+  void setJdbcTemplate(JdbcTemplate jdbcTemplate);
 
   JdbcTemplate getJdbcTemplate();
 

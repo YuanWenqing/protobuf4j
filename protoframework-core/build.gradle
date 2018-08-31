@@ -1,0 +1,14 @@
+
+dependencies {
+    // protobuf
+    api('com.google.protobuf:protobuf-java:3.6.0')
+
+    // util
+    api('org.apache.commons:commons-lang3:3.7')
+    api('com.google.guava:guava:25.1-jre')
+
+    // json
+    api('com.hubspot.jackson:jackson-datatype-protobuf:0.9.9-jackson2.9-proto3')
+
+    testImplementation(project(":test-proto"))
+}

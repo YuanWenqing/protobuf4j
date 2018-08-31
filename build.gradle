@@ -16,10 +16,19 @@ buildscript {
     }
 }
 
+ext {
+    springBootVersion = '2.0.3.RELEASE'
+    springVersion = '5.0.7.RELEASE'
+}
+
 // project setting
 subprojects {
     group = "org.protoframework"
     version = "0.7.4"
+
+    ext {
+        publishable = true
+    }
 
     repositories {
         mavenLocal()
@@ -38,7 +47,15 @@ subprojects {
     apply plugin: "jacoco"
 
     jar << {
-        println jar.archivePath
+//        println jar.archivePath
+    }
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        from sourceSets.main.allJava
+        classifier = 'sources'
+    }
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
     }
 
     jacocoTestReport.dependsOn(test)
@@ -50,9 +67,6 @@ subprojects {
         println test.reports.html.entryPoint
     }
 
-    // build dir change to out
-    project.buildDir = "out"
-
     dependencies {
 
         // Nullable & NonNull
@@ -63,128 +77,32 @@ subprojects {
         testImplementation('junit:junit:4.12')
 
     }
+
 }
-project(':test-proto') { // 测试用的proto module
-    // https://github.com/google/protobuf-gradle-plugin
-    apply plugin: "com.google.protobuf"
-    protobuf {
-        generatedFilesBaseDir = "$projectDir/gen/"
-        def userhome = System.properties['user.home']
-        plugins {
-            // define a codegen plugin named as `naming`
-            naming {
-                path = "$userhome/.protobuf/naming.py"
+
+project(":test-proto") {
+    ext.publishable = false
+}
+// 配置发布
+configure(subprojects.findAll { it.ext.publishable }) {
+    // 在这里应用插件，否则相关publishing配置无法生效，but why?
+    apply plugin: 'maven-publish'
+    afterEvaluate {
+        project.publishing.publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifactId project.archivesBaseName
+                version project.version
+
+                artifact sourcesJar
             }
         }
-        generateProtoTasks {
-            ofSourceSet('main')
-            // all() returns the collection of all protoc tasks
-            all().each { task ->
-                // Here you can configure the task by name of each codegen plugin
-                task.plugins {
-                    naming {
-                        outputSubDir = "java"
-                    }
-                }
+        project.publishToMavenLocal {
+            doLast {
+                def pub = publishing.publications.mavenJava
+                println "artifact: ${pub.groupId}:${pub.artifactId}:${pub.version}"
             }
         }
-    }
-    clean {
-        delete protobuf.generatedFilesBaseDir
-    }
-    sourceSets {
-        main.java.srcDir("${protobuf.generatedFilesBaseDir}/main/java")
-    }
-
-    dependencies {
-        // protobuf
-        api('com.google.protobuf:protobuf-java:3.6.0')
-    }
-}
-project(':protoframework-core') {
-    apply plugin: 'maven-publish'
-
-    dependencies {
-        // protobuf
-        api('com.google.protobuf:protobuf-java:3.6.0')
-
-        // util
-        api('org.apache.commons:commons-lang3:3.7')
-        api('com.google.guava:guava:25.1-jre')
-
-        // json
-        api('com.hubspot.jackson:jackson-datatype-protobuf:0.9.9-jackson2.9-proto3')
-
-        testImplementation(project(":test-proto"))
-    }
-}
-project(':protoframework-orm') {
-    apply plugin: 'maven-publish'
-
-    dependencies {
-        api(project(":protoframework-core"))
-
-        // db
-        api('org.springframework:spring-jdbc:5.0.7.RELEASE')
-        api('org.springframework:spring-context:5.0.7.RELEASE')
-
-        // log
-        implementation('org.apache.logging.log4j:log4j-slf4j-impl:2.11.0')
-        // log4j-slf4j-impl会自动引入下面的几个依赖
-//        implementation('org.apache.logging.log4j:log4j-core:2.11.0')
-//        implementation('org.apache.logging.log4j:log4j-api:2.11.0')
-//        implementation('org.slf4j:slf4j-api:1.7.25')
-
-        testImplementation(project(":test-proto")) // dao testcase use this
-        testImplementation('org.springframework:spring-test:5.0.7.RELEASE')
-        testImplementation('com.h2database:h2:1.4.197') // embedded h2 database and jdbc driver
-    }
-}
-project(':spring-starter') {
-    apply plugin: 'maven-publish'
-
-    archivesBaseName = "protoframework-spring-boot-starter"
-
-    dependencies {
-        api(project(":protoframework-orm"))
-
-        // https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/index.html#boot-features-custom-starter-module-autoconfigure
-        // 生成自动配置有关的配置项
-        annotationProcessor('org.springframework.boot:spring-boot-autoconfigure-processor:2.0.3.RELEASE')
-
-        // test
-        testImplementation(project(":test-proto"))
-    }
-}
-project(':protoframework-grpc') {
-    dependencies {
-
-        implementation('io.grpc:grpc-all:1.13.1')
-
-    }
-}
-
-configure(subprojects.findAll {
-    it.plugins.hasPlugin('maven-publish')
-}) {
-    project.task('sourcesJar', type: Jar) {
-        from sourceSets.main.allJava
-        classifier = 'sources'
-    }
-    project.publishing.publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifactId project.archivesBaseName
-            version project.version
-
-            artifact sourcesJar
-        }
-    }
-    project.task('local') {
-        dependsOn publishToMavenLocal
-        doLast {
-            def pub = publishing.publications.mavenJava
-            println "artifact: ${pub.groupId}:${pub.artifactId}:${pub.version}"
-        }
+        project.task('local').dependsOn(project.publishToMavenLocal)
     }
 }
