@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/8/2
  */
-public class DataSourceRoutingPostProcessor implements BeanPostProcessor, ApplicationContextAware {
+class DataSourceRoutingPostProcessor implements BeanPostProcessor, ApplicationContextAware {
   private ApplicationContext applicationContext;
 
   @Override

@@ -30,8 +30,7 @@ import java.util.Properties;
  * @see PropertiesLoader
  * @see PropertiesParser
  */
-public class MultiDataSourceImportRegistrar
-    implements ImportBeanDefinitionRegistrar, ResourceLoaderAware {
+class MultiDataSourceImportRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware {
 
   private ResourceLoader resourceLoader = new DefaultResourceLoader();
 

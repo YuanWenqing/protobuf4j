@@ -1,12 +1,12 @@
 package org.protoframework.orm.dao;
 
-import org.protoframework.orm.spring.JdbcTemplateAware;
 import org.protoframework.orm.sql.*;
 import org.protoframework.orm.sql.clause.SetClause;
 import org.protoframework.orm.sql.clause.WhereClause;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.KeyHolder;
+import top.fangwz.springboot.datasource.JdbcTemplateAware;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

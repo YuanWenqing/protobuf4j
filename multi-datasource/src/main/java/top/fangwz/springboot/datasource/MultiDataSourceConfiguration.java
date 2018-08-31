@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  * @date: 2018/8/28
  */
 @Configuration
-public class MultiDataSourceConfiguration {
+class MultiDataSourceConfiguration {
 
   @Bean
   public DataSourceRoutingPostProcessor dataSourceRoutingPostProcessor() {
