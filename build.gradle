@@ -45,6 +45,14 @@ subprojects {
     jar << {
         println jar.archivePath
     }
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        from sourceSets.main.allJava
+        classifier = 'sources'
+    }
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
 
     jacocoTestReport.dependsOn(test)
     jacocoTestReport << {
@@ -65,15 +73,12 @@ subprojects {
         testImplementation('junit:junit:4.12')
 
     }
+
 }
 configure(subprojects.findAll {
     it.plugins.hasPlugin('maven-publish')
 }) {
     afterEvaluate {
-        project.task('sourcesJar', type: Jar) {
-            from sourceSets.main.allJava
-            classifier = 'sources'
-        }
         project.publishing.publications {
             mavenJava(MavenPublication) {
                 from components.java
@@ -83,8 +88,7 @@ configure(subprojects.findAll {
                 artifact sourcesJar
             }
         }
-        project.task('local') {
-            dependsOn publishToMavenLocal
+        project.publishToMavenLocal {
             doLast {
                 def pub = publishing.publications.mavenJava
                 println "artifact: ${pub.groupId}:${pub.artifactId}:${pub.version}"
