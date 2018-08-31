@@ -26,6 +26,10 @@ subprojects {
     group = "org.protoframework"
     version = "0.7.4"
 
+    ext {
+        publishable = true
+    }
+
     repositories {
         mavenLocal()
         maven {
@@ -43,7 +47,7 @@ subprojects {
     apply plugin: "jacoco"
 
     jar << {
-        println jar.archivePath
+//        println jar.archivePath
     }
     task sourcesJar(type: Jar, dependsOn: classes) {
         from sourceSets.main.allJava
@@ -75,9 +79,14 @@ subprojects {
     }
 
 }
-configure(subprojects.findAll {
-    it.plugins.hasPlugin('maven-publish')
-}) {
+
+project(":test-proto") {
+    ext.publishable = false
+}
+// 配置发布
+configure(subprojects.findAll { it.ext.publishable }) {
+    // 在这里应用插件，否则相关publishing配置无法生效，but why?
+    apply plugin: 'maven-publish'
     afterEvaluate {
         project.publishing.publications {
             mavenJava(MavenPublication) {
@@ -94,5 +103,6 @@ configure(subprojects.findAll {
                 println "artifact: ${pub.groupId}:${pub.artifactId}:${pub.version}"
             }
         }
+        project.task('local').dependsOn(project.publishToMavenLocal)
     }
 }
