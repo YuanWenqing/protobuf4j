@@ -1,6 +1,7 @@
 
 dependencies {
     api(project(":protoframework-core"))
+    api(project(":multi-datasource"))
 
     // db
     api("org.springframework:spring-jdbc:${springVersion}")
