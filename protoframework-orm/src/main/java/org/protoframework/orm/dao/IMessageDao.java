@@ -23,6 +23,8 @@ public interface IMessageDao<T> {
 
   RowMapper<T> getMessageMapper();
 
+  void setJdbcTemplate(JdbcTemplate jdbcTemplate);
+
   JdbcTemplate getJdbcTemplate();
 
   /**
