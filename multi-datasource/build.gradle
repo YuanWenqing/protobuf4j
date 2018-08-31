@@ -1,0 +1,25 @@
+
+dependencies {
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
+
+    annotationProcessor("org.projectlombok:lombok:1.18.2")
+    compileOnly("org.projectlombok:lombok:1.18.2")
+
+    implementation("org.springframework.boot:spring-boot:${springBootVersion}")
+    implementation("org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}")
+
+    // db
+    api('org.springframework:spring-jdbc:5.0.7.RELEASE')
+    api('org.springframework:spring-context:5.0.7.RELEASE')
+
+    // util
+    api('org.apache.commons:commons-lang3:3.7')
+    api('com.google.guava:guava:25.1-jre')
+
+    // test
+    testImplementation('org.springframework:spring-test:5.0.7.RELEASE')
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    testImplementation('mysql:mysql-connector-java:6.0.6')
+    testImplementation('com.zaxxer:HikariCP:2.7.9')
+    testImplementation('commons-io:commons-io:2.6')
+}
