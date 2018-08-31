@@ -1,6 +1,4 @@
 
-archivesBaseName = "protoframework-spring-boot-starter"
-
 dependencies {
     api(project(":protoframework-orm"))
 
