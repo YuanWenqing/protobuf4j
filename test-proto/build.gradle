@@ -1,0 +1,37 @@
+
+// 测试用的proto module
+// https://github.com/google/protobuf-gradle-plugin
+apply plugin: "com.google.protobuf"
+protobuf {
+    generatedFilesBaseDir = "$projectDir/gen/"
+    def userhome = System.properties['user.home']
+    plugins {
+        // define a codegen plugin named as `naming`
+        naming {
+            path = "$userhome/.protobuf/naming.py"
+        }
+    }
+    generateProtoTasks {
+        ofSourceSet('main')
+        // all() returns the collection of all protoc tasks
+        all().each { task ->
+            // Here you can configure the task by name of each codegen plugin
+            task.plugins {
+                naming {
+                    outputSubDir = "java"
+                }
+            }
+        }
+    }
+}
+clean {
+    delete protobuf.generatedFilesBaseDir
+}
+sourceSets {
+    main.java.srcDir("${protobuf.generatedFilesBaseDir}/main/java")
+}
+
+dependencies {
+    // protobuf
+    api('com.google.protobuf:protobuf-java:3.6.0')
+}
