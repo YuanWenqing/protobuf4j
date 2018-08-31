@@ -6,7 +6,6 @@ import org.protoframework.orm.sql.clause.WhereClause;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.KeyHolder;
-import top.fangwz.springboot.datasource.JdbcTemplateAware;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,12 +16,14 @@ import java.util.Map;
 /**
  * 基本的接口
  */
-public interface IMessageDao<T> extends JdbcTemplateAware {
+public interface IMessageDao<T> {
   Class<T> getMessageType();
 
   String getTableName();
 
   RowMapper<T> getMessageMapper();
+
+  void setJdbcTemplate(JdbcTemplate jdbcTemplate);
 
   JdbcTemplate getJdbcTemplate();
 
