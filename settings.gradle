@@ -5,4 +5,4 @@ include 'protoframework-core'
 include 'protoframework-orm'
 include 'protoframework-grpc'
 include 'spring-starter'
-
+include 'multi-datasource'
