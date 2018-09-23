@@ -252,8 +252,7 @@ public class TestClause {
 
     PaginationClause clause;
 
-    clause = QueryCreator.pagination(-1).
-        setDefaultLimit(10).build();
+    clause = QueryCreator.pagination(10).build();
     assertEquals(10, clause.getLimit());
     assertEquals(0, clause.getOffset());
     assertEquals("LIMIT 10", clause.toSqlTemplate(new StringBuilder()).toString());
@@ -264,9 +263,7 @@ public class TestClause {
     assertEquals("LIMIT 10 OFFSET 10", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("LIMIT 10 OFFSET 10", clause.toSolidSql(new StringBuilder()).toString());
 
-    clause = QueryCreator.pagination(-1).
-        setDefaultLimit(20).
-        setDefaultPageNo(10).buildByPageNo(0);
+    clause = QueryCreator.pagination(20).buildByPageNo(10);
     assertEquals(20, clause.getLimit());
     assertEquals(180, clause.getOffset());
     assertEquals("LIMIT 20 OFFSET 180", clause.toSqlTemplate(new StringBuilder()).toString());
@@ -277,8 +274,7 @@ public class TestClause {
     assertEquals("LIMIT 20 OFFSET 200", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("LIMIT 20 OFFSET 200", clause.toSolidSql(new StringBuilder()).toString());
 
-    clause = QueryCreator.pagination(10).
-        setDefaultOffset(10).buildByOffset(-1);
+    clause = QueryCreator.pagination(10).buildByOffset(10);
     assertEquals(10, clause.getLimit());
     assertEquals(10, clause.getOffset());
     assertEquals("LIMIT 10 OFFSET 10", clause.toSqlTemplate(new StringBuilder()).toString());

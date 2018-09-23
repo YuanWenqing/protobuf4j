@@ -100,36 +100,8 @@ public abstract class PaginationClause extends AbstractSqlObject {
 
   public static class Builder {
     private int limit;
-    private Integer defaultLimit;
-    private Integer defaultOffset;
-    private Integer defaultPageNo;
-
     private Builder(int limit) {
       this.limit = limit;
-    }
-
-    /**
-     * 设置默认的limit，当构造时limit非法时使用默认值
-     */
-    public Builder setDefaultLimit(int defaultLimit) {
-      this.defaultLimit = defaultLimit;
-      return this;
-    }
-
-    /**
-     * 设置默认的offset，当构造时offset非法时使用默认值
-     */
-    public Builder setDefaultOffset(int defaultOffset) {
-      this.defaultOffset = defaultOffset;
-      return this;
-    }
-
-    /**
-     * 设置默认的pageNo，当构造时pageNo非法时使用默认值
-     */
-    public Builder setDefaultPageNo(int defaultPageNo) {
-      this.defaultPageNo = defaultPageNo;
-      return this;
     }
 
     public PaginationClause build() {
@@ -137,24 +109,12 @@ public abstract class PaginationClause extends AbstractSqlObject {
     }
 
     public PaginationClause buildByOffset(int offset) {
-      if (defaultLimit != null && limit < 0) {
-        limit = defaultLimit.intValue();
-      }
-      if (defaultOffset != null && offset < 0) {
-        offset = defaultOffset.intValue();
-      }
       Preconditions.checkArgument(limit >= 0, "limit(>=0): " + limit);
       Preconditions.checkArgument(offset >= 0, "offset(>=0): " + offset);
       return new OffsetLimit(limit, offset);
     }
 
     public PaginationClause buildByPageNo(int pageNo) {
-      if (defaultLimit != null && limit < 0) {
-        limit = defaultLimit.intValue();
-      }
-      if (defaultPageNo != null && pageNo <= 0) {
-        pageNo = defaultPageNo.intValue();
-      }
       Preconditions.checkArgument(limit >= 0, "limit(>=0): " + limit);
       Preconditions.checkArgument(pageNo > 0, "pageNo(>0): " + pageNo);
       return new PageNoLimit(limit, pageNo);
