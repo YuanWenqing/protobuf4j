@@ -24,7 +24,7 @@ ext {
 // project setting
 subprojects {
     group = "org.protoframework"
-    version = "0.8.0"
+    version = "0.8.1"
 
     ext {
         publishable = true
