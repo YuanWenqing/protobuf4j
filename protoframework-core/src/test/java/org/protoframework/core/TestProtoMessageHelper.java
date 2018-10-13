@@ -6,6 +6,7 @@ import com.google.protobuf.MapEntry;
 import org.junit.Before;
 import org.junit.Test;
 import org.protoframework.core.proto.data.TestModel;
+import org.protoframework.test.MsgsForTest;
 
 import java.util.List;
 import java.util.Map;

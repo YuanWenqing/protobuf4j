@@ -6,20 +6,24 @@ buildscript {
             name "nexus"
             url "https://nexus.ilovelook.cn/repository/maven-public/"
             credentials {
-                username "deployment"
-                password "X605deploy"
+                username property("nexus.username")
+                password property("nexus.password")
             }
         }
     }
     dependencies {
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.6'
+        classpath "com.google.protobuf:protobuf-gradle-plugin:$protobufPluginVersion"
     }
 }
 
 // project setting
 subprojects {
     group = "org.protoframework"
-    version = "0.7.0"
+    version = "0.8.1"
+
+    ext {
+        publishable = true
+    }
 
     repositories {
         mavenLocal()
@@ -27,14 +31,27 @@ subprojects {
             name "nexus"
             url "https://nexus.ilovelook.cn/repository/maven-public/"
             credentials {
-                username "deployment"
-                password "X605deploy"
+                username property("nexus.username")
+                password property("nexus.password")
             }
         }
     }
 
     apply plugin: "java"
+    apply plugin: "java-library"
     apply plugin: "jacoco"
+
+    jar << {
+//        println jar.archivePath
+    }
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        from sourceSets.main.allJava
+        classifier = 'sources'
+    }
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
 
     jacocoTestReport.dependsOn(test)
     jacocoTestReport << {
@@ -45,131 +62,36 @@ subprojects {
         println test.reports.html.entryPoint
     }
 
-    // build dir change to out
-    project.buildDir = "out"
-
     dependencies {
-
-        // Nullable & NonNull
-        compile 'com.google.code.findbugs:jsr305:3.0.0'
-
         // test
-        testCompile 'junit:junit:4.12'
-
-    }
-}
-project(':test-proto') { // 测试用的proto module
-    apply plugin: "com.google.protobuf"
-    protobuf {
-        generatedFilesBaseDir = "$projectDir/gen/"
-        generateProtoTasks {
-            ofSourceSet('main')
-        }
-    }
-    clean {
-        delete protobuf.generatedFilesBaseDir
-    }
-    sourceSets {
-        main.java.srcDir("${protobuf.generatedFilesBaseDir}/main/java")
+        testImplementation("junit:junit:$junitVersion")
     }
 
-    dependencies {
-        // protobuf
-        compile 'com.google.protobuf:protobuf-java:3.6.0'
-    }
 }
-project(':protoframework-core') {
+
+project(":test-proto") {
+    ext.publishable = false
+}
+// 配置发布
+configure(subprojects.findAll { it.ext.publishable }) {
+    // 在这里应用插件，否则相关publishing配置无法生效，but why?
     apply plugin: 'maven-publish'
+    afterEvaluate {
+        project.publishing.publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifactId project.archivesBaseName
+                version project.version
 
-//    apply plugin: "com.google.protobuf"
-//    protobuf {
-//        generatedFilesBaseDir = "$projectDir/gen/"
-//        generateProtoTasks {
-//            ofSourceSet('test')
-//        }
-//    }
-//    clean {
-//        delete protobuf.generatedFilesBaseDir
-//    }
-//    sourceSets {
-//        test.java.srcDir("${protobuf.generatedFilesBaseDir}/test/java")
-//    }
-
-    dependencies {
-
-        // protobuf
-        compile 'com.google.protobuf:protobuf-java:3.6.0'
-
-        // spring
-        compile 'org.springframework:spring-core:4.3.18.RELEASE'
-//        compile 'org.springframework:spring-beans:4.3.18.RELEASE'
-
-        // util
-        compile 'org.apache.commons:commons-lang3:3.4'
-        compile 'com.google.guava:guava:18.0'
-
-        // json
-        compile 'com.hubspot.jackson:jackson-datatype-protobuf:0.9.9-jackson2.9-proto3'
-
-        testCompile project(":test-proto")
-    }
-}
-project(':protoframework-orm') {
-    apply plugin: 'maven-publish'
-
-    dependencies {
-        compile project(":protoframework-core")
-
-        // db
-        compile 'org.springframework:spring-jdbc:4.3.18.RELEASE'
-        compile 'org.springframework:spring-context:4.3.18.RELEASE'
-
-        compile('org.mybatis:mybatis-spring:1.3.2')
-
-        // util
-        compile 'org.apache.commons:commons-lang3:3.4'
-        compile 'com.google.guava:guava:18.0'
-
-        // log
-        compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.0'
-        // log4j-slf4j-impl会自动引入下面的几个依赖
-//        compile 'org.apache.logging.log4j:log4j-core:2.11.0'
-//        compile 'org.apache.logging.log4j:log4j-api:2.11.0'
-//        compile 'org.slf4j:slf4j-api:1.7.25'
-
-        testCompile project(":test-proto") // dao testcase use this
-        testCompile 'org.springframework:spring-test:4.3.18.RELEASE'
-        testCompile 'com.h2database:h2:1.4.197' // embedded h2 database and jdbc driver
-    }
-}
-project(':protoframework-grpc') {
-    dependencies {
-
-        compile 'io.grpc:grpc-all:1.13.1'
-
-    }
-}
-
-configure(subprojects.findAll {
-    it.plugins.hasPlugin('maven-publish')
-}) {
-    project.task('sourcesJar', type: Jar) {
-        from sourceSets.main.allJava
-        classifier = 'sources'
-    }
-    project.publishing.publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            version project.version
-
-            artifact sourcesJar
+                artifact sourcesJar
+            }
         }
-    }
-    project.task('local') {
-        dependsOn publishToMavenLocal
-        doLast {
-            def pub = publishing.publications.mavenJava
-            println "artifact: ${pub.groupId}:${pub.artifactId}:${pub.version}"
+        project.publishToMavenLocal {
+            doLast {
+                def pub = publishing.publications.mavenJava
+                println "artifact: ${pub.groupId}:${pub.artifactId}:${pub.version}"
+            }
         }
+        project.task('local').dependsOn(project.publishToMavenLocal)
     }
 }

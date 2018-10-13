@@ -1,6 +1,5 @@
 package org.protoframework.orm.dao;
 
-import org.protoframework.orm.spring.JdbcTemplateAware;
 import org.protoframework.orm.sql.*;
 import org.protoframework.orm.sql.clause.SetClause;
 import org.protoframework.orm.sql.clause.WhereClause;
@@ -17,12 +16,14 @@ import java.util.Map;
 /**
  * 基本的接口
  */
-public interface IMessageDao<T> extends JdbcTemplateAware {
+public interface IMessageDao<T> {
   Class<T> getMessageType();
 
   String getTableName();
 
   RowMapper<T> getMessageMapper();
+
+  void setJdbcTemplate(JdbcTemplate jdbcTemplate);
 
   JdbcTemplate getJdbcTemplate();
 
@@ -90,14 +91,14 @@ public interface IMessageDao<T> extends JdbcTemplateAware {
    * <p>
    * 注意：条件需要制定的范围小一些，不要一次取太多！
    */
-  List<T> selectAll(@Nullable IExpression cond);
+  List<T> selectCond(@Nullable IExpression cond);
 
   /**
    * 根据where子句返回所有数据
    *
    * @param where 遍历条件、排序和分页配置
    */
-  List<T> selectAll(@Nonnull WhereClause where);
+  List<T> selectWhere(@Nonnull WhereClause where);
 
   /**
    * select方法

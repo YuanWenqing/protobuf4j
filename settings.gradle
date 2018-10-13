@@ -2,5 +2,6 @@ rootProject.name = "protoframework"
 
 include 'test-proto'
 include 'protoframework-core'
+include 'protoframework-sql'
 include 'protoframework-orm'
-include 'protoframework-grpc'
+include 'protoframework-spring'

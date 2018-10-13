@@ -11,13 +11,15 @@ package org.protoframework.orm.dao;
 
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import org.protoframework.core.ProtoMessageHelper;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 
-import javax.annotation.Nonnull;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -29,54 +31,29 @@ import java.util.Set;
  *
  * @author yuanwq
  */
+@Setter
+@Getter
 public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
   /**
    * The class we are mapping to
    */
+  @NonNull
   private final Class<T> mappedClass;
+  @NonNull
   private final ProtoMessageHelper<T> messageHelper;
   private final IProtoSqlConverter sqlConverter;
-  /**
-   * Whether we're strictly validating
-   */
-  private boolean checkFullyPopulated = false;
-
-  public ProtoMessageRowMapper(@Nonnull Class<T> mappedClass,
-      @Nonnull IProtoSqlConverter sqlConverter) {
-    this.mappedClass = mappedClass;
-    this.messageHelper = ProtoMessageHelper.getHelper(mappedClass);
-    this.sqlConverter = sqlConverter;
-  }
-
-  public ProtoMessageRowMapper(@Nonnull Class<T> mappedClass,
-      @Nonnull IProtoSqlConverter sqlConverter, boolean checkFullyPopulated) {
-    this(mappedClass, sqlConverter);
-    this.checkFullyPopulated = checkFullyPopulated;
-  }
-
-  /**
-   * Get the class that we are mapping to.
-   */
-  public final Class<T> getMappedClass() {
-    return this.mappedClass;
-  }
-
-  /**
-   * Return whether we're strictly validating that all bean properties have been mapped from
-   * corresponding database fields.
-   */
-  public boolean isCheckFullyPopulated() {
-    return this.checkFullyPopulated;
-  }
-
   /**
    * Set whether we're strictly validating that all bean properties have been mapped from
    * corresponding database fields.
    * <p>
    * Default is {@code false}, accepting unpopulated properties in the target bean.
    */
-  public void setCheckFullyPopulated(boolean checkFullyPopulated) {
-    this.checkFullyPopulated = checkFullyPopulated;
+  private boolean checkFullyPopulated = false;
+
+  public ProtoMessageRowMapper(Class<T> mappedClass, IProtoSqlConverter sqlConverter) {
+    this.mappedClass = mappedClass;
+    this.messageHelper = ProtoMessageHelper.getHelper(mappedClass);
+    this.sqlConverter = sqlConverter;
   }
 
   /**

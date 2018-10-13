@@ -11,9 +11,10 @@ import org.protoframework.core.ProtoMessageHelper;
 import org.protoframework.orm.sql.*;
 import org.protoframework.orm.sql.clause.*;
 import org.protoframework.orm.sql.expr.RawExpr;
-import org.protoframework.util.ThreadLocalTimer;
+import org.protoframework.orm.util.ThreadLocalTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -33,7 +34,7 @@ import static com.google.common.base.Preconditions.*;
  * @param <T> 访问的数据表的数据元素类型
  * @author yuanwq
  */
-public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
+public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, InitializingBean {
   protected static final ThreadLocalTimer timer = new ThreadLocalTimer();
   protected static final String SQL_INSERT_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s);";
   protected static final String SQL_INSERT_IGNORE_TEMPLATE =
@@ -83,6 +84,11 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     this.daoLogger = LoggerFactory
         .getLogger(getClass().getName() + "#" + messageHelper.getDescriptor().getFullName());
     this.sqlLogger = new DaoSqlLogger(messageHelper.getDescriptor().getFullName());
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    checkNotNull(jdbcTemplate, "null jdbcTemplate");
   }
 
   @Override
@@ -157,7 +163,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     for (FieldDescriptor fd : messageHelper.getFieldDescriptorList()) {
       if (messageHelper.isFieldSet(message, fd.getName())) {
         Object value = messageHelper.getFieldValue(message, fd.getName());
-        insertSql.addField(fd.getName(), value);
+        insertSql.addValue(fd.getName(), value);
       }
     }
     return insertSql;
@@ -264,7 +270,9 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   @Override
   public Iterator<T> iterator(IExpression cond, int batch) {
-    return iterator(new WhereClause().setCond(cond).limit(batch));
+    WhereClause whereClause = QueryCreator.where().limit(batch);
+    whereClause.setCond(cond);
+    return iterator(whereClause);
   }
 
   @Override
@@ -282,7 +290,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
       }
 
       private void setupNextIteration() {
-        delegate = ProtoMessageDao.this.selectAll(where).iterator();
+        delegate = ProtoMessageDao.this.selectWhere(where).iterator();
         where.setPagination(where.getPagination().next());
       }
 
@@ -308,7 +316,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   @Override
   public T selectOne(IExpression cond) {
-    WhereClause where = new WhereClause().setCond(cond).limit(1);
+    WhereClause where = QueryCreator.where().limit(1);
+    where.setCond(cond);
     return selectOne(where);
   }
 
@@ -318,7 +327,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     if (where.getPagination() == null) {
       where.limit(1);
     }
-    List<T> messages = selectAll(where);
+    List<T> messages = selectWhere(where);
     if (messages.isEmpty()) {
       return null;
     }
@@ -327,19 +336,22 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   @Override
   public List<T> selectAll() {
-    return selectAll(new WhereClause());
+    return selectWhere(new WhereClause());
   }
 
   @Override
-  public List<T> selectAll(IExpression cond) {
-    return selectAll(new WhereClause().setCond(cond));
+  public List<T> selectCond(IExpression cond) {
+    WhereClause whereClause = QueryCreator.where();
+    whereClause.setCond(cond);
+    return selectWhere(whereClause);
   }
 
   @Override
-  public List<T> selectAll(@Nonnull WhereClause where) {
+  public List<T> selectWhere(@Nonnull WhereClause where) {
     checkNotNull(where);
     SelectClause select = new SelectClause().select(SqlUtil.SELECT_STAR);
-    SelectSql sql = new SelectSql(select, fromClause, where);
+    SelectSql sql = new SelectSql(select, fromClause);
+    sql.setWhere(where);
     return doSelect(sql, messageMapper);
   }
 
@@ -359,7 +371,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   @Override
   public int delete(IExpression cond) {
-    DeleteSql deleteSql = new DeleteSql(fromClause, new WhereClause().setCond(cond));
+    DeleteSql deleteSql = new DeleteSql(fromClause);
+    deleteSql.where().setCond(cond);
     return doDelete(deleteSql);
   }
 
@@ -397,8 +410,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
 
   @Override
   public int update(@Nonnull SetClause setClause, @Nullable IExpression cond) {
-    WhereClause where = new WhereClause().setCond(cond);
-    UpdateSql updateSql = new UpdateSql(fromClause.getTableRef(), setClause, where);
+    UpdateSql updateSql = new UpdateSql(fromClause.getTableRef(), setClause);
+    updateSql.where().setCond(cond);
     return doUpdate(updateSql);
   }
 
@@ -432,11 +445,11 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     return count(SqlUtil.SELECT_COUNT, cond);
   }
 
-  protected int count(@Nonnull SelectExpr countExpr, @Nullable IExpression cond) {
-    checkNotNull(countExpr);
-    SelectClause select = new SelectClause().select(countExpr);
-    WhereClause where = new WhereClause().setCond(cond);
-    SelectSql selectSql = new SelectSql(select, fromClause, where);
+  protected int count(@Nonnull SelectItem countItem, @Nullable IExpression cond) {
+    checkNotNull(countItem);
+    SelectClause select = new SelectClause().select(countItem);
+    SelectSql selectSql = new SelectSql(select, fromClause);
+    selectSql.where().setCond(cond);
     Integer ret = doSelectFirst(selectSql, new SingleColumnRowMapper<>(Integer.class));
     return ret == null ? 0 : ret;
   }
@@ -452,8 +465,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     checkNotNull(expr);
     IExpression sumExpr = SqlUtil.aggregateWrap("SUM", expr);
     SelectClause select = new SelectClause().select(sumExpr);
-    WhereClause where = new WhereClause().setCond(cond);
-    SelectSql selectSql = new SelectSql(select, fromClause, where);
+    SelectSql selectSql = new SelectSql(select, fromClause);
+    selectSql.where().setCond(cond);
     Long ret = doSelectFirst(selectSql, new SingleColumnRowMapper<>(Long.class));
     return ret == null ? 0 : ret;
   }
@@ -470,8 +483,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     checkNotNull(expr);
     IExpression maxExpr = SqlUtil.aggregateWrap("MAX", expr);
     SelectClause select = new SelectClause().select(maxExpr);
-    WhereClause where = new WhereClause().setCond(cond);
-    SelectSql selectSql = new SelectSql(select, fromClause, where);
+    SelectSql selectSql = new SelectSql(select, fromClause);
+    selectSql.where().setCond(cond);
     return doSelectFirst(selectSql, mapper);
   }
 
@@ -493,8 +506,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     checkNotNull(expr);
     IExpression minExpr = SqlUtil.aggregateWrap("MIN", expr);
     SelectClause select = new SelectClause().select(minExpr);
-    WhereClause where = new WhereClause().setCond(cond);
-    SelectSql selectSql = new SelectSql(select, fromClause, where);
+    SelectSql selectSql = new SelectSql(select, fromClause);
+    selectSql.where().setCond(cond);
     return doSelectFirst(selectSql, mapper);
   }
 
@@ -508,9 +521,9 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     SelectClause select = new SelectClause();
     select.select(groupColumn);
     select.select(SqlUtil.SELECT_COUNT);
-    WhereClause where = new WhereClause().setCond(cond);
-    where.setGroupBy(new GroupByClause().by(groupColumn));
-    SelectSql selectSql = new SelectSql(select, fromClause, where);
+    SelectSql selectSql = new SelectSql(select, fromClause);
+    selectSql.where().setCond(cond);
+    selectSql.where().setGroupBy(new GroupByClause().by(groupColumn));
     RowMapper<Pair<GK, Integer>> mapper = getGroupCountMapper(groupColumn);
     List<Pair<GK, Integer>> ret = doSelect(selectSql, mapper);
     if (ret == null || ret.isEmpty()) {
@@ -518,9 +531,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T> {
     }
     Map<GK, Integer> map = Maps.newLinkedHashMap();
     for (Pair<GK, Integer> pair : ret) {
-      if (pair.getKey() == null) {
-        continue;
-      }
       map.put(pair.getKey(), pair.getValue());
     }
     return map;
