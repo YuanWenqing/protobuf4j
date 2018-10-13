@@ -213,7 +213,7 @@ public class TestClause {
     assertEquals("ORDER BY a ASC,b DESC", clause.toSolidSql(new StringBuilder()).toString());
     assertFalse(clause.isEmpty());
 
-    clause.by(new OrderByItem(FieldValues.add("a", 1)));
+    clause.by(FieldValues.add("a", 1));
     System.out.println(clause);
     assertEquals("ORDER BY a ASC,b DESC,a+?",
         clause.toSqlTemplate(new StringBuilder()).toString());
@@ -229,6 +229,12 @@ public class TestClause {
     assertEquals(0, clause.getOrderByItems().size());
     assertEquals("", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("", clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.by("a");
+    System.out.println(clause);
+    assertEquals("ORDER BY a", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("ORDER BY a", clause.toSolidSql(new StringBuilder()).toString());
+    assertFalse(clause.isEmpty());
   }
 
   @Test

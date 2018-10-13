@@ -24,13 +24,13 @@ public class GroupByClause extends AbstractSqlObject {
     return this;
   }
 
-  public GroupByClause by(GroupByItem groupByItem) {
+  private GroupByClause addGroupByItem(GroupByItem groupByItem) {
     this.groupByItems.add(groupByItem);
     return this;
   }
 
   public GroupByClause by(IExpression expr) {
-    return by(new GroupByItem(expr));
+    return addGroupByItem(new GroupByItem(expr));
   }
 
   public GroupByClause by(String column) {
@@ -38,7 +38,7 @@ public class GroupByClause extends AbstractSqlObject {
   }
 
   public GroupByClause asc(IExpression expr) {
-    return by(new GroupByItem(expr, Direction.ASC));
+    return addGroupByItem(new GroupByItem(expr, Direction.ASC));
   }
 
   public GroupByClause asc(String column) {
@@ -46,7 +46,7 @@ public class GroupByClause extends AbstractSqlObject {
   }
 
   public GroupByClause desc(IExpression expr) {
-    return by(new GroupByItem(expr, Direction.DESC));
+    return addGroupByItem(new GroupByItem(expr, Direction.DESC));
   }
 
   public GroupByClause desc(String column) {

@@ -24,13 +24,21 @@ public class OrderByClause extends AbstractSqlObject {
     return this;
   }
 
-  public OrderByClause by(OrderByItem orderByItem) {
+  private OrderByClause addOrderByItem(OrderByItem orderByItem) {
     this.orderByItems.add(orderByItem);
     return this;
   }
 
+  public OrderByClause by(IExpression expr) {
+    return addOrderByItem(new OrderByItem(expr));
+  }
+
+  public OrderByClause by(String column) {
+    return by(Column.of(column));
+  }
+
   public OrderByClause asc(IExpression expr) {
-    return by(new OrderByItem(expr, Direction.ASC));
+    return addOrderByItem(new OrderByItem(expr, Direction.ASC));
   }
 
   public OrderByClause asc(String column) {
@@ -38,7 +46,7 @@ public class OrderByClause extends AbstractSqlObject {
   }
 
   public OrderByClause desc(IExpression expr) {
-    return by(new OrderByItem(expr, Direction.DESC));
+    return addOrderByItem(new OrderByItem(expr, Direction.DESC));
   }
 
   public OrderByClause desc(String column) {

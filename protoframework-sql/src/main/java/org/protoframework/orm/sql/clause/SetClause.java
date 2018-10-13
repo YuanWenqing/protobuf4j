@@ -29,7 +29,7 @@ public class SetClause extends AbstractSqlObject {
     return this;
   }
 
-  public SetClause addSetItem(SetItem setItem) {
+  private SetClause addSetItem(SetItem setItem) {
     this.setItems.add(setItem);
     return this;
   }
