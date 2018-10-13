@@ -1,6 +1,5 @@
 package org.protoframework.orm.dao;
 
-import org.apache.logging.log4j.status.StatusLogger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,10 +16,6 @@ import javax.sql.DataSource;
  */
 @Configuration
 public class JdbcConfiguration {
-  static {
-    // 主动初始化log4j，避免最后shutdown时才初始化，导致出错
-    StatusLogger.getLogger();
-  }
 
   @Bean
   public DataSource dataSource() {
