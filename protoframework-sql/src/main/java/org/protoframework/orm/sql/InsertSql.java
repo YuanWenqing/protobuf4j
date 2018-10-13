@@ -3,7 +3,6 @@ package org.protoframework.orm.sql;
 import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.NonNull;
-import lombok.Singular;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.orm.sql.expr.Value;
 
@@ -22,12 +21,12 @@ public class InsertSql extends AbstractSqlObject implements ISqlStatement {
   private final LinkedHashMap<String, IExpression> insertFields = Maps.newLinkedHashMap();
   private boolean ignore = false;
 
-  public InsertSql addField(String field, Object value) {
-    return addField(field, Value.of(value, field));
+  public InsertSql addValue(String field, Object value) {
+    return addExpression(field, Value.of(value, field));
   }
 
-  public InsertSql addField(String field, IExpression value) {
-    insertFields.put(field, value);
+  public InsertSql addExpression(String field, IExpression expression) {
+    insertFields.put(field, expression);
     return this;
   }
 

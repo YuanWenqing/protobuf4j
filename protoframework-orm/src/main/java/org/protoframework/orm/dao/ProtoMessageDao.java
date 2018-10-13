@@ -163,7 +163,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
     for (FieldDescriptor fd : messageHelper.getFieldDescriptorList()) {
       if (messageHelper.isFieldSet(message, fd.getName())) {
         Object value = messageHelper.getFieldValue(message, fd.getName());
-        insertSql.addField(fd.getName(), value);
+        insertSql.addValue(fd.getName(), value);
       }
     }
     return insertSql;

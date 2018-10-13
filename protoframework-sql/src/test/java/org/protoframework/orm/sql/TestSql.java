@@ -183,13 +183,13 @@ public class TestSql {
     assertEquals("INSERT INTO aa () VALUES ()", sql.toSolidSql(new StringBuilder()).toString());
     assertTrue(sql.collectSqlValue(Lists.newArrayList()).isEmpty());
 
-    sql.addField("b", 1);
+    sql.addValue("b", 1);
     System.out.println(sql);
     assertEquals("INSERT INTO aa (b) VALUES (?)",
         sql.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("INSERT INTO aa (b) VALUES (1)", sql.toSolidSql(new StringBuilder()).toString());
 
-    sql.addField("c", FieldValues.add("a", 2));
+    sql.addExpression("c", FieldValues.add("a", 2));
     System.out.println(sql);
     assertEquals("INSERT INTO aa (b,c) VALUES (?,a+?)",
         sql.toSqlTemplate(new StringBuilder()).toString());
