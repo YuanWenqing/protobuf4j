@@ -163,7 +163,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
     for (FieldDescriptor fd : messageHelper.getFieldDescriptorList()) {
       if (messageHelper.isFieldSet(message, fd.getName())) {
         Object value = messageHelper.getFieldValue(message, fd.getName());
-        insertSql.addField(fd.getName(), value);
+        insertSql.addValue(fd.getName(), value);
       }
     }
     return insertSql;
@@ -438,7 +438,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
     return count(SqlUtil.SELECT_COUNT, cond);
   }
 
-  protected int count(@Nonnull SelectExpr countExpr, @Nullable IExpression cond) {
+  protected int count(@Nonnull SelectItem countExpr, @Nullable IExpression cond) {
     checkNotNull(countExpr);
     SelectClause select = new SelectClause().select(countExpr);
     WhereClause where = new WhereClause().setCond(cond);

@@ -1,6 +1,7 @@
 package org.protoframework.orm.sql;
 
-import com.google.common.base.Preconditions;
+import lombok.Data;
+import lombok.NonNull;
 import org.protoframework.orm.sql.clause.FromClause;
 import org.protoframework.orm.sql.clause.WhereClause;
 
@@ -11,35 +12,19 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/15
  */
+@Data
 public class DeleteSql extends AbstractSqlObject implements ISqlStatement {
+  @NonNull
   private final FromClause from;
   private WhereClause where;
 
-  public DeleteSql(@Nonnull FromClause from) {
-    Preconditions.checkNotNull(from);
-    this.from = from;
-  }
-
-  public DeleteSql(@Nonnull FromClause from, WhereClause where) {
-    this(from);
-    setWhere(where);
-  }
-
-  public FromClause getFrom() {
-    return from;
-  }
-
-  public WhereClause getWhere() {
-    return where;
-  }
-
-  public DeleteSql setWhere(WhereClause where) {
-    this.where = where;
-    return this;
-  }
-
+  /**
+   * create {@link WhereClause} if necessary
+   */
   public WhereClause where() {
-    this.where = new WhereClause();
+    if (where == null) {
+      this.where = new WhereClause();
+    }
     return this.where;
   }
 
