@@ -23,7 +23,7 @@ public class TestClause {
     clause = QueryCreator.select();
     System.out.println(clause);
     assertTrue(clause.isEmpty());
-    assertEquals(0, clause.getSelectExprs().size());
+    assertEquals(0, clause.getSelectItems().size());
     try {
       clause.toSqlTemplate(new StringBuilder());
       fail();
@@ -40,15 +40,15 @@ public class TestClause {
 
     clause.select("b");
     System.out.println(clause);
-    assertTrue(clause.getSelectExprs().get(1).getExpression() instanceof Column);
-    assertNull(clause.getSelectExprs().get(1).getAlias());
+    assertTrue(clause.getSelectItems().get(1).getExpression() instanceof Column);
+    assertNull(clause.getSelectItems().get(1).getAlias());
     assertEquals("SELECT a,b", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SELECT a,b", clause.toSolidSql(new StringBuilder()).toString());
     assertFalse(clause.isEmpty());
 
-    clause.select(new SelectExpr(FieldValues.add("a", 1), "b"));
+    clause.select(new SelectItem(FieldValues.add("a", 1), "b"));
     System.out.println(clause);
-    assertEquals("b", clause.getSelectExprs().get(2).getAlias());
+    assertEquals("b", clause.getSelectItems().get(2).getAlias());
     assertEquals("SELECT a,b,a+? AS b", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SELECT a,b,a+1 AS b", clause.toSolidSql(new StringBuilder()).toString());
     List<ISqlValue> sqlValues = clause.collectSqlValue(Lists.newArrayList());
@@ -157,7 +157,7 @@ public class TestClause {
     clause = QueryCreator.groupBy();
     System.out.println(clause);
     assertTrue(clause.isEmpty());
-    assertEquals(0, clause.getGroupByExprs().size());
+    assertEquals(0, clause.getGroupByItems().size());
     assertEquals("", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("", clause.toSolidSql(new StringBuilder()).toString());
 
@@ -169,8 +169,8 @@ public class TestClause {
 
     clause.desc("b");
     System.out.println(clause);
-    assertTrue(clause.getGroupByExprs().get(1).getExpression() instanceof Column);
-    assertEquals(Direction.DESC, clause.getGroupByExprs().get(1).getDirection());
+    assertTrue(clause.getGroupByItems().get(1).getExpression() instanceof Column);
+    assertEquals(Direction.DESC, clause.getGroupByItems().get(1).getDirection());
     assertEquals("GROUP BY a ASC,b DESC", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("GROUP BY a ASC,b DESC", clause.toSolidSql(new StringBuilder()).toString());
     assertFalse(clause.isEmpty());
@@ -179,6 +179,13 @@ public class TestClause {
     System.out.println(clause);
     assertEquals("GROUP BY a ASC,b DESC,c", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("GROUP BY a ASC,b DESC,c", clause.toSolidSql(new StringBuilder()).toString());
+
+    clause.clear();
+    System.out.println(clause);
+    assertTrue(clause.isEmpty());
+    assertEquals(0, clause.getGroupByItems().size());
+    assertEquals("", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("", clause.toSolidSql(new StringBuilder()).toString());
   }
 
   @Test
@@ -188,7 +195,7 @@ public class TestClause {
     clause = QueryCreator.orderBy();
     System.out.println(clause);
     assertTrue(clause.isEmpty());
-    assertEquals(0, clause.getOrderByExprs().size());
+    assertEquals(0, clause.getOrderByItems().size());
     assertEquals("", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("", clause.toSolidSql(new StringBuilder()).toString());
 
@@ -200,21 +207,28 @@ public class TestClause {
 
     clause.desc("b");
     System.out.println(clause);
-    assertTrue(clause.getOrderByExprs().get(1).getExpression() instanceof Column);
-    assertEquals(Direction.DESC, clause.getOrderByExprs().get(1).getDirection());
+    assertTrue(clause.getOrderByItems().get(1).getExpression() instanceof Column);
+    assertEquals(Direction.DESC, clause.getOrderByItems().get(1).getDirection());
     assertEquals("ORDER BY a ASC,b DESC", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("ORDER BY a ASC,b DESC", clause.toSolidSql(new StringBuilder()).toString());
     assertFalse(clause.isEmpty());
 
-    clause.by(new OrderByExpr(FieldValues.add("a", 1), Direction.DESC));
+    clause.by(new OrderByItem(FieldValues.add("a", 1)));
     System.out.println(clause);
-    assertEquals("ORDER BY a ASC,b DESC,a+? DESC",
+    assertEquals("ORDER BY a ASC,b DESC,a+?",
         clause.toSqlTemplate(new StringBuilder()).toString());
-    assertEquals("ORDER BY a ASC,b DESC,a+1 DESC",
+    assertEquals("ORDER BY a ASC,b DESC,a+1",
         clause.toSolidSql(new StringBuilder()).toString());
     List<ISqlValue> sqlValues = clause.collectSqlValue(Lists.newArrayList());
     assertEquals(1, sqlValues.size());
     assertEquals(1, sqlValues.get(0).getValue());
+
+    clause.clear();
+    System.out.println(clause);
+    assertTrue(clause.isEmpty());
+    assertEquals(0, clause.getOrderByItems().size());
+    assertEquals("", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("", clause.toSolidSql(new StringBuilder()).toString());
   }
 
   @Test
@@ -291,6 +305,9 @@ public class TestClause {
     assertEquals(10, clause.totalPages(100));
     assertEquals(10, clause.totalPages(91));
     assertEquals(10, clause.totalPages(99));
+
+    clause = QueryCreator.pagination(0).build();
+    assertEquals(0, clause.totalPages(1));
   }
 
   @Test
@@ -300,7 +317,7 @@ public class TestClause {
     clause = QueryCreator.set();
     System.out.println(clause);
     assertTrue(clause.isEmpty());
-    assertEquals(0, clause.getSetExprs().size());
+    assertEquals(0, clause.getSetItems().size());
     try {
       clause.toSqlTemplate(new StringBuilder());
       fail();
@@ -311,22 +328,22 @@ public class TestClause {
 
     clause.setValue("a", 1);
     System.out.println(clause);
-    assertEquals("a", clause.getSetExprs().get(0).getColumn().getColumn());
-    assertTrue(clause.getSetExprs().get(0).getValueExpr() instanceof Value);
+    assertEquals("a", clause.getSetItems().get(0).getColumn().getColumn());
+    assertTrue(clause.getSetItems().get(0).getValue() instanceof Value);
     assertEquals("SET a=?", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SET a=1", clause.toSolidSql(new StringBuilder()).toString());
     assertFalse(clause.isEmpty());
 
-    clause.setExpr("b", FieldValues.add("c", 2));
+    clause.setExpression("b", FieldValues.add("c", 2));
     System.out.println(clause);
-    assertTrue(clause.getSetExprs().get(1).getValueExpr() instanceof ArithmeticExpr);
+    assertTrue(clause.getSetItems().get(1).getValue() instanceof ArithmeticExpr);
     assertEquals("SET a=?,b=c+?", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SET a=1,b=c+2", clause.toSolidSql(new StringBuilder()).toString());
     assertFalse(clause.isEmpty());
 
     clause.setColumn("d", "e");
     System.out.println(clause);
-    assertTrue(clause.getSetExprs().get(2).getValueExpr() instanceof Column);
+    assertTrue(clause.getSetItems().get(2).getValue() instanceof Column);
     assertEquals("SET a=?,b=c+?,d=e", clause.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SET a=1,b=c+2,d=e", clause.toSolidSql(new StringBuilder()).toString());
     List<ISqlValue> sqlValues = clause.collectSqlValue(Lists.newArrayList());

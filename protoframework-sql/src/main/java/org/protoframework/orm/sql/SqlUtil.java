@@ -1,7 +1,7 @@
 package org.protoframework.orm.sql;
 
 import org.apache.commons.lang3.StringUtils;
-import org.protoframework.orm.sql.clause.SelectExpr;
+import org.protoframework.orm.sql.clause.SelectItem;
 import org.protoframework.orm.sql.expr.AbstractExpression;
 import org.protoframework.orm.sql.expr.RawExpr;
 
@@ -18,16 +18,16 @@ public abstract class SqlUtil {
   private SqlUtil() {
   }
 
-  public static final SelectExpr SELECT_STAR = new SelectExpr(new RawExpr("*")) {
+  public static final SelectItem SELECT_STAR = new SelectItem(new RawExpr("*")) {
     @Override
-    public SelectExpr setAlias(String alias) {
+    public void setAlias(String alias) {
       throw new UnsupportedOperationException("cannot set alias for STAR `*`");
     }
   };
 
-  public static final SelectExpr SELECT_COUNT = new SelectExpr(new RawExpr("COUNT(1)")) {
+  public static final SelectItem SELECT_COUNT = new SelectItem(new RawExpr("COUNT(1)")) {
     @Override
-    public SelectExpr setAlias(String alias) {
+    public void setAlias(String alias) {
       throw new UnsupportedOperationException("cannot set alias for DEFAULT `COUNT(1)`");
     }
   };

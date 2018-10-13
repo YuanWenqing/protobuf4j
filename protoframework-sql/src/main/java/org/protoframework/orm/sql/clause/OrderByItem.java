@@ -1,37 +1,30 @@
 package org.protoframework.orm.sql.clause;
 
+import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.protoframework.orm.sql.AbstractSqlObject;
 import org.protoframework.orm.sql.Direction;
 import org.protoframework.orm.sql.IExpression;
 import org.protoframework.orm.sql.ISqlValue;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public class GroupByExpr extends AbstractSqlObject {
+@Data
+@RequiredArgsConstructor
+public class OrderByItem extends AbstractSqlObject {
+  @NonNull
   private final IExpression expression;
-  private final Direction direction;
+  private Direction direction;
 
-  public GroupByExpr(@Nonnull IExpression expression, @Nullable Direction direction) {
+  public OrderByItem(IExpression expression, Direction direction) {
     this.expression = expression;
     this.direction = direction;
-  }
-
-  public GroupByExpr(@Nonnull IExpression expression) {
-    this(expression, null);
-  }
-
-  public IExpression getExpression() {
-    return expression;
-  }
-
-  public Direction getDirection() {
-    return direction;
   }
 
   @Override
