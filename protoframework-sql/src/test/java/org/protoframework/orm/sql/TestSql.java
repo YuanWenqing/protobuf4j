@@ -18,17 +18,13 @@ public class TestSql {
 
     sql = QueryCreator.selectFrom("t ");
     System.out.println(sql);
+    assertNotNull(sql.getSelect());
     assertNotNull(sql.getFrom());
-    assertNull(sql.getSelect());
     assertNull(sql.getWhere());
-    assertEquals("FROM t", sql.toSolidSql(new StringBuilder()).toString());
+    assertEquals("SELECT FROM t", sql.toSolidSql(new StringBuilder()).toString());
     assertTrue(sql.collectSqlValue(Lists.newArrayList()).isEmpty());
 
-    sql.select();
-    System.out.println(sql);
-    assertNotNull(sql.getSelect());
-    assertEquals("SELECT FROM t", sql.toSolidSql(new StringBuilder()).toString());
-    sql.select().star();
+    sql.getSelect().star();
     System.out.println(sql);
     assertEquals("SELECT * FROM t", sql.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SELECT * FROM t", sql.toSolidSql(new StringBuilder()).toString());
@@ -47,15 +43,13 @@ public class TestSql {
 
     sql.setWhere(null);
     System.out.println(sql);
-    sql.setSelect(null);
-    System.out.println(sql);
-    assertNull(sql.getSelect());
     assertNull(sql.getWhere());
-    assertEquals("FROM t", sql.toSolidSql(new StringBuilder()).toString());
+    assertEquals("SELECT * FROM t", sql.toSolidSql(new StringBuilder()).toString());
 
-    sql = new SelectSql(null, QueryCreator.from("t"), null);
-    assertNull(sql.getSelect());
-    assertNull(sql.getWhere());
+    sql.getSelect().clear();
+    System.out.println(sql);
+    assertNotNull(sql.getSelect());
+    assertEquals("SELECT FROM t", sql.toSolidSql(new StringBuilder()).toString());
   }
 
   @Test
@@ -65,16 +59,12 @@ public class TestSql {
     sql = QueryCreator.updateSql("t");
     System.out.println(sql);
     assertNotNull(sql.getTable());
-    assertNull(sql.getSet());
+    assertNotNull(sql.getSet());
     assertNull(sql.getWhere());
-    assertEquals("UPDATE t", sql.toSolidSql(new StringBuilder()).toString());
+    assertEquals("UPDATE t SET ", sql.toSolidSql(new StringBuilder()).toString());
     assertTrue(sql.collectSqlValue(Lists.newArrayList()).isEmpty());
 
-    sql.set();
-    System.out.println(sql);
-    assertNotNull(sql.getSet());
-    assertEquals("UPDATE t", sql.toSolidSql(new StringBuilder()).toString());
-    sql.set().setValue("a", "b");
+    sql.getSet().setValue("a", "b");
     System.out.println(sql);
     assertEquals("UPDATE t SET a=?", sql.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("UPDATE t SET a='b'", sql.toSolidSql(new StringBuilder()).toString());
@@ -92,16 +82,10 @@ public class TestSql {
     assertEquals(2, sqlValues.size());
 
     sql.setWhere(null);
+    sql.getSet().clear();
     System.out.println(sql);
-    sql.setSet(null);
-    System.out.println(sql);
-    assertNull(sql.getSet());
     assertNull(sql.getWhere());
-    assertEquals("UPDATE t", sql.toSolidSql(new StringBuilder()).toString());
-
-    sql = new UpdateSql(QueryCreator.table("t"), null, null);
-    assertNull(sql.getSet());
-    assertNull(sql.getWhere());
+    assertEquals("UPDATE t SET ", sql.toSolidSql(new StringBuilder()).toString());
   }
 
   @Test
@@ -133,10 +117,6 @@ public class TestSql {
     System.out.println(sql);
     assertNull(sql.getWhere());
     assertEquals("DELETE FROM t", sql.toSolidSql(new StringBuilder()).toString());
-
-    sql = new DeleteSql(QueryCreator.from("a"), QueryCreator.where());
-    assertNotNull(sql.getFrom());
-    assertNotNull(sql.getWhere());
   }
 
   @Test

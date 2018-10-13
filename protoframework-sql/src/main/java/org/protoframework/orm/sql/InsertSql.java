@@ -1,6 +1,9 @@
 package org.protoframework.orm.sql;
 
 import com.google.common.collect.Maps;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.Singular;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.orm.sql.expr.Value;
 
@@ -12,18 +15,12 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/26
  */
+@Data
 public class InsertSql extends AbstractSqlObject implements ISqlStatement {
+  @NonNull
   private final ITableRef table;
   private final LinkedHashMap<String, IExpression> insertFields = Maps.newLinkedHashMap();
   private boolean ignore = false;
-
-  public InsertSql(@Nonnull ITableRef table) {
-    this.table = table;
-  }
-
-  public ITableRef getTable() {
-    return table;
-  }
 
   public InsertSql addField(String field, Object value) {
     return addField(field, Value.of(value, field));
@@ -31,15 +28,6 @@ public class InsertSql extends AbstractSqlObject implements ISqlStatement {
 
   public InsertSql addField(String field, IExpression value) {
     insertFields.put(field, value);
-    return this;
-  }
-
-  public boolean isIgnore() {
-    return ignore;
-  }
-
-  public InsertSql setIgnore(boolean ignore) {
-    this.ignore = ignore;
     return this;
   }
 

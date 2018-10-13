@@ -27,6 +27,11 @@ public class SelectClause extends AbstractSqlObject {
     return selectExprs.isEmpty();
   }
 
+  public SelectClause clear() {
+    selectExprs.clear();
+    return this;
+  }
+
   public SelectClause select(SelectExpr selectExpr) {
     this.selectExprs.add(selectExpr);
     return this;

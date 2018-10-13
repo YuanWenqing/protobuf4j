@@ -32,7 +32,7 @@ public abstract class SqlUtil {
     }
   };
 
-  public static final IExpression aggregateWrap(String aggregateFunc, IExpression expr) {
+  public static IExpression aggregateWrap(String aggregateFunc, IExpression expr) {
     return new AbstractExpression() {
       @Override
       public int comparePrecedence(@Nonnull ISqlOperator outerOp) {

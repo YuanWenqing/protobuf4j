@@ -58,7 +58,7 @@ public abstract class QueryCreator {
   }
 
   public static SelectSql selectFrom(String table) {
-    return new SelectSql(from(table));
+    return new SelectSql(select(), from(table));
   }
 
   public static DeleteSql deleteFrom(String table) {
@@ -66,7 +66,7 @@ public abstract class QueryCreator {
   }
 
   public static UpdateSql updateSql(String table) {
-    return new UpdateSql(table(table));
+    return new UpdateSql(table(table), set());
   }
 
   public static InsertSql insertInto(String table) {

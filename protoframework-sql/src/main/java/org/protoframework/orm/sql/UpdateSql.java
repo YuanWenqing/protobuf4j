@@ -1,68 +1,37 @@
 package org.protoframework.orm.sql;
 
+import lombok.Data;
+import lombok.NonNull;
 import org.protoframework.orm.sql.clause.SetClause;
 import org.protoframework.orm.sql.clause.WhereClause;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.*;
-
 /**
  * @author: yuanwq
  * @date: 2018/7/15
  */
+@Data
 public class UpdateSql extends AbstractSqlObject implements ISqlStatement {
+  @NonNull
   private final ITableRef table;
-  private SetClause set;
+  @NonNull
+  private final SetClause set;
   private WhereClause where;
 
-  public UpdateSql(@Nonnull ITableRef table) {
-    checkNotNull(table);
-    this.table = table;
-  }
-
-  public UpdateSql(@Nonnull ITableRef table, SetClause set, WhereClause where) {
-    this(table);
-    this.set = set;
-    this.where = where;
-  }
-
-  public ITableRef getTable() {
-    return table;
-  }
-
-  public SetClause getSet() {
-    return set;
-  }
-
-  public UpdateSql setSet(SetClause set) {
-    this.set = set;
-    return this;
-  }
-
-  public SetClause set() {
-    this.set = new SetClause();
-    return this.set;
-  }
-
-  public WhereClause getWhere() {
-    return where;
-  }
-
-  public UpdateSql setWhere(WhereClause where) {
-    this.where = where;
-    return this;
-  }
-
+  /**
+   * create {@link WhereClause} if necessary
+   */
   public WhereClause where() {
-    this.where = new WhereClause();
+    if (this.where == null) {
+      this.where = new WhereClause();
+    }
     return this.where;
   }
 
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    checkNotNull(set);
     sb.append("UPDATE ");
     table.toSqlTemplate(sb);
     sb.append(" ");
@@ -78,10 +47,8 @@ public class UpdateSql extends AbstractSqlObject implements ISqlStatement {
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
     sb.append("UPDATE ");
     table.toSolidSql(sb);
-    if (set != null && !set.isEmpty()) {
-      sb.append(" ");
-      set.toSolidSql(sb);
-    }
+    sb.append(" ");
+    set.toSolidSql(sb);
     if (where != null) {
       sb.append(" ");
       where.toSolidSql(sb);
@@ -91,9 +58,7 @@ public class UpdateSql extends AbstractSqlObject implements ISqlStatement {
 
   @Override
   public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
-    if (set != null) {
-      set.collectSqlValue(sqlValues);
-    }
+    set.collectSqlValue(sqlValues);
     if (where != null) {
       where.collectSqlValue(sqlValues);
     }

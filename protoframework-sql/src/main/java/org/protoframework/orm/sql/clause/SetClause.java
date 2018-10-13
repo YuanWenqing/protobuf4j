@@ -27,6 +27,11 @@ public class SetClause extends AbstractSqlObject {
     return setExprs.isEmpty();
   }
 
+  public SetClause clear() {
+    setExprs.clear();
+    return this;
+  }
+
   public SetClause addSetExpr(SetExpr setExpr) {
     this.setExprs.add(setExpr);
     return this;
