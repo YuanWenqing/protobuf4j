@@ -16,11 +16,11 @@ import java.util.Map;
  * @author: yuanwq
  * @date: 2018/7/23
  */
-public class PriKeyProtoMessageDao<K, T extends Message> extends ProtoMessageDao<T>
+public class PrimaryKeyProtoMessageDao<K, T extends Message> extends ProtoMessageDao<T>
     implements IPrimaryKeyMessageDao<K, T> {
   protected final String primaryKey;
 
-  public PriKeyProtoMessageDao(@Nonnull Class<T> messageType, String primaryKey) {
+  public PrimaryKeyProtoMessageDao(@Nonnull Class<T> messageType, String primaryKey) {
     super(messageType);
     this.primaryKey = primaryKey;
   }

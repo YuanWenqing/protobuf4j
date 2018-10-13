@@ -32,13 +32,13 @@ public class TestMessageDao {
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
-  private PriKeyProtoMessageDao<Long, TestModel.DbMsg> dao;
+  private PrimaryKeyProtoMessageDao<Long, TestModel.DbMsg> dao;
   private final String primaryKey = "id";
   private TestModel.DbMsg msgTemplate;
 
   @Before
   public void setup() {
-    dao = new PriKeyProtoMessageDao<>(TestModel.DbMsg.class, primaryKey);
+    dao = new PrimaryKeyProtoMessageDao<>(TestModel.DbMsg.class, primaryKey);
     dao.setJdbcTemplate(jdbcTemplate);
 
     msgTemplate =
