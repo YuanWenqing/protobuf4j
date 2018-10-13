@@ -1,7 +1,7 @@
 /**
  * @author yuanwq, date: 2017年2月17日
  */
-package org.protoframework.util;
+package org.protoframework.orm.util;
 
 import com.google.common.base.Stopwatch;
 

@@ -1,7 +1,6 @@
-package org.protoframework.core.util;
+package org.protoframework.orm.util;
 
 import org.junit.Test;
-import org.protoframework.util.ThreadLocalTimer;
 
 import java.util.concurrent.TimeUnit;
 

@@ -11,7 +11,7 @@ import org.protoframework.core.ProtoMessageHelper;
 import org.protoframework.orm.sql.*;
 import org.protoframework.orm.sql.clause.*;
 import org.protoframework.orm.sql.expr.RawExpr;
-import org.protoframework.util.ThreadLocalTimer;
+import org.protoframework.orm.util.ThreadLocalTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
