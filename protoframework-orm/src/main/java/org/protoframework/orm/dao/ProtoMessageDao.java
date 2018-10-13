@@ -445,9 +445,9 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
     return count(SqlUtil.SELECT_COUNT, cond);
   }
 
-  protected int count(@Nonnull SelectItem countExpr, @Nullable IExpression cond) {
-    checkNotNull(countExpr);
-    SelectClause select = new SelectClause().select(countExpr);
+  protected int count(@Nonnull SelectItem countItem, @Nullable IExpression cond) {
+    checkNotNull(countItem);
+    SelectClause select = new SelectClause().select(countItem);
     SelectSql selectSql = new SelectSql(select, fromClause);
     selectSql.where().setCond(cond);
     Integer ret = doSelectFirst(selectSql, new SingleColumnRowMapper<>(Integer.class));
