@@ -12,13 +12,8 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.6'
+        classpath "com.google.protobuf:protobuf-gradle-plugin:$protobufPluginVersion"
     }
-}
-
-ext {
-    springBootVersion = '2.0.3.RELEASE'
-    springVersion = '5.0.7.RELEASE'
 }
 
 // project setting
@@ -68,14 +63,8 @@ subprojects {
     }
 
     dependencies {
-
-        // Nullable & NonNull
-        // http://spotbugs.readthedocs.io/en/latest/migration.html
-        compileOnly('com.github.spotbugs:spotbugs-annotations:3.1.3')
-
         // test
-        testImplementation('junit:junit:4.12')
-
+        testImplementation("junit:junit:$junitVersion")
     }
 
 }
