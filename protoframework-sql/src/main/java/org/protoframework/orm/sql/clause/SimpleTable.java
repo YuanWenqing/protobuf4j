@@ -1,5 +1,6 @@
 package org.protoframework.orm.sql.clause;
 
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.orm.sql.AbstractSqlObject;
 import org.protoframework.orm.sql.ISqlValue;
@@ -14,6 +15,7 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/16
  */
+@Data
 public class SimpleTable extends AbstractSqlObject implements ITableRef {
   private final String tableName;
 

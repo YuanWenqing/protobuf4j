@@ -1,6 +1,7 @@
 package org.protoframework.orm.sql.clause;
 
 import com.google.common.collect.Lists;
+import lombok.Data;
 import org.protoframework.orm.sql.AbstractSqlObject;
 import org.protoframework.orm.sql.Direction;
 import org.protoframework.orm.sql.IExpression;
@@ -8,27 +9,28 @@ import org.protoframework.orm.sql.ISqlValue;
 import org.protoframework.orm.sql.expr.Column;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * @author: yuanwq
  * @date: 2018/7/12
  */
+@Data
 public class GroupByClause extends AbstractSqlObject {
-  private final List<GroupByExpr> groupByExprs = Lists.newArrayList();
+  private final List<GroupByItem> groupByItems = Lists.newArrayList();
 
-  public List<GroupByExpr> getGroupByExprs() {
-    return Collections.unmodifiableList(groupByExprs);
+  public GroupByClause clear() {
+    groupByItems.clear();
+    return this;
   }
 
-  public GroupByClause by(GroupByExpr groupByExpr) {
-    this.groupByExprs.add(groupByExpr);
+  private GroupByClause addGroupByItem(GroupByItem groupByItem) {
+    this.groupByItems.add(groupByItem);
     return this;
   }
 
   public GroupByClause by(IExpression expr) {
-    return by(new GroupByExpr(expr));
+    return addGroupByItem(new GroupByItem(expr));
   }
 
   public GroupByClause by(String column) {
@@ -36,7 +38,7 @@ public class GroupByClause extends AbstractSqlObject {
   }
 
   public GroupByClause asc(IExpression expr) {
-    return by(new GroupByExpr(expr, Direction.ASC));
+    return addGroupByItem(new GroupByItem(expr, Direction.ASC));
   }
 
   public GroupByClause asc(String column) {
@@ -44,7 +46,7 @@ public class GroupByClause extends AbstractSqlObject {
   }
 
   public GroupByClause desc(IExpression expr) {
-    return by(new GroupByExpr(expr, Direction.DESC));
+    return addGroupByItem(new GroupByItem(expr, Direction.DESC));
   }
 
   public GroupByClause desc(String column) {
@@ -52,17 +54,17 @@ public class GroupByClause extends AbstractSqlObject {
   }
 
   public boolean isEmpty() {
-    return groupByExprs.isEmpty();
+    return groupByItems.isEmpty();
   }
 
   @Override
   public StringBuilder toSqlTemplate(@Nonnull StringBuilder sb) {
-    if (groupByExprs.isEmpty()) {
+    if (groupByItems.isEmpty()) {
       return sb;
     }
     sb.append("GROUP BY ");
     boolean first = true;
-    for (GroupByExpr expr : groupByExprs) {
+    for (GroupByItem expr : groupByItems) {
       if (first) {
         first = false;
       } else {
@@ -75,12 +77,12 @@ public class GroupByClause extends AbstractSqlObject {
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    if (groupByExprs.isEmpty()) {
+    if (groupByItems.isEmpty()) {
       return sb;
     }
     sb.append("GROUP BY ");
     boolean first = true;
-    for (GroupByExpr expr : groupByExprs) {
+    for (GroupByItem expr : groupByItems) {
       if (first) {
         first = false;
       } else {
@@ -93,7 +95,7 @@ public class GroupByClause extends AbstractSqlObject {
 
   @Override
   public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
-    for (GroupByExpr expr : groupByExprs) {
+    for (GroupByItem expr : groupByItems) {
       expr.collectSqlValue(sqlValues);
     }
     return sqlValues;

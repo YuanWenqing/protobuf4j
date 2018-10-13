@@ -1,6 +1,7 @@
 package org.protoframework.orm.sql.clause;
 
 import com.google.common.base.Preconditions;
+import lombok.Data;
 import org.protoframework.orm.sql.AbstractSqlObject;
 import org.protoframework.orm.sql.ISqlValue;
 
@@ -14,19 +15,12 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/12
  */
+@Data
 public abstract class PaginationClause extends AbstractSqlObject {
   protected final int limit;
 
-  public PaginationClause(int limit) {
-    this.limit = limit;
-  }
-
   public static Builder newBuilder(int limit) {
     return new Builder(limit);
-  }
-
-  public int getLimit() {
-    return limit;
   }
 
   public abstract int getOffset();

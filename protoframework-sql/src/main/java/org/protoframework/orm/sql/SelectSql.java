@@ -1,5 +1,7 @@
 package org.protoframework.orm.sql;
 
+import lombok.Data;
+import lombok.NonNull;
 import org.protoframework.orm.sql.clause.FromClause;
 import org.protoframework.orm.sql.clause.SelectClause;
 import org.protoframework.orm.sql.clause.WhereClause;
@@ -13,50 +15,21 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/15
  */
+@Data
 public class SelectSql extends AbstractSqlObject implements ISqlStatement {
+  @NonNull
+  private final SelectClause select;
+  @NonNull
   private final FromClause from;
-  private SelectClause select;
   private WhereClause where;
 
-  public SelectSql(@Nonnull FromClause from) {
-    this.from = from;
-  }
-
-  public SelectSql(SelectClause select, @Nonnull FromClause from, WhereClause where) {
-    this.select = select;
-    this.from = from;
-    this.where = where;
-  }
-
-  public SelectClause getSelect() {
-    return select;
-  }
-
-  public SelectSql setSelect(SelectClause select) {
-    this.select = select;
-    return this;
-  }
-
-  public SelectClause select() {
-    this.select = new SelectClause();
-    return this.select;
-  }
-
-  public FromClause getFrom() {
-    return from;
-  }
-
-  public WhereClause getWhere() {
-    return where;
-  }
-
-  public SelectSql setWhere(WhereClause where) {
-    this.where = where;
-    return this;
-  }
-
+  /**
+   * create {@link WhereClause} if necessary
+   */
   public WhereClause where() {
-    this.where = new WhereClause();
+    if (this.where == null) {
+      this.where = new WhereClause();
+    }
     return this.where;
   }
 
@@ -76,9 +49,7 @@ public class SelectSql extends AbstractSqlObject implements ISqlStatement {
 
   @Override
   public StringBuilder toSolidSql(@Nonnull StringBuilder sb) {
-    if (select != null) {
-      select.toSolidSql(sb);
-    }
+    select.toSolidSql(sb);
     if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
       sb.append(" ");
     }
@@ -92,9 +63,7 @@ public class SelectSql extends AbstractSqlObject implements ISqlStatement {
 
   @Override
   public List<ISqlValue> collectSqlValue(@Nonnull List<ISqlValue> sqlValues) {
-    if (select != null) {
-      select.collectSqlValue(sqlValues);
-    }
+    select.collectSqlValue(sqlValues);
     from.collectSqlValue(sqlValues);
     if (where != null) {
       where.collectSqlValue(sqlValues);

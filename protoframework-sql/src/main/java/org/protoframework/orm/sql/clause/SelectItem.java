@@ -1,6 +1,8 @@
 package org.protoframework.orm.sql.clause;
 
-import com.google.common.base.Preconditions;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.orm.sql.AbstractSqlObject;
 import org.protoframework.orm.sql.IExpression;
@@ -13,32 +15,16 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/11
  */
-public class SelectExpr extends AbstractSqlObject {
-
+@Data
+@RequiredArgsConstructor
+public class SelectItem extends AbstractSqlObject {
+  @NonNull
   private final IExpression expression;
   private String alias;
 
-  public SelectExpr(@Nonnull IExpression expression, String alias) {
+  public SelectItem(IExpression expression, String alias) {
     this(expression);
     this.setAlias(alias);
-  }
-
-  public SelectExpr(@Nonnull IExpression expression) {
-    Preconditions.checkNotNull(expression);
-    this.expression = expression;
-  }
-
-  public IExpression getExpression() {
-    return expression;
-  }
-
-  public String getAlias() {
-    return alias;
-  }
-
-  public SelectExpr setAlias(String alias) {
-    this.alias = alias;
-    return this;
   }
 
   @Override

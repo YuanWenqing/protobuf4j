@@ -1,5 +1,8 @@
 package org.protoframework.orm.sql.clause;
 
+import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.protoframework.orm.sql.AbstractSqlObject;
 import org.protoframework.orm.sql.Direction;
 import org.protoframework.orm.sql.IExpression;
@@ -9,28 +12,20 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.*;
-
 /**
  * @author: yuanwq
  * @date: 2018/7/12
  */
-public class OrderByExpr extends AbstractSqlObject {
+@Data
+@RequiredArgsConstructor
+public class GroupByItem extends AbstractSqlObject {
+  @NonNull
   private final IExpression expression;
-  private final Direction direction;
+  private Direction direction;
 
-  public OrderByExpr(@Nonnull IExpression expression, @Nullable Direction direction) {
-    checkNotNull(expression);
+  public GroupByItem(IExpression expression, Direction direction) {
     this.expression = expression;
     this.direction = direction;
-  }
-
-  public IExpression getExpression() {
-    return expression;
-  }
-
-  public Direction getDirection() {
-    return direction;
   }
 
   @Override

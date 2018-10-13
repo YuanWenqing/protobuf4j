@@ -2,6 +2,8 @@ package org.protoframework.orm.sql;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import lombok.Data;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.orm.sql.expr.Value;
 
@@ -16,27 +18,22 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/11
  */
+@Data
 public class RawSql extends AbstractSqlObject implements ISqlStatement {
 
+  @NonNull
   private final String sql;
+  @NonNull
   private final List<Object> values;
 
-  public RawSql(@Nonnull String sql) {
+  public RawSql(String sql) {
     this(sql, Collections.emptyList());
   }
 
-  public RawSql(@Nonnull String sql, @Nonnull Collection<?> values) {
+  public RawSql(String sql, Collection<?> values) {
     checkArgument(StringUtils.isNotBlank(sql));
     this.sql = sql;
     this.values = ImmutableList.copyOf(values);
-  }
-
-  public String getSql() {
-    return sql;
-  }
-
-  public List<Object> getValues() {
-    return values;
   }
 
   @Override

@@ -1,5 +1,6 @@
 package org.protoframework.orm.sql.clause;
 
+import lombok.Data;
 import org.protoframework.orm.sql.AbstractSqlObject;
 import org.protoframework.orm.sql.IExpression;
 import org.protoframework.orm.sql.ISqlValue;
@@ -12,30 +13,16 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/12
  */
+@Data
 public class WhereClause extends AbstractSqlObject {
   private IExpression cond;
   private OrderByClause orderBy;
   private GroupByClause groupBy;
   private PaginationClause pagination;
 
-  public IExpression getCond() {
-    return cond;
-  }
-
-  public WhereClause setCond(IExpression cond) {
-    this.cond = cond;
-    return this;
-  }
-
-  public OrderByClause getOrderBy() {
-    return orderBy;
-  }
-
-  public WhereClause setOrderBy(OrderByClause orderBy) {
-    this.orderBy = orderBy;
-    return this;
-  }
-
+  /**
+   * create {@link OrderByClause} if necessary
+   */
   public OrderByClause orderBy() {
     if (orderBy == null) {
       setOrderBy(QueryCreator.orderBy());
@@ -43,15 +30,9 @@ public class WhereClause extends AbstractSqlObject {
     return orderBy;
   }
 
-  public GroupByClause getGroupBy() {
-    return groupBy;
-  }
-
-  public WhereClause setGroupBy(GroupByClause groupBy) {
-    this.groupBy = groupBy;
-    return this;
-  }
-
+  /**
+   * create {@link GroupByClause} if necessary
+   */
   public GroupByClause groupBy() {
     if (groupBy == null) {
       setGroupBy(QueryCreator.groupBy());
@@ -59,17 +40,12 @@ public class WhereClause extends AbstractSqlObject {
     return groupBy;
   }
 
-  public PaginationClause getPagination() {
-    return pagination;
-  }
-
-  public WhereClause setPagination(PaginationClause pagination) {
-    this.pagination = pagination;
-    return this;
-  }
-
+  /**
+   * {@code limit <limit> offset 0}
+   */
   public WhereClause limit(int limit) {
-    return setPagination(PaginationClause.newBuilder(limit).build());
+    setPagination(PaginationClause.newBuilder(limit).build());
+    return this;
   }
 
   @Override
