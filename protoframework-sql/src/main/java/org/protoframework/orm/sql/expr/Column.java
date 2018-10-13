@@ -1,5 +1,6 @@
 package org.protoframework.orm.sql.expr;
 
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.orm.sql.ISqlOperator;
 import org.protoframework.orm.sql.ISqlValue;
@@ -16,6 +17,7 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/11
  */
+@Data
 public class Column extends AbstractExpression {
   private final String column;
 
@@ -26,10 +28,6 @@ public class Column extends AbstractExpression {
 
   public static Column of(String column) {
     return new Column(column);
-  }
-
-  public String getColumn() {
-    return column;
   }
 
   @Override

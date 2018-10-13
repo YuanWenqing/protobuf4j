@@ -21,9 +21,7 @@ import static com.google.common.base.Preconditions.*;
 @Data
 public class RawSql extends AbstractSqlObject implements ISqlStatement {
 
-  @NonNull
   private final String sql;
-  @NonNull
   private final List<Object> values;
 
   public RawSql(String sql) {

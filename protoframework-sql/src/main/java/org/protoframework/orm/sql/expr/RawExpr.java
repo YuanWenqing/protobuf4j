@@ -2,6 +2,7 @@ package org.protoframework.orm.sql.expr;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.orm.sql.ISqlOperator;
 import org.protoframework.orm.sql.ISqlValue;
@@ -18,6 +19,7 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/11
  */
+@Data
 public class RawExpr extends AbstractExpression {
 
   private final String sql;
@@ -31,14 +33,6 @@ public class RawExpr extends AbstractExpression {
     checkArgument(StringUtils.isNotBlank(sql));
     this.sql = StringUtils.trim(sql);
     this.values = ImmutableList.copyOf(values);
-  }
-
-  public String getSql() {
-    return sql;
-  }
-
-  public List<Object> getValues() {
-    return values;
   }
 
   @Override

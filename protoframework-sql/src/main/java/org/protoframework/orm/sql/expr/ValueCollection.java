@@ -2,6 +2,7 @@ package org.protoframework.orm.sql.expr;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.orm.sql.ISqlOperator;
 import org.protoframework.orm.sql.ISqlValue;
@@ -16,9 +17,13 @@ import java.util.List;
  * @author: yuanwq
  * @date: 2018/7/11
  */
+@Data
 public class ValueCollection extends AbstractExpression {
-  private final List<Object> values;
+  /**
+   * @return 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
+   */
   private final String field;
+  private final List<Object> values;
 
   /**
    * @param field 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
@@ -41,19 +46,8 @@ public class ValueCollection extends AbstractExpression {
     return of(values, null);
   }
 
-  public List<Object> getValues() {
-    return values;
-  }
-
   public boolean isEmpty() {
     return values.isEmpty();
-  }
-
-  /**
-   * @return 与{@code value}关联的字段，便于确定{@code value}转换SqlValue时的类型
-   */
-  public String getField() {
-    return field;
   }
 
   @Override
@@ -79,10 +73,5 @@ public class ValueCollection extends AbstractExpression {
       sqlValues.add(Value.of(value, field));
     }
     return sqlValues;
-  }
-
-  @Override
-  public String toString() {
-    return "ValueCollection{" + "field='" + field + '\'' + ", values=" + values + '}';
   }
 }

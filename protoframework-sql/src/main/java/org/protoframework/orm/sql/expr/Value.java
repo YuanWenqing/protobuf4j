@@ -1,5 +1,6 @@
 package org.protoframework.orm.sql.expr;
 
+import lombok.Data;
 import org.protoframework.orm.sql.ISqlOperator;
 import org.protoframework.orm.sql.ISqlValue;
 
@@ -15,6 +16,7 @@ import static com.google.common.base.Preconditions.*;
  * @author: yuanwq
  * @date: 2018/7/11
  */
+@Data
 public class Value extends AbstractExpression implements ISqlValue {
   private final Object value;
   private final String field;
@@ -78,8 +80,4 @@ public class Value extends AbstractExpression implements ISqlValue {
     return sqlValues;
   }
 
-  @Override
-  public String toString() {
-    return "Value{" + "value=" + value + ", field='" + field + '\'' + '}';
-  }
 }

@@ -1,5 +1,7 @@
 package org.protoframework.orm.sql.expr;
 
+import lombok.Data;
+import lombok.NonNull;
 import org.protoframework.orm.sql.IBinaryExpr;
 import org.protoframework.orm.sql.IExpression;
 import org.protoframework.orm.sql.ISqlOperator;
@@ -9,23 +11,22 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
 
-import static com.google.common.base.Preconditions.*;
-
 /**
  * @author: yuanwq
  * @date: 2018/7/16
  */
+@Data
 public abstract class AbstractBinaryExpr<T extends ISqlOperator> extends AbstractExpression
     implements IBinaryExpr<T> {
   private static final String WRAP_LEFT = "(";
   private static final String WRAP_RIGHT = ")";
 
   protected final IExpression left;
+  @NonNull
   protected final T op;
   protected final IExpression right;
 
   public AbstractBinaryExpr(IExpression left, T op, IExpression right) {
-    checkNotNull(op);
     op.checkExpression(left, right);
     this.left = left;
     this.op = op;
