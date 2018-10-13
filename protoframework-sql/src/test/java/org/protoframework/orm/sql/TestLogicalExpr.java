@@ -24,7 +24,7 @@ public class TestLogicalExpr {
 
     {
       // and
-      expr = FieldFields.and("a", "b");
+      expr = Expressions.FieldAndField.and("a", "b");
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Column);
@@ -36,7 +36,7 @@ public class TestLogicalExpr {
     }
     {
       // or
-      expr = FieldFields.or("a", "b");
+      expr = Expressions.FieldAndField.or("a", "b");
       System.out.println(expr);
       assertEquals(LogicalOp.OR, expr.getOp());
       assertEquals("a OR b", expr.toSqlTemplate(new StringBuilder()).toString());
@@ -44,7 +44,7 @@ public class TestLogicalExpr {
     }
     {
       // xor
-      expr = FieldFields.xor("a", "b");
+      expr = Expressions.FieldAndField.xor("a", "b");
       System.out.println(expr);
       assertEquals(LogicalOp.XOR, expr.getOp());
       assertEquals("a XOR b", expr.toSqlTemplate(new StringBuilder()).toString());
@@ -52,7 +52,7 @@ public class TestLogicalExpr {
     }
     {
       // not
-      expr = FieldFields.not("a");
+      expr = Expressions.FieldAndField.not("a");
       System.out.println(expr);
       assertEquals(LogicalOp.NOT, expr.getOp());
       assertEquals("NOT a", expr.toSqlTemplate(new StringBuilder()).toString());
@@ -64,7 +64,8 @@ public class TestLogicalExpr {
 
   @Test
   public void testEmbedding() {
-    IExpression expr = LogicalExpr.and(FieldValues.add("a", 1), FieldFields.add("a", "b"));
+    IExpression expr = LogicalExpr.and(
+        Expressions.FieldAndValue.add("a", 1), Expressions.FieldAndField.add("a", "b"));
     System.out.println(expr);
     assertEquals("(a+?) AND (a+b)", expr.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("(a+1) AND (a+b)", expr.toSolidSql(new StringBuilder()).toString());
@@ -73,19 +74,22 @@ public class TestLogicalExpr {
     assertEquals("a", sqlValues.get(0).getField());
     assertEquals(1, sqlValues.get(0).getValue());
 
-    expr = LogicalExpr.and(FieldFields.and("a", "b"), FieldFields.and("c", "d"));
+    expr = LogicalExpr.and(
+        Expressions.FieldAndField.and("a", "b"), Expressions.FieldAndField.and("c", "d"));
     System.out.println(expr);
     assertEquals("a AND b AND c AND d", expr.toSqlTemplate(new StringBuilder()).toString());
 
-    expr = LogicalExpr.and(FieldFields.or("a", "b"), FieldFields.and("c", "d"));
+    expr = LogicalExpr.and(
+        Expressions.FieldAndField.or("a", "b"), Expressions.FieldAndField.and("c", "d"));
     System.out.println(expr);
     assertEquals("(a OR b) AND c AND d", expr.toSqlTemplate(new StringBuilder()).toString());
 
-    expr = LogicalExpr.and(FieldFields.gt("a", "b"), FieldFields.and("c", "d"));
+    expr = LogicalExpr.and(
+        Expressions.FieldAndField.gt("a", "b"), Expressions.FieldAndField.and("c", "d"));
     System.out.println(expr);
     assertEquals("a>b AND c AND d", expr.toSqlTemplate(new StringBuilder()).toString());
 
-    expr = FieldValues.gt("a", 1);
+    expr = Expressions.FieldAndValue.gt("a", 1);
     expr = expr.and(Column.of("b"));
     System.out.println(expr);
     assertEquals("a>? AND b", expr.toSqlTemplate(new StringBuilder()).toString());

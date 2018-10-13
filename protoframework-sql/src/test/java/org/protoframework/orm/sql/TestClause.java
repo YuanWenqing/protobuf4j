@@ -46,7 +46,7 @@ public class TestClause {
     assertEquals("SELECT a,b", clause.toSolidSql(new StringBuilder()).toString());
     assertFalse(clause.isEmpty());
 
-    clause.select(new SelectItem(FieldValues.add("a", 1), "b"));
+    clause.select(new SelectItem(Expressions.FieldAndValue.add("a", 1), "b"));
     System.out.println(clause);
     assertEquals("b", clause.getSelectItems().get(2).getAlias());
     assertEquals("SELECT a,b,a+? AS b", clause.toSqlTemplate(new StringBuilder()).toString());
@@ -80,7 +80,7 @@ public class TestClause {
     assertEquals("", clause.toSolidSql(new StringBuilder()).toString());
     assertTrue(clause.collectSqlValue(Lists.newArrayList()).isEmpty());
 
-    clause.setCond(FieldValues.eq("a", 1));
+    clause.setCond(Expressions.FieldAndValue.eq("a", 1));
     System.out.println(clause);
     assertNotNull(clause.getCond());
     assertEquals("WHERE a=?", clause.toSqlTemplate(new StringBuilder()).toString());
@@ -213,7 +213,7 @@ public class TestClause {
     assertEquals("ORDER BY a ASC,b DESC", clause.toSolidSql(new StringBuilder()).toString());
     assertFalse(clause.isEmpty());
 
-    clause.by(FieldValues.add("a", 1));
+    clause.by(Expressions.FieldAndValue.add("a", 1));
     System.out.println(clause);
     assertEquals("ORDER BY a ASC,b DESC,a+?",
         clause.toSqlTemplate(new StringBuilder()).toString());
@@ -340,7 +340,7 @@ public class TestClause {
     assertEquals("SET a=1", clause.toSolidSql(new StringBuilder()).toString());
     assertFalse(clause.isEmpty());
 
-    clause.setExpression("b", FieldValues.add("c", 2));
+    clause.setExpression("b", Expressions.FieldAndValue.add("c", 2));
     System.out.println(clause);
     assertTrue(clause.getSetItems().get(1).getValue() instanceof ArithmeticExpr);
     assertEquals("SET a=?,b=c+?", clause.toSqlTemplate(new StringBuilder()).toString());

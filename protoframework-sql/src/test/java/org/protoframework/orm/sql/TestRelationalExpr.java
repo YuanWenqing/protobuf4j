@@ -20,7 +20,7 @@ public class TestRelationalExpr {
 
     {
       // =
-      expr = FieldValues.eq("a", 1);
+      expr = Expressions.FieldAndValue.eq("a", 1);
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertEquals("a", ((Column) expr.getLeft()).getColumn());
@@ -35,7 +35,7 @@ public class TestRelationalExpr {
     }
     {
       // !=
-      expr = FieldValues.ne("a", 1);
+      expr = Expressions.FieldAndValue.ne("a", 1);
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Value);
@@ -45,7 +45,7 @@ public class TestRelationalExpr {
     }
     {
       // <
-      expr = FieldValues.lt("a", 1);
+      expr = Expressions.FieldAndValue.lt("a", 1);
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Value);
@@ -55,7 +55,7 @@ public class TestRelationalExpr {
     }
     {
       // <=
-      expr = FieldValues.lte("a", 1);
+      expr = Expressions.FieldAndValue.lte("a", 1);
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Value);
@@ -65,7 +65,7 @@ public class TestRelationalExpr {
     }
     {
       // >
-      expr = FieldValues.gt("a", 1);
+      expr = Expressions.FieldAndValue.gt("a", 1);
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Value);
@@ -75,7 +75,7 @@ public class TestRelationalExpr {
     }
     {
       // >=
-      expr = FieldValues.gte("a", 1);
+      expr = Expressions.FieldAndValue.gte("a", 1);
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Value);
@@ -85,7 +85,7 @@ public class TestRelationalExpr {
     }
     {
       // is null
-      expr = FieldValues.isNull("a");
+      expr = Expressions.FieldAndValue.isNull("a");
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertNull(expr.getRight());
@@ -97,7 +97,7 @@ public class TestRelationalExpr {
     }
     {
       // is not null
-      expr = FieldValues.isNotNull("a");
+      expr = Expressions.FieldAndValue.isNotNull("a");
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertNull(expr.getRight());
@@ -109,7 +109,7 @@ public class TestRelationalExpr {
     }
     {
       // like
-      expr = FieldValues.like("a", "pattern");
+      expr = Expressions.FieldAndValue.like("a", "pattern");
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Value);
@@ -123,7 +123,7 @@ public class TestRelationalExpr {
     }
     {
       // between
-      expr = FieldValues.between("a", 1, 2);
+      expr = Expressions.FieldAndValue.between("a", 1, 2);
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof BetweenExpr);
@@ -141,7 +141,8 @@ public class TestRelationalExpr {
       assertTrue(betweenExpr.getMax() instanceof Value);
 
       expr =
-          RelationalExpr.between(Column.of("a"), FieldValues.add("b", 1), FieldValues.mod("c", 2));
+          RelationalExpr.between(Column.of("a"), Expressions.FieldAndValue
+              .add("b", 1), Expressions.FieldAndValue.mod("c", 2));
       System.out.println(expr);
       assertEquals("a BETWEEN (b+?) AND (c MOD ?)",
           expr.toSqlTemplate(new StringBuilder()).toString());
@@ -150,7 +151,7 @@ public class TestRelationalExpr {
     }
     {
       // in
-      expr = FieldValues.in("a", Lists.newArrayList(2, 3));
+      expr = Expressions.FieldAndValue.in("a", Lists.newArrayList(2, 3));
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof ValueCollection);
@@ -166,7 +167,7 @@ public class TestRelationalExpr {
     }
     {
       // nin
-      expr = FieldValues.nin("a", Lists.newArrayList(2, 3));
+      expr = Expressions.FieldAndValue.nin("a", Lists.newArrayList(2, 3));
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof ValueCollection);
@@ -189,7 +190,7 @@ public class TestRelationalExpr {
 
     {
       // =
-      expr = FieldFields.eq("a", "b");
+      expr = Expressions.FieldAndField.eq("a", "b");
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Column);
@@ -201,7 +202,7 @@ public class TestRelationalExpr {
     }
     {
       // !=
-      expr = FieldFields.ne("a", "b");
+      expr = Expressions.FieldAndField.ne("a", "b");
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Column);
@@ -211,7 +212,7 @@ public class TestRelationalExpr {
     }
     {
       // <
-      expr = FieldFields.lt("a", "b");
+      expr = Expressions.FieldAndField.lt("a", "b");
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Column);
@@ -221,7 +222,7 @@ public class TestRelationalExpr {
     }
     {
       // <=
-      expr = FieldFields.lte("a", "b");
+      expr = Expressions.FieldAndField.lte("a", "b");
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Column);
@@ -231,7 +232,7 @@ public class TestRelationalExpr {
     }
     {
       // >
-      expr = FieldFields.gt("a", "b");
+      expr = Expressions.FieldAndField.gt("a", "b");
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Column);
@@ -241,7 +242,7 @@ public class TestRelationalExpr {
     }
     {
       // >=
-      expr = FieldFields.gte("a", "b");
+      expr = Expressions.FieldAndField.gte("a", "b");
       System.out.println(expr);
       assertTrue(expr.getLeft() instanceof Column);
       assertTrue(expr.getRight() instanceof Column);
@@ -253,7 +254,8 @@ public class TestRelationalExpr {
 
   @Test
   public void testEmbedding() {
-    RelationalExpr expr = RelationalExpr.eq(FieldValues.eq("a", 1), FieldFields.gt("a", "b"));
+    RelationalExpr expr = RelationalExpr.eq(
+        Expressions.FieldAndValue.eq("a", 1), Expressions.FieldAndField.gt("a", "b"));
     System.out.println(expr);
     assertEquals("(a=?)=(a>b)", expr.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("(a=1)=(a>b)", expr.toSolidSql(new StringBuilder()).toString());
@@ -262,11 +264,13 @@ public class TestRelationalExpr {
     assertEquals("a", sqlValues.get(0).getField());
     assertEquals(1, sqlValues.get(0).getValue());
 
-    expr = RelationalExpr.gt(FieldFields.add("a", "b"), FieldFields.multiply("c", "d"));
+    expr = RelationalExpr.gt(
+        Expressions.FieldAndField.add("a", "b"), Expressions.FieldAndField.multiply("c", "d"));
     System.out.println(expr);
     assertEquals("(a+b)>(c*d)", expr.toSqlTemplate(new StringBuilder()).toString());
 
-    expr = RelationalExpr.lt(FieldFields.eq("a", "b"), FieldFields.and("c", "d"));
+    expr = RelationalExpr.lt(
+        Expressions.FieldAndField.eq("a", "b"), Expressions.FieldAndField.and("c", "d"));
     System.out.println(expr);
     assertEquals("(a=b)<(c AND d)", expr.toSqlTemplate(new StringBuilder()).toString());
   }

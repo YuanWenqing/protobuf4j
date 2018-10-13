@@ -33,7 +33,7 @@ public class TestSql {
     System.out.println(sql);
     assertEquals("SELECT * FROM t ", sql.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SELECT * FROM t ", sql.toSolidSql(new StringBuilder()).toString());
-    sql.where().setCond(FieldValues.eq("a", 1));
+    sql.where().setCond(Expressions.FieldAndValue.eq("a", 1));
     System.out.println(sql);
     assertEquals("SELECT * FROM t WHERE a=?", sql.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("SELECT * FROM t WHERE a=1", sql.toSolidSql(new StringBuilder()).toString());
@@ -73,7 +73,7 @@ public class TestSql {
     System.out.println(sql);
     assertEquals("UPDATE t SET a=? ", sql.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("UPDATE t SET a='b' ", sql.toSolidSql(new StringBuilder()).toString());
-    sql.where().setCond(FieldValues.eq("a", 1));
+    sql.where().setCond(Expressions.FieldAndValue.eq("a", 1));
     System.out.println(sql);
     assertEquals("UPDATE t SET a=? WHERE a=?", sql.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("UPDATE t SET a='b' WHERE a=1", sql.toSolidSql(new StringBuilder()).toString());
@@ -105,7 +105,7 @@ public class TestSql {
     assertNotNull(sql.getWhere());
     assertEquals("DELETE FROM t ", sql.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("DELETE FROM t ", sql.toSolidSql(new StringBuilder()).toString());
-    sql.where().setCond(FieldValues.eq("a", 1));
+    sql.where().setCond(Expressions.FieldAndValue.eq("a", 1));
     System.out.println(sql);
     assertEquals("DELETE FROM t WHERE a=?", sql.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("DELETE FROM t WHERE a=1", sql.toSolidSql(new StringBuilder()).toString());
@@ -189,7 +189,7 @@ public class TestSql {
         sql.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("INSERT INTO aa (b) VALUES (1)", sql.toSolidSql(new StringBuilder()).toString());
 
-    sql.addExpression("c", FieldValues.add("a", 2));
+    sql.addExpression("c", Expressions.FieldAndValue.add("a", 2));
     System.out.println(sql);
     assertEquals("INSERT INTO aa (b,c) VALUES (?,a+?)",
         sql.toSqlTemplate(new StringBuilder()).toString());
