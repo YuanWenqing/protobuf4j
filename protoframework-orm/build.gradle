@@ -1,5 +1,9 @@
 
 dependencies {
+    // lombok，两种方式依赖都需要
+    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
+
     api(project(":protoframework-core"))
     api(project(":protoframework-sql"))
 
