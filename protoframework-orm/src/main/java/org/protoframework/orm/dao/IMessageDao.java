@@ -91,14 +91,14 @@ public interface IMessageDao<T> {
    * <p>
    * 注意：条件需要制定的范围小一些，不要一次取太多！
    */
-  List<T> selectAll(@Nullable IExpression cond);
+  List<T> selectCond(@Nullable IExpression cond);
 
   /**
    * 根据where子句返回所有数据
    *
    * @param where 遍历条件、排序和分页配置
    */
-  List<T> selectAll(@Nonnull WhereClause where);
+  List<T> selectWhere(@Nonnull WhereClause where);
 
   /**
    * select方法

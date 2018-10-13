@@ -42,7 +42,7 @@ public class PrimaryKeyProtoMessageDao<K, T extends Message> extends ProtoMessag
     if (keys.isEmpty()) {
       return Collections.emptyMap();
     }
-    List<T> items = selectAll(FieldValues.in(primaryKey, keys));
+    List<T> items = selectCond(FieldValues.in(primaryKey, keys));
     if (items == null || items.isEmpty()) {
       return Collections.emptyMap();
     }

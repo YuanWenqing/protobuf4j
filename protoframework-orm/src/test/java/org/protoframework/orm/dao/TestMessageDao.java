@@ -133,7 +133,7 @@ public class TestMessageDao {
       assertEquals(1, rowArr[i]);
     }
     // retrieve inserted data
-    List<TestModel.DbMsg> msgs = dao.selectAll(FieldValues.eq("string_v", "testMulti"));
+    List<TestModel.DbMsg> msgs = dao.selectCond(FieldValues.eq("string_v", "testMulti"));
     assertEquals(3, msgs.size());
     List<Long> ids = Lists.transform(msgs, TestModel.DbMsg::getId);
     // select multi
@@ -143,7 +143,7 @@ public class TestMessageDao {
     int rows = dao.deleteMultiByPrimaryKey(ids);
     assertEquals(3, rows);
     // assert after delete
-    msgs = dao.selectAll(FieldValues.eq("string_v", "testMulti"));
+    msgs = dao.selectCond(FieldValues.eq("string_v", "testMulti"));
     assertEquals(0, msgs.size());
     map = dao.selectMultiByPrimaryKey(ids);
     assertEquals(0, msgs.size());
@@ -188,7 +188,7 @@ public class TestMessageDao {
     assertFalse(iter2.hasNext());
 
     IExpression cond = FieldValues.eq("string_v", "testIterator");
-    iter1 = dao.selectAll(cond).iterator();
+    iter1 = dao.selectCond(cond).iterator();
     iter2 = dao.iterator(cond, 2);
     while (iter1.hasNext()) {
       assertTrue(iter2.hasNext());
@@ -213,7 +213,7 @@ public class TestMessageDao {
     int expectCount = dao.selectAll().size();
     assertEquals(expectCount, dao.count(null));
 
-    expectCount = dao.selectAll(cond).size();
+    expectCount = dao.selectCond(cond).size();
     assertEquals(expectCount, dao.count(cond));
 
     int sum = 0;
@@ -248,7 +248,7 @@ public class TestMessageDao {
     RawSql rawSql = new RawSql(sql, Lists.newArrayList(time));
     int rows = dao.doRawSql(rawSql);
     assertEquals(1, rows);
-    assertTrue(dao.selectAll(FieldValues.eq("int64_v", time)).size() > 0);
+    assertTrue(dao.selectCond(FieldValues.eq("int64_v", time)).size() > 0);
   }
 
   @Test
