@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class TestMessageDao {
   public void setup() {
     dao = new PrimaryKeyProtoMessageDao<>(TestModel.DbMsg.class, primaryKey);
     dao.setJdbcTemplate(jdbcTemplate);
+    dao.afterPropertiesSet();
 
     msgTemplate =
         TestModel.DbMsg.newBuilder().setInt32V(32).setInt64V(64).setFloatV(1.23f).setDoubleV(2.345)
@@ -153,6 +155,8 @@ public class TestMessageDao {
 
   @Test
   public void testInsertAndDelete() {
+    int[] rowArr = dao.insertMulti(Collections.emptyList());
+    assertEquals(0, rowArr.length);
     int count = dao.selectAll().size();
     long id = dao.insertReturnKey(msgTemplate).longValue();
     TestModel.DbMsg msg = dao.selectOneByPrimaryKey(id);
@@ -239,6 +243,15 @@ public class TestMessageDao {
     System.out.println(map);
     assertEquals(1, map.size());
     assertEquals(num, map.get("testAggregate").intValue());
+
+    // assert no data
+    cond = FieldValues.eq("string_v", "testAggregate111");
+    assertEquals(0, dao.count(cond));
+    assertEquals(0, dao.sum("int32_v", cond));
+    assertNull(dao.max("int32_v", cond));
+    assertNull(dao.min("int32_v", cond));
+    map = dao.groupCount("string_v", cond);
+    assertTrue(map.isEmpty());
   }
 
   @Test

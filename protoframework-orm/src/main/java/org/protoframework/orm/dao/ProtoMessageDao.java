@@ -531,9 +531,6 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
     }
     Map<GK, Integer> map = Maps.newLinkedHashMap();
     for (Pair<GK, Integer> pair : ret) {
-      if (pair.getKey() == null) {
-        continue;
-      }
       map.put(pair.getKey(), pair.getValue());
     }
     return map;
