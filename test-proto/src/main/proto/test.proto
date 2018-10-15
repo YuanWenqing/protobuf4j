@@ -3,7 +3,7 @@ package test;
 
 // 测试用的proto定义
 
-option java_package = "org.protoframework.core.proto.data";
+option java_package = "protobufframework.test.proto";
 option java_outer_classname = "TestModel";
 
 
