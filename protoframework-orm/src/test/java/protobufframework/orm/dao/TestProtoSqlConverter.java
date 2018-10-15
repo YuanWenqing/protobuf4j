@@ -5,9 +5,9 @@ import com.google.common.collect.Sets;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.MapEntry;
 import org.junit.Test;
-import protobufframework.core.ProtoMessageHelper;
 import org.protoframework.core.proto.data.TestModel;
 import org.springframework.dao.TypeMismatchDataAccessException;
+import protobufframework.core.ProtoMessageHelper;
 
 import java.sql.Date;
 import java.sql.Timestamp;

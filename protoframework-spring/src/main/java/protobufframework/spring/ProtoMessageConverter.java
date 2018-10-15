@@ -6,7 +6,6 @@ package protobufframework.spring;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
-import protobufframework.core.ProtoMessageHelper;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
@@ -14,6 +13,7 @@ import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.ConditionalConverter;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
+import protobufframework.core.ProtoMessageHelper;
 
 import java.io.IOException;
 

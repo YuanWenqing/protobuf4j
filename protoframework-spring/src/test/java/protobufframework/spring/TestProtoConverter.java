@@ -1,11 +1,11 @@
 package protobufframework.spring;
 
 import org.junit.Test;
-import protobufframework.core.ProtobufObjectMapper;
 import org.protoframework.core.proto.data.TestModel;
-import protobufframework.test.MsgsForTest;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
+import protobufframework.core.ProtobufObjectMapper;
+import protobufframework.test.MsgsForTest;
 
 import java.io.IOException;
 import java.lang.reflect.Field;

@@ -1,6 +1,5 @@
 package protobufframework.orm.sql;
 
-import org.protoframework.orm.sql.clause.*;
 import protobufframework.orm.sql.clause.*;
 import protobufframework.orm.sql.expr.Column;
 import protobufframework.orm.sql.expr.Value;

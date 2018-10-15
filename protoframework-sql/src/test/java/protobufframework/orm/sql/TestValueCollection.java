@@ -2,7 +2,6 @@ package protobufframework.orm.sql;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
-import org.protoframework.orm.sql.expr.*;
 import protobufframework.orm.sql.expr.*;
 
 import java.util.Collections;

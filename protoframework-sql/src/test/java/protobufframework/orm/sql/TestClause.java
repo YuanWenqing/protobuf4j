@@ -3,11 +3,10 @@ package protobufframework.orm.sql;
 import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
-import org.protoframework.orm.sql.clause.*;
+import protobufframework.orm.sql.clause.*;
 import protobufframework.orm.sql.expr.ArithmeticExpr;
 import protobufframework.orm.sql.expr.Column;
 import protobufframework.orm.sql.expr.Value;
-import protobufframework.orm.sql.clause.*;
 
 import java.util.List;
 

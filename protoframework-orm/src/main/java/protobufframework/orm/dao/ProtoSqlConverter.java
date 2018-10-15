@@ -14,8 +14,8 @@ import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.translate.EntityArrays;
 import org.apache.commons.text.translate.LookupTranslator;
-import protobufframework.core.ProtoMessageHelper;
 import org.springframework.dao.TypeMismatchDataAccessException;
+import protobufframework.core.ProtoMessageHelper;
 
 import java.sql.Timestamp;
 import java.util.Collections;

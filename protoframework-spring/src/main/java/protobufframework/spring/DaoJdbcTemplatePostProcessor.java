@@ -1,11 +1,11 @@
 package protobufframework.spring;
 
-import protobufframework.orm.dao.IMessageDao;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.jdbc.core.JdbcTemplate;
+import protobufframework.orm.dao.IMessageDao;
 
 /**
  * @author: yuanwq

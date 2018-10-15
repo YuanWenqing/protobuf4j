@@ -4,9 +4,9 @@
 package protobufframework.orm.dao;
 
 import com.google.protobuf.Descriptors.FieldDescriptor;
-import protobufframework.core.ProtoMessageHelper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
+import protobufframework.core.ProtoMessageHelper;
 
 import javax.annotation.Nonnull;
 import java.sql.ResultSet;

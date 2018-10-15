@@ -1,12 +1,11 @@
 package protobufframework.orm.dao;
 
-import org.protoframework.orm.sql.*;
-import protobufframework.orm.sql.clause.SetClause;
-import protobufframework.orm.sql.clause.WhereClause;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.KeyHolder;
 import protobufframework.orm.sql.*;
+import protobufframework.orm.sql.clause.SetClause;
+import protobufframework.orm.sql.clause.WhereClause;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

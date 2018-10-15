@@ -1,6 +1,5 @@
 package protobufframework.orm.sql;
 
-import org.protoframework.orm.sql.expr.*;
 import protobufframework.orm.sql.expr.*;
 
 import java.util.Collection;

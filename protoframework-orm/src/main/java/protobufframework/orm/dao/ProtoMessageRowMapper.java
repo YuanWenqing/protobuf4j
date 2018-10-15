@@ -14,11 +14,11 @@ import com.google.protobuf.Message;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import protobufframework.core.ProtoMessageHelper;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
+import protobufframework.core.ProtoMessageHelper;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

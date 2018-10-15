@@ -2,12 +2,12 @@ package protobufframework.spring;
 
 import com.google.protobuf.ProtocolMessageEnum;
 import org.apache.commons.lang3.StringUtils;
-import protobufframework.core.ProtoEnumHelper;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.ConditionalConverter;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
+import protobufframework.core.ProtoEnumHelper;
 
 /**
  * @author: yuanwq

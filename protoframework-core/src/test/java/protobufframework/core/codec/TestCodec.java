@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
-import protobufframework.test.MsgsForTest;
 import org.protoframework.core.proto.data.TestModel;
+import protobufframework.test.MsgsForTest;
 
 import java.io.IOException;
 
