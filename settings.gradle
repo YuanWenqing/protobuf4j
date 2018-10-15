@@ -1,7 +1,7 @@
-rootProject.name = "protoframework"
+rootProject.name = "protobuf-framework"
 
 include 'test-proto'
-include 'protoframework-core'
-include 'protoframework-sql'
-include 'protoframework-orm'
-include 'protoframework-spring'
+include 'protobuf-framework-core'
+include 'protobuf-framework-sql'
+include 'protobuf-framework-orm'
+include 'protobuf-framework-spring'

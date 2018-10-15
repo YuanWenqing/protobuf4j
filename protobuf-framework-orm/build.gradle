@@ -1,0 +1,23 @@
+
+dependencies {
+    // lombok，两种方式依赖都需要
+    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
+
+    api(project(":protobuf-framework-core"))
+    api(project(":protobuf-framework-sql"))
+
+    // db
+    api("org.springframework:spring-jdbc:${springVersion}")
+    api("org.springframework:spring-context:${springVersion}")
+
+    // util
+    implementation("org.apache.commons:commons-text:$commonsTextVersion")
+
+    // log
+    implementation("org.slf4j:slf4j-api:$slf4jVersion")
+
+    testImplementation(project(":test-proto")) // dao testcase use this
+    testImplementation("org.springframework:spring-test:${springVersion}")
+    testImplementation('com.h2database:h2:1.4.197') // embedded h2 database and jdbc driver
+}
