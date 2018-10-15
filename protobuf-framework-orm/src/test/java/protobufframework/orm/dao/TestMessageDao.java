@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.protoframework.core.proto.data.TestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -16,6 +15,7 @@ import protobufframework.orm.sql.FieldAndValue;
 import protobufframework.orm.sql.IExpression;
 import protobufframework.orm.sql.RawSql;
 import protobufframework.orm.sql.clause.WhereClause;
+import protobufframework.test.proto.TestModel;
 
 import java.util.Collections;
 import java.util.Iterator;

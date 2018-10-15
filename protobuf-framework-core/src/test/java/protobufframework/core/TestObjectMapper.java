@@ -2,8 +2,8 @@ package protobufframework.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
-import org.protoframework.core.proto.data.TestModel;
 import protobufframework.test.MsgsForTest;
+import protobufframework.test.proto.TestModel;
 
 import java.io.IOException;
 

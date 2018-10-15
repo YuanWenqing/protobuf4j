@@ -2,7 +2,7 @@ package protobufframework.core;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.protoframework.core.proto.data.TestModel;
+import protobufframework.test.proto.TestModel;
 
 import static org.junit.Assert.*;
 

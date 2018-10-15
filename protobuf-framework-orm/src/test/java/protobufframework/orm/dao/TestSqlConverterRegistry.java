@@ -4,7 +4,7 @@ import com.google.protobuf.AbstractMessage;
 import com.google.protobuf.GeneratedMessageV3;
 import com.google.protobuf.Message;
 import org.junit.Test;
-import org.protoframework.core.proto.data.TestModel;
+import protobufframework.test.proto.TestModel;
 
 import static org.junit.Assert.*;
 

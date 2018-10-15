@@ -5,8 +5,8 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.MapEntry;
 import org.junit.Before;
 import org.junit.Test;
-import org.protoframework.core.proto.data.TestModel;
 import protobufframework.test.MsgsForTest;
+import protobufframework.test.proto.TestModel;
 
 import java.util.List;
 import java.util.Map;

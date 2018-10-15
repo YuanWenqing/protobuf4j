@@ -1,7 +1,7 @@
 package protobufframework.test;
 
 import com.google.protobuf.ByteString;
-import org.protoframework.core.proto.data.TestModel;
+import protobufframework.test.proto.TestModel;
 
 /**
  * @author: yuanwq
