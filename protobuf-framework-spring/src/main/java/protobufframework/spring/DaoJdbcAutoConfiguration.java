@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @date: 2018/9/24
  */
 @Configuration
-@ConditionalOnProperty(value = "protoframework.datasource.auto.enable", matchIfMissing = true)
+@ConditionalOnProperty(value = "protobuf-framework.datasource.auto-enable", matchIfMissing = true)
 @ConditionalOnBean(JdbcTemplate.class)
 @AutoConfigureAfter(JdbcTemplateAutoConfiguration.class)
 public class DaoJdbcAutoConfiguration {
