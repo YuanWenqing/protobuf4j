@@ -1,4 +1,4 @@
-rootProject.name = "protoframework"
+rootProject.name = "protobuf-framework"
 
 include 'test-proto'
 include 'protoframework-core'
