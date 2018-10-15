@@ -3,7 +3,6 @@ package org.protoframework.orm.sql;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import lombok.Data;
-import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.protoframework.orm.sql.expr.Value;
 

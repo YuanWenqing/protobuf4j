@@ -10,7 +10,6 @@ import org.protoframework.orm.sql.SqlUtil;
 import org.protoframework.orm.sql.expr.Column;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.List;
 
 /**

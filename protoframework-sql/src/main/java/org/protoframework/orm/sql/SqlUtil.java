@@ -15,22 +15,21 @@ import java.util.List;
  * @date: 2018/7/15
  */
 public abstract class SqlUtil {
-  private SqlUtil() {
-  }
-
   public static final SelectItem SELECT_STAR = new SelectItem(new RawExpr("*")) {
     @Override
     public void setAlias(String alias) {
       throw new UnsupportedOperationException("cannot set alias for STAR `*`");
     }
   };
-
   public static final SelectItem SELECT_COUNT = new SelectItem(new RawExpr("COUNT(1)")) {
     @Override
     public void setAlias(String alias) {
       throw new UnsupportedOperationException("cannot set alias for DEFAULT `COUNT(1)`");
     }
   };
+
+  private SqlUtil() {
+  }
 
   public static IExpression aggregateWrap(String aggregateFunc, IExpression expr) {
     return new AbstractExpression() {

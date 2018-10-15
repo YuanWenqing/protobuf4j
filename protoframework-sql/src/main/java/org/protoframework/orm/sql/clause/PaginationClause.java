@@ -94,6 +94,7 @@ public abstract class PaginationClause extends AbstractSqlObject {
 
   public static class Builder {
     private int limit;
+
     private Builder(int limit) {
       this.limit = limit;
     }

@@ -215,10 +215,8 @@ public class TestClause {
 
     clause.by(FieldAndValue.add("a", 1));
     System.out.println(clause);
-    assertEquals("ORDER BY a ASC,b DESC,a+?",
-        clause.toSqlTemplate(new StringBuilder()).toString());
-    assertEquals("ORDER BY a ASC,b DESC,a+1",
-        clause.toSolidSql(new StringBuilder()).toString());
+    assertEquals("ORDER BY a ASC,b DESC,a+?", clause.toSqlTemplate(new StringBuilder()).toString());
+    assertEquals("ORDER BY a ASC,b DESC,a+1", clause.toSolidSql(new StringBuilder()).toString());
     List<ISqlValue> sqlValues = clause.collectSqlValue(Lists.newArrayList());
     assertEquals(1, sqlValues.size());
     assertEquals(1, sqlValues.get(0).getValue());

@@ -154,8 +154,8 @@ public class TestArithmeticExpr {
 
   @Test
   public void testEmbedding() {
-    ArithmeticExpr expr = ArithmeticExpr.add(
-        FieldAndValue.add("a", 1), FieldAndField.add("a", "b"));
+    ArithmeticExpr expr =
+        ArithmeticExpr.add(FieldAndValue.add("a", 1), FieldAndField.add("a", "b"));
     System.out.println(expr);
     assertEquals("a+?+a+b", expr.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("a+1+a+b", expr.toSolidSql(new StringBuilder()).toString());
@@ -164,13 +164,11 @@ public class TestArithmeticExpr {
     assertEquals("a", sqlValues.get(0).getField());
     assertEquals(1, sqlValues.get(0).getValue());
 
-    expr = ArithmeticExpr.add(
-        FieldAndField.add("a", "b"), FieldAndField.multiply("c", "d"));
+    expr = ArithmeticExpr.add(FieldAndField.add("a", "b"), FieldAndField.multiply("c", "d"));
     System.out.println(expr);
     assertEquals("a+b+(c*d)", expr.toSqlTemplate(new StringBuilder()).toString());
 
-    expr = ArithmeticExpr.add(
-        FieldAndField.eq("a", "b"), FieldAndField.and("c", "d"));
+    expr = ArithmeticExpr.add(FieldAndField.eq("a", "b"), FieldAndField.and("c", "d"));
     System.out.println(expr);
     assertEquals("(a=b)+(c AND d)", expr.toSqlTemplate(new StringBuilder()).toString());
   }
