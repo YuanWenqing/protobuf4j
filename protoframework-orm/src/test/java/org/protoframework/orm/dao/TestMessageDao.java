@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.protoframework.core.ProtoMessageHelper;
 import org.protoframework.core.proto.data.TestModel;
-import org.protoframework.orm.sql.Expressions;
+import org.protoframework.orm.sql.FieldAndValue;
 import org.protoframework.orm.sql.IExpression;
 import org.protoframework.orm.sql.RawSql;
 import org.protoframework.orm.sql.clause.WhereClause;
@@ -135,7 +135,7 @@ public class TestMessageDao {
       assertEquals(1, rowArr[i]);
     }
     // retrieve inserted data
-    List<TestModel.DbMsg> msgs = dao.selectCond(Expressions.FieldAndValue.eq("string_v", "testMulti"));
+    List<TestModel.DbMsg> msgs = dao.selectCond(FieldAndValue.eq("string_v", "testMulti"));
     assertEquals(3, msgs.size());
     List<Long> ids = Lists.transform(msgs, TestModel.DbMsg::getId);
     // select multi
@@ -145,11 +145,11 @@ public class TestMessageDao {
     int rows = dao.deleteMultiByPrimaryKey(ids);
     assertEquals(3, rows);
     // assert after delete
-    msgs = dao.selectCond(Expressions.FieldAndValue.eq("string_v", "testMulti"));
+    msgs = dao.selectCond(FieldAndValue.eq("string_v", "testMulti"));
     assertEquals(0, msgs.size());
     map = dao.selectMultiByPrimaryKey(ids);
     assertEquals(0, msgs.size());
-    rows = dao.delete(Expressions.FieldAndValue.eq("string_v", "testMulti"));
+    rows = dao.delete(FieldAndValue.eq("string_v", "testMulti"));
     assertEquals(0, rows);
   }
 
@@ -191,7 +191,7 @@ public class TestMessageDao {
     }
     assertFalse(iter2.hasNext());
 
-    IExpression cond = Expressions.FieldAndValue.eq("string_v", "testIterator");
+    IExpression cond = FieldAndValue.eq("string_v", "testIterator");
     iter1 = dao.selectCond(cond).iterator();
     iter2 = dao.iterator(cond, 2);
     while (iter1.hasNext()) {
@@ -200,7 +200,7 @@ public class TestMessageDao {
     }
     assertFalse(iter2.hasNext());
 
-    iter2 = dao.iterator(Expressions.FieldAndValue.lt("id", 0), 100);
+    iter2 = dao.iterator(FieldAndValue.lt("id", 0), 100);
     assertFalse(iter2.hasNext());
 
     iter2 = dao.iterator(new WhereClause().limit(0));
@@ -211,8 +211,8 @@ public class TestMessageDao {
   public void testAggregate() {
     int num = 7;
     prepare("testAggregate", num);
-    IExpression cond = Expressions.FieldAndValue.eq("string_v", "testAggregate");
-    IExpression expr = Expressions.FieldAndValue.add("int32_v", 1);
+    IExpression cond = FieldAndValue.eq("string_v", "testAggregate");
+    IExpression expr = FieldAndValue.add("int32_v", 1);
 
     int expectCount = dao.selectAll().size();
     assertEquals(expectCount, dao.count(null));
@@ -229,7 +229,7 @@ public class TestMessageDao {
 
     assertEquals(num - 1, (int) dao.max("int32_v", cond));
     assertEquals(num, (int) dao.max(expr, cond, new SingleColumnRowMapper<Integer>()));
-    assertNull(dao.max("int32_v", Expressions.FieldAndValue.eq("string_v", "aaaaaaaaaaaaa")));
+    assertNull(dao.max("int32_v", FieldAndValue.eq("string_v", "aaaaaaaaaaaaa")));
 
     assertEquals(0, (int) dao.min("int32_v", cond));
     assertEquals(1, (int) dao.min(expr, cond, new SingleColumnRowMapper<Integer>()));
@@ -245,7 +245,7 @@ public class TestMessageDao {
     assertEquals(num, map.get("testAggregate").intValue());
 
     // assert no data
-    cond = Expressions.FieldAndValue.eq("string_v", "testAggregate111");
+    cond = FieldAndValue.eq("string_v", "testAggregate111");
     assertEquals(0, dao.count(cond));
     assertEquals(0, dao.sum("int32_v", cond));
     assertNull(dao.max("int32_v", cond));
@@ -261,7 +261,7 @@ public class TestMessageDao {
     RawSql rawSql = new RawSql(sql, Lists.newArrayList(time));
     int rows = dao.doRawSql(rawSql);
     assertEquals(1, rows);
-    assertTrue(dao.selectCond(Expressions.FieldAndValue.eq("int64_v", time)).size() > 0);
+    assertTrue(dao.selectCond(FieldAndValue.eq("int64_v", time)).size() > 0);
   }
 
   @Test

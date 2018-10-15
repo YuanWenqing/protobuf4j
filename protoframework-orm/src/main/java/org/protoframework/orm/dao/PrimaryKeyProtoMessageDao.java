@@ -2,7 +2,7 @@ package org.protoframework.orm.dao;
 
 import com.google.common.collect.Maps;
 import com.google.protobuf.Message;
-import org.protoframework.orm.sql.Expressions;
+import org.protoframework.orm.sql.FieldAndValue;
 import org.protoframework.orm.sql.IExpression;
 
 import javax.annotation.Nonnull;
@@ -33,7 +33,7 @@ public class PrimaryKeyProtoMessageDao<K, T extends Message> extends ProtoMessag
   @Nullable
   @Override
   public T selectOneByPrimaryKey(@Nonnull K key) {
-    return selectOne(Expressions.FieldAndValue.eq(primaryKey, key));
+    return selectOne(FieldAndValue.eq(primaryKey, key));
   }
 
   @SuppressWarnings("unchecked")
@@ -42,7 +42,7 @@ public class PrimaryKeyProtoMessageDao<K, T extends Message> extends ProtoMessag
     if (keys.isEmpty()) {
       return Collections.emptyMap();
     }
-    List<T> items = selectCond(Expressions.FieldAndValue.in(primaryKey, keys));
+    List<T> items = selectCond(FieldAndValue.in(primaryKey, keys));
     if (items == null || items.isEmpty()) {
       return Collections.emptyMap();
     }
@@ -60,13 +60,13 @@ public class PrimaryKeyProtoMessageDao<K, T extends Message> extends ProtoMessag
   @Override
   public int updateMessageByPrimaryKey(T newItem, T oldItem) {
     Object k = messageHelper.getFieldValue(oldItem, primaryKey);
-    IExpression cond = Expressions.FieldAndValue.eq(primaryKey, k);
+    IExpression cond = FieldAndValue.eq(primaryKey, k);
     return updateMessage(newItem, oldItem, cond);
   }
 
   @Override
   public int deleteByPrimaryKey(K key) {
-    return delete(Expressions.FieldAndValue.eq(primaryKey, key));
+    return delete(FieldAndValue.eq(primaryKey, key));
   }
 
   @Override
@@ -74,6 +74,6 @@ public class PrimaryKeyProtoMessageDao<K, T extends Message> extends ProtoMessag
     if (keys.isEmpty()) {
       return 0;
     }
-    return delete(Expressions.FieldAndValue.in(primaryKey, keys));
+    return delete(FieldAndValue.in(primaryKey, keys));
   }
 }
