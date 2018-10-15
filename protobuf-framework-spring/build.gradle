@@ -1,6 +1,6 @@
 
 dependencies {
-    api(project(":protoframework-orm"))
+    api(project(":protobuf-framework-orm"))
 
     // https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/index.html#boot-features-custom-starter-module-autoconfigure
     // 生成自动配置有关的配置项
