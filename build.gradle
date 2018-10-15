@@ -19,7 +19,7 @@ buildscript {
 // project setting
 subprojects {
     group = "org.protoframework"
-    version = "0.8.1"
+    version = "0.9.0"
 
     ext {
         publishable = true
