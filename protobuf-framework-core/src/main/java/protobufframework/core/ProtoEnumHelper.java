@@ -1,23 +1,23 @@
 package protobufframework.core;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Internal;
 import com.google.protobuf.ProtocolMessageEnum;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @author: yuanwq
  * @date: 2018/7/9
  */
-public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelper<T> {
+public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IEnumHelper<T> {
   @SuppressWarnings("rawtypes")
   private static ConcurrentHashMap<String, ProtoEnumHelper> helperMap = new ConcurrentHashMap<>();
 
@@ -40,8 +40,9 @@ public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelp
 
   private final Class<T> cls;
   private final Descriptors.EnumDescriptor descriptor;
-  private final Function<Integer, T> forNumberFunc;
   private final T unrecognized;
+  private final Map<Integer, T> numberValueMap = Maps.newLinkedHashMap();
+  private final Map<String, T> nameValueMap = Maps.newLinkedHashMap();
 
   @SuppressWarnings("unchecked")
   public ProtoEnumHelper(Class<T> cls) {
@@ -49,7 +50,13 @@ public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelp
     this.descriptor = (Descriptors.EnumDescriptor) invokeStaticMethodUnchecked("getDescriptor");
     Internal.EnumLiteMap<T> enumLiteMap =
         (Internal.EnumLiteMap<T>) invokeStaticMethodUnchecked("internalGetValueMap");
-    this.forNumberFunc = enumLiteMap::findValueByNumber;
+    for (Descriptors.EnumValueDescriptor valueDescriptor : descriptor.getValues()) {
+      String name = valueDescriptor.getName();
+      int number = valueDescriptor.getNumber();
+      T value = enumLiteMap.findValueByNumber(number);
+      nameValueMap.put(name, value);
+      numberValueMap.put(number, value);
+    }
     try {
       this.unrecognized = (T) this.cls.getField("UNRECOGNIZED").get(null);
     } catch (IllegalAccessException | NoSuchFieldException e) {
@@ -73,18 +80,6 @@ public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelp
     return unrecognized;
   }
 
-  public T byName(String name) {
-    Descriptors.EnumValueDescriptor valueDescriptor = descriptor.findValueByName(name);
-    if (valueDescriptor == null) {
-      return null;
-    }
-    return byNumber(valueDescriptor.getNumber());
-  }
-
-  public T byNumber(int number) {
-    return forNumberFunc.apply(number);
-  }
-
   @Override
   public Class<? extends T> getType() {
     return cls;
@@ -92,54 +87,32 @@ public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IBeanHelp
 
   @Override
   public T defaultValue() {
-    return byNumber(0);
+    return forNumber(0);
   }
 
   @Override
-  public boolean isEmpty(T enumValue) {
-    if (enumValue == null) {
-      return true;
-    }
-    if (this.unrecognized.equals(enumValue)) {
-      return false;
-    }
-    return enumValue.getNumber() == 0;
+  public Collection<T> getEnumValues() {
+    return numberValueMap.values();
   }
 
   @Override
-  public boolean hasField(String enumName) {
-    return byName(enumName) != null;
+  public Set<String> getEnumValueNames() {
+    return nameValueMap.keySet();
   }
 
   @Override
-  public Set<String> getFieldNames() {
-    return descriptor.getValues().stream().map(Descriptors.EnumValueDescriptor::getName)
-        .collect(Collectors.toSet());
+  public Set<Integer> getEnumValueNumbers() {
+    return numberValueMap.keySet();
   }
 
   @Override
-  public Class<?> getFieldType(String enumName) {
-    throw new UnsupportedOperationException("cls=" + this.cls.getName() + ", field=" + enumName);
+  public T of(String name) {
+    return nameValueMap.get(name);
   }
 
   @Override
-  public Map<String, Class<?>> getFieldTypeMap() {
-    throw new UnsupportedOperationException(this.cls.getName());
-  }
-
-  @Override
-  public boolean isFieldSet(T enumValue, String enumName) {
-    throw new UnsupportedOperationException("cls=" + this.cls.getName() + ", field=" + enumName);
-  }
-
-  @Override
-  public Object getFieldValue(T enumValue, String enumName) {
-    throw new UnsupportedOperationException("cls=" + this.cls.getName() + ", field=" + enumName);
-  }
-
-  @Override
-  public T setFieldValue(T enumValue, String enumName, Object fieldValue) {
-    throw new UnsupportedOperationException("cls=" + this.cls.getName() + ", field=" + enumName);
+  public T forNumber(int number) {
+    return numberValueMap.get(number);
   }
 
   @Override

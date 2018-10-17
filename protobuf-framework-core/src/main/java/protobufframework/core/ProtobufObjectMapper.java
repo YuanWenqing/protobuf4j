@@ -116,9 +116,9 @@ public abstract class ProtobufObjectMapper extends ObjectMapper {
     public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
       String text = p.getText();
       if (StringUtils.isNumeric(text)) {
-        return ProtoEnumHelper.getHelper(this.cls).byNumber(Integer.parseInt(text));
+        return ProtoEnumHelper.getHelper(this.cls).forNumber(Integer.parseInt(text));
       }
-      return ProtoEnumHelper.getHelper(this.cls).byName(text);
+      return ProtoEnumHelper.getHelper(this.cls).of(text);
     }
   }
 

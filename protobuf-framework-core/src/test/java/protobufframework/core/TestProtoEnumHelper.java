@@ -20,15 +20,13 @@ public class TestProtoEnumHelper {
 
   @Test
   public void testHelper() {
-    System.out.println(helper.getFieldNames());
+    helper = ProtoEnumHelper.getHelper(TestModel.EnumA.class);
+    System.out.println(helper.getEnumValues());
+    System.out.println(helper.getEnumValueNames());
+    System.out.println(helper.getEnumValueNumbers());
     assertSame(helper, ProtoEnumHelper.getHelper(TestModel.EnumA.EA0));
     assertEquals(TestModel.EnumA.class, helper.getType());
     assertEquals(TestModel.EnumA.EA0, helper.defaultValue());
-
-    assertTrue(helper.isEmpty(null));
-    assertTrue(helper.isEmpty(TestModel.EnumA.EA0));
-    assertFalse(helper.isEmpty(TestModel.EnumA.EA2));
-    assertFalse(helper.isEmpty(TestModel.EnumA.UNRECOGNIZED));
 
     assertEquals(TestModel.EnumA.getDescriptor(), helper.getDescriptor());
     assertEquals(TestModel.EnumA.UNRECOGNIZED, helper.getUnrecognizedValue());
@@ -41,29 +39,20 @@ public class TestProtoEnumHelper {
 
   @Test
   public void testFindValue() {
-    assertTrue(helper.hasField("EA0"));
-    assertFalse(helper.hasField("EA10"));
+    assertNotNull(helper.of("EA0"));
+    assertNull(helper.of("EA10"));
 
     for (TestModel.EnumA enumA : TestModel.EnumA.values()) {
       if (enumA == TestModel.EnumA.UNRECOGNIZED) {
         continue;
       }
-      assertEquals(enumA, helper.byNumber(enumA.getNumber()));
-      assertEquals(enumA, helper.byName(enumA.name()));
+      assertEquals(enumA, helper.forNumber(enumA.getNumber()));
+      assertEquals(enumA, helper.of(enumA.name()));
     }
-    assertEquals(null, helper.byName(""));
-    assertEquals(null, helper.byName(null));
-    assertEquals(null, helper.byNumber(-1));
-    assertEquals(null, helper.byNumber(10000));
-  }
-
-  @Test
-  public void testUnsupport() {
-    assertUnsupport(() -> helper.getFieldType(""));
-    assertUnsupport(() -> helper.getFieldTypeMap());
-    assertUnsupport(() -> helper.isFieldSet(null, ""));
-    assertUnsupport(() -> helper.getFieldValue(null, ""));
-    assertUnsupport(() -> helper.setFieldValue(null, "", null));
+    assertEquals(null, helper.of(""));
+    assertEquals(null, helper.of(null));
+    assertEquals(null, helper.forNumber(-1));
+    assertEquals(null, helper.forNumber(10000));
   }
 
   private void assertUnsupport(Runnable func) {

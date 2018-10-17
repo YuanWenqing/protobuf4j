@@ -26,10 +26,10 @@ public class ProtoEnumConverter
       T value = null;
       if (StringUtils.isNumeric(source)) {
         // not support negative number
-        value = helper.byNumber(Integer.parseInt(source));
+        value = helper.forNumber(Integer.parseInt(source));
       }
       if (value == null) {
-        value = helper.byName(source);
+        value = helper.of(source);
       }
       if (value == null) {
         throw new ConversionFailedException(TypeDescriptor.forObject(source),
