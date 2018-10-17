@@ -9,7 +9,7 @@ import java.util.Set;
  * @author: yuanwq
  * @date: 2018/7/2
  */
-public interface IBeanHelper<T> {
+public interface IMessageHelper<T> {
 
   /**
    * @return bean的类型
@@ -22,14 +22,14 @@ public interface IBeanHelper<T> {
   T defaultValue();
 
   /**
-   * bean是否为空
+   * message是否为空
    * <p>
-   * bean为空=所有字段未set
+   * message为空=所有字段未set
    *
    * @return true=null or equals to default instance
    * @see #isFieldSet(T, String)
    */
-  boolean isEmpty(T bean);
+  boolean isEmpty(T message);
 
   /**
    * @return 是否存在对应的字段
@@ -37,7 +37,7 @@ public interface IBeanHelper<T> {
   boolean hasField(String fieldName);
 
   /**
-   * 获取bean的字段名集合
+   * 获取message的字段名集合
    */
   Set<String> getFieldNames();
 
@@ -54,7 +54,7 @@ public interface IBeanHelper<T> {
   Map<String, Class<?>> getFieldTypeMap();
 
   /**
-   * bean中对应字段是否设置
+   * message中对应字段是否设置
    * <ul>
    * <li>基本类型: true=不等于默认值</li>
    * <li>嵌套类型: true=不为null</li>
@@ -63,10 +63,10 @@ public interface IBeanHelper<T> {
    *
    * @throws RuntimeException no field found
    */
-  boolean isFieldSet(T bean, String fieldName);
+  boolean isFieldSet(T message, String fieldName);
 
   /**
-   * 获取bean中对应字段的值
+   * 获取message中对应字段的值
    * <ul>
    * <li>已设置：设置的值</li>
    * <li>未设置：默认值，其中对于集合类型返回空集合</li>
@@ -75,18 +75,18 @@ public interface IBeanHelper<T> {
    * @throws RuntimeException no field found
    * @see #isFieldSet(T, String)
    */
-  Object getFieldValue(T bean, String fieldName);
+  Object getFieldValue(T message, String fieldName);
 
   /**
-   * 设置bean的{@code fieldName}字段值为{@code fieldValue}
+   * 设置message的{@code fieldName}字段值为{@code fieldValue}
    *
-   * @return new Bean with the field set
+   * @return new message with the field set
    * @throws RuntimeException no field found
    */
-  T setFieldValue(T bean, String fieldName, Object fieldValue);
+  T setFieldValue(T message, String fieldName, Object fieldValue);
 
   /**
-   * 统一处理bean的toString
+   * 统一处理message的toString
    */
-  String toString(T bean);
+  String toString(T message);
 }

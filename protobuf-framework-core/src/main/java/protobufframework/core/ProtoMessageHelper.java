@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author: yuanwq
  * @date: 2018/7/2
  */
-public class ProtoMessageHelper<T extends Message> implements IBeanHelper<T> {
+public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> {
   @SuppressWarnings("rawtypes")
   private static ConcurrentHashMap<String, ProtoMessageHelper> helperMap =
       new ConcurrentHashMap<>();
