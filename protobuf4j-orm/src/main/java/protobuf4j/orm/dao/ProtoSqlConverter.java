@@ -81,6 +81,8 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
 
   private void registerDefaultTypeConverters() {
     typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.BOOLEAN, new BooleanTypeConverter());
+    typeConverterMap
+        .put(Descriptors.FieldDescriptor.JavaType.BYTE_STRING, new ByteStringTypeConverter());
     typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.DOUBLE, new DoubleTypeConverter());
     typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.ENUM, new EnumTypeConverter());
     typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.FLOAT, new FloatTypeConverter());
