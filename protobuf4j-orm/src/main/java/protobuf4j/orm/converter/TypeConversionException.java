@@ -6,6 +6,15 @@ import org.springframework.dao.TypeMismatchDataAccessException;
 public class TypeConversionException extends TypeMismatchDataAccessException {
 
   /**
+   * generic construction
+   *
+   * @param msg
+   */
+  public TypeConversionException(String msg) {
+    super(msg);
+  }
+
+  /**
    * construction when failing to convert
    *
    * @param javaType
@@ -14,7 +23,7 @@ public class TypeConversionException extends TypeMismatchDataAccessException {
    */
   public TypeConversionException(Descriptors.FieldDescriptor.JavaType javaType, Object fieldValue,
       Class<?> sqlValueType) {
-    super("fail to convert to sql value, field.type=" + javaType + ", field.value=`" + fieldValue +
+    super("fail to convert to sql value, javaType=" + javaType + ", field.value=`" + fieldValue +
         "`, value.type=" + fieldValue.getClass().getName() + ", sqlValue.type=" +
         sqlValueType.getName());
   }
@@ -27,6 +36,6 @@ public class TypeConversionException extends TypeMismatchDataAccessException {
    */
   public TypeConversionException(Descriptors.FieldDescriptor.JavaType javaType, Object sqlValue) {
     super("fail to parse sql value, sqlValue=`" + sqlValue + "`, sqlValue.type=" +
-        sqlValue.getClass().getName() + ", field.type=" + javaType);
+        sqlValue.getClass().getName() + ", javaType=" + javaType);
   }
 }

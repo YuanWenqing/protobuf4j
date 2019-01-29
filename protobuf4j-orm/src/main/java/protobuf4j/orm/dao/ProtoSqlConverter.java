@@ -7,6 +7,7 @@ import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Internal;
 import com.google.protobuf.MapEntry;
@@ -16,6 +17,7 @@ import org.apache.commons.text.translate.EntityArrays;
 import org.apache.commons.text.translate.LookupTranslator;
 import org.springframework.dao.TypeMismatchDataAccessException;
 import protobuf4j.core.ProtoMessageHelper;
+import protobuf4j.orm.converter.*;
 
 import java.sql.Timestamp;
 import java.util.Collections;
@@ -70,7 +72,21 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
     return instance;
   }
 
+  private final Map<Descriptors.FieldDescriptor.JavaType, ITypeConverter> typeConverterMap;
+
   protected ProtoSqlConverter() {
+    typeConverterMap = Maps.newHashMap();
+    registerDefaultTypeConverters();
+  }
+
+  private void registerDefaultTypeConverters() {
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.BOOLEAN, new BooleanTypeConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.DOUBLE, new DoubleTypeConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.ENUM, new EnumTypeConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.FLOAT, new FloatTypeConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.INT, new IntTypeConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.LONG, new LongTypeConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.STRING, new StringTypeConverter());
   }
 
   @Override
@@ -110,41 +126,13 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
    * @see #resolveSqlValueType(Descriptors.FieldDescriptor.JavaType)
    */
   protected Object toSqlValue(Descriptors.FieldDescriptor.JavaType javaType, Object value) {
-    switch (javaType) {
-      case BOOLEAN:
-        return boolToInt(value);
-      case ENUM:
-        return enumToInt(value);
-      case INT:
-        if (value instanceof Integer) {
-          return value;
-        }
-        break;
-      case LONG:
-        if (value instanceof Long || value instanceof Integer) {
-          return ((Number) value).longValue();
-        }
-        break;
-      case FLOAT:
-        if (value instanceof Number) {
-          return ((Number) value).floatValue();
-        }
-        break;
-      case DOUBLE:
-        if (value instanceof Number) {
-          return ((Number) value).doubleValue();
-        }
-        break;
-      case STRING:
-        if (value instanceof String) {
-          return value;
-        } else {
-          return String.valueOf(value);
-        }
+    ITypeConverter converter = typeConverterMap.get(javaType);
+    if (converter == null) {
+      throw new TypeConversionException(
+          "no converter found, javaType=" + javaType + ", value=`" + value + "`, valueType=" +
+              value.getClass().getName());
     }
-    throw new TypeMismatchDataAccessException(
-        "fail to convert, fieldType=" + javaType + ", value=`" + value + "`, valueType=" +
-            value.getClass().getName());
+    return converter.toSqlValue(value);
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
