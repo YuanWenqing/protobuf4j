@@ -255,8 +255,6 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       return parseMapFromString(helper, fd, sqlValue);
     } else if (fd.isRepeated()) {
       return parseListFromString(fd, sqlValue);
-    } else if (fd.getJavaType().equals(Descriptors.FieldDescriptor.JavaType.BOOLEAN)) {
-      return parseInt(sqlValue) != 0;
     } else if (fd.getJavaType().equals(Descriptors.FieldDescriptor.JavaType.ENUM)) {
       // EnumValueDescriptor
       return fd.getEnumType().findValueByNumber(parseInt(sqlValue));
@@ -265,8 +263,13 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       Timestamp ts = (Timestamp) sqlValue;
       return ts.getTime();
     } else {
-      resolveSqlValueType(fd.getJavaType()); // fast fail if not support
-      return sqlValue;
+      ITypeConverter converter = typeConverterMap.get(fd.getJavaType());
+      if (converter == null) {
+        throw new TypeConversionException(
+            "no converter found, javaType=" + fd.getJavaType() + ", sqlValue=`" + sqlValue +
+                "`, sqlValue.type=" + sqlValue.getClass().getName());
+      }
+      return converter.fromSqlValue(sqlValue);
     }
   }
 
