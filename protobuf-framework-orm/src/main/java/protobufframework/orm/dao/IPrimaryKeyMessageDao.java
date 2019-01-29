@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/23
+ * author: yuanwq
+ * date: 2018/7/23
  */
 public interface IPrimaryKeyMessageDao<K, T> extends IMessageDao<T> {
   /**

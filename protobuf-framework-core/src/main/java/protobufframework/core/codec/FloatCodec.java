@@ -3,8 +3,8 @@ package protobufframework.core.codec;
 import javax.annotation.Nullable;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/5
+ * author: yuanwq
+ * date: 2018/7/5
  */
 public class FloatCodec implements ICodec<Float> {
   public static final FloatCodec INSTANCE = new FloatCodec();

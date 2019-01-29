@@ -10,8 +10,8 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/17
+ * author: yuanwq
+ * date: 2018/7/17
  */
 public class TestValueCollection {
   @Test

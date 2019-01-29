@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * 将数据库一行数据映射为Protobuf Message
  *
- * @author yuanwq
+ * author yuanwq
  */
 @Setter
 @Getter

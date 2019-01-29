@@ -1,5 +1,5 @@
 /**
- * @author yuanwq, date: 2016年7月8日
+ * author yuanwq, date: 2016年7月8日
  */
 package protobufframework.core.codec;
 
@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * @author yuanwq
+ * author yuanwq
  */
 public class ProtoEnumCodec<T extends ProtocolMessageEnum> implements ICodec<T> {
   private final Class<T> cls;

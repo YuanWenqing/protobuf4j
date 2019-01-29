@@ -13,8 +13,8 @@ import static com.google.common.base.Preconditions.*;
  * 常量：字符串 数值 等
  * <p>
  *
- * @author: yuanwq
- * @date: 2018/7/11
+ * author: yuanwq
+ * date: 2018/7/11
  */
 @Data
 public class Value extends AbstractExpression implements ISqlValue {

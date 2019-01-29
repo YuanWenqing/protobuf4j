@@ -18,8 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/6
+ * author: yuanwq
+ * date: 2018/7/6
  */
 public abstract class ProtobufObjectMapper extends ObjectMapper {
   public ProtobufObjectMapper() {

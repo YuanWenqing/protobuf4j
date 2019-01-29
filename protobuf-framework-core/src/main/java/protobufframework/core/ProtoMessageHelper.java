@@ -18,8 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 处理Protobuf Message反射的辅助类
  *
- * @author: yuanwq
- * @date: 2018/7/2
+ * author: yuanwq
+ * date: 2018/7/2
  */
 public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> {
   @SuppressWarnings("rawtypes")

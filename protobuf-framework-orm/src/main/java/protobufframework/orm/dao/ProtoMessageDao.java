@@ -32,7 +32,7 @@ import static com.google.common.base.Preconditions.*;
  * <p>
  *
  * @param <T> 访问的数据表的数据元素类型
- * @author yuanwq
+ * author yuanwq
  */
 public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, InitializingBean {
   protected static final ThreadLocalTimer timer = new ThreadLocalTimer();

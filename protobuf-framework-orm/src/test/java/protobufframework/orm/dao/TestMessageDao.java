@@ -25,8 +25,8 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/23
+ * author: yuanwq
+ * date: 2018/7/23
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = JdbcConfiguration.class)

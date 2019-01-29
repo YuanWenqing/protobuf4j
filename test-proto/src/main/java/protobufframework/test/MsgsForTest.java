@@ -4,8 +4,8 @@ import com.google.protobuf.ByteString;
 import protobufframework.test.proto.TestModel;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/6
+ * author: yuanwq
+ * date: 2018/7/6
  */
 public class MsgsForTest {
 

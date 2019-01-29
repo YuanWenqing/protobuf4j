@@ -1,5 +1,5 @@
 /**
- * @author yuanwq, date: 2017年2月17日
+ * author yuanwq, date: 2017年2月17日
  */
 package protobufframework.orm.util;
 
@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 线程安全的计时器
  *
- * @author yuanwq
+ * author yuanwq
  * @see Stopwatch
  */
 public class ThreadLocalTimer extends ThreadLocal<Stopwatch> {

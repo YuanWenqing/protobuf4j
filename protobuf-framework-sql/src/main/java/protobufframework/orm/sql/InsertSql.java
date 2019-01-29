@@ -11,8 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/26
+ * author: yuanwq
+ * date: 2018/7/26
  */
 @Data
 public class InsertSql extends AbstractSqlObject implements ISqlStatement {

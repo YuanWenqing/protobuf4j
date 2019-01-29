@@ -8,8 +8,8 @@ import static java.lang.Thread.sleep;
 import static org.junit.Assert.*;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/23
+ * author: yuanwq
+ * date: 2018/7/23
  */
 public class TestThreadLocalTimer {
   @Test

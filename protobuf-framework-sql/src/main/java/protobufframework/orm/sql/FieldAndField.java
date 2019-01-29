@@ -8,8 +8,8 @@ import protobufframework.orm.sql.expr.RelationalExpr;
 /**
  * a util to build relational expression for two specified fields
  *
- * @author: yuanwq
- * @date: 2018/7/16
+ * author: yuanwq
+ * date: 2018/7/16
  */
 public interface FieldAndField {
 

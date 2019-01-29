@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/14
+ * author: yuanwq
+ * date: 2018/7/14
  */
 public class DaoSqlLogger {
   private final String name;

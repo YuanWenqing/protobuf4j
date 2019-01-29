@@ -14,8 +14,8 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/4
+ * author: yuanwq
+ * date: 2018/7/4
  */
 public class TestProtoMessageHelper {
   private ProtoMessageHelper<TestModel.MsgA> helper;

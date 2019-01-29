@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/16
+ * author: yuanwq
+ * date: 2018/7/16
  */
 @Data
 public abstract class AbstractBinaryExpr<T extends ISqlOperator> extends AbstractExpression

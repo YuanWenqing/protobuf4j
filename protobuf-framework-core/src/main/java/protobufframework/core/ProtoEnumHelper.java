@@ -14,8 +14,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/9
+ * author: yuanwq
+ * date: 2018/7/9
  */
 public class ProtoEnumHelper<T extends ProtocolMessageEnum> implements IEnumHelper<T> {
   @SuppressWarnings("rawtypes")

@@ -3,8 +3,8 @@ package protobufframework.orm.sql.expr;
 import org.junit.Test;
 
 /**
- * @author: yuanwq
- * @date: 2018/10/13
+ * author: yuanwq
+ * date: 2018/10/13
  */
 public class TestOpCheck {
   @Test(expected = IllegalArgumentException.class)

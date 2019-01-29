@@ -6,8 +6,8 @@ import java.util.Set;
 /**
  * 通过反射处理enum的辅助类
  *
- * @author: yuanwq
- * @date: 2018/7/2
+ * author: yuanwq
+ * date: 2018/7/2
  */
 public interface IEnumHelper<T> {
 

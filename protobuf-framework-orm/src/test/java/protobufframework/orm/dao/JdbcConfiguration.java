@@ -11,8 +11,8 @@ import javax.sql.DataSource;
 /**
  * 需要使用jdbc的测试用例的基类
  *
- * @author: yuanwq
- * @date: 2018/7/24
+ * author: yuanwq
+ * date: 2018/7/24
  */
 @Configuration
 public class JdbcConfiguration {

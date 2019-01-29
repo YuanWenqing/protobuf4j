@@ -1,5 +1,5 @@
 /**
- * @author yuanwq, date: 2016年2月17日
+ * author yuanwq, date: 2016年2月17日
  */
 package protobufframework.orm.dao;
 
@@ -16,7 +16,7 @@ import java.sql.SQLException;
  * 将数据库值映射处理为Protobuf Message的字段值
  * <p>
  *
- * @author yuanwq
+ * author yuanwq
  */
 public class ProtoFieldRowMapper<F> implements RowMapper<F> {
 

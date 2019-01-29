@@ -7,8 +7,8 @@ import java.util.Collection;
 /**
  * a util to build relational expression for a specified field and some specified value(s)
  *
- * @author: yuanwq
- * @date: 2018/7/16
+ * author: yuanwq
+ * date: 2018/7/16
  */
 public interface FieldAndValue {
 

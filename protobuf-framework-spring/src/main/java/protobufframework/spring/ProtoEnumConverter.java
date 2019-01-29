@@ -10,8 +10,8 @@ import org.springframework.core.convert.converter.ConverterFactory;
 import protobufframework.core.ProtoEnumHelper;
 
 /**
- * @author: yuanwq
- * @date: 2018/5/7
+ * author: yuanwq
+ * date: 2018/5/7
  */
 public class ProtoEnumConverter
     implements ConverterFactory<String, ProtocolMessageEnum>, ConditionalConverter {

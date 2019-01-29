@@ -6,8 +6,8 @@ import static com.google.common.base.Preconditions.*;
  * 访问者模式解耦具体表达式的sql语句构造逻辑
  * <p>
  *
- * @author: yuanwq
- * @date: 2018/7/11
+ * author: yuanwq
+ * date: 2018/7/11
  */
 public interface ISqlOperator {
 

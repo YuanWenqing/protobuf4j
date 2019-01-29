@@ -14,8 +14,8 @@ import java.util.List;
 /**
  * 值集合
  *
- * @author: yuanwq
- * @date: 2018/7/11
+ * author: yuanwq
+ * date: 2018/7/11
  */
 @Data
 public class ValueCollection extends AbstractExpression {

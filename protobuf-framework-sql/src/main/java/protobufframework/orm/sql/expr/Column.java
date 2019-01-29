@@ -14,8 +14,8 @@ import static com.google.common.base.Preconditions.*;
  * 表列
  * <p>
  *
- * @author: yuanwq
- * @date: 2018/7/11
+ * author: yuanwq
+ * date: 2018/7/11
  */
 @Data
 public class Column extends AbstractExpression {

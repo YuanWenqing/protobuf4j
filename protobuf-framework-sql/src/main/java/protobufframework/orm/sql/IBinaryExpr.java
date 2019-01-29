@@ -2,8 +2,8 @@ package protobufframework.orm.sql;
 
 /**
  * @param <T> 运算符类型
- * @author: yuanwq
- * @date: 2018/7/11
+ * author: yuanwq
+ * date: 2018/7/11
  */
 public interface IBinaryExpr<T extends ISqlOperator> extends IExpression {
   /**

@@ -3,8 +3,8 @@ package protobufframework.orm.sql;
 /**
  * sqlValue接口，处理value与字段的关联，便于后续value的转换
  *
- * @author: yuanwq
- * @date: 2018/7/16
+ * author: yuanwq
+ * date: 2018/7/16
  */
 public interface ISqlValue {
   /**

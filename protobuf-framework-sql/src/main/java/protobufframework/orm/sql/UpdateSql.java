@@ -9,8 +9,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/15
+ * author: yuanwq
+ * date: 2018/7/15
  */
 @Data
 public class UpdateSql extends AbstractSqlObject implements ISqlStatement {

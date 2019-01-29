@@ -7,8 +7,8 @@ import protobufframework.orm.sql.expr.Value;
 /**
  * 构建sql语句元素的util
  *
- * @author: yuanwq
- * @date: 2018/7/16
+ * author: yuanwq
+ * date: 2018/7/16
  */
 public abstract class QueryCreator {
   private QueryCreator() {

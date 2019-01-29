@@ -12,8 +12,8 @@ import java.util.List;
 import static com.google.common.base.Preconditions.*;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/15
+ * author: yuanwq
+ * date: 2018/7/15
  */
 @Data
 public class SelectSql extends AbstractSqlObject implements ISqlStatement {

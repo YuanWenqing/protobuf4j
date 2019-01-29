@@ -11,8 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/15
+ * author: yuanwq
+ * date: 2018/7/15
  */
 public abstract class SqlUtil {
   public static final SelectItem SELECT_STAR = new SelectItem(new RawExpr("*")) {

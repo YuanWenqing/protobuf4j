@@ -12,8 +12,8 @@ import java.util.List;
  * 分页子句：{@code LIMIT <limit> OFFSET <offset>}
  * <p>
  *
- * @author: yuanwq
- * @date: 2018/7/12
+ * author: yuanwq
+ * date: 2018/7/12
  */
 @Data
 public abstract class PaginationClause extends AbstractSqlObject {

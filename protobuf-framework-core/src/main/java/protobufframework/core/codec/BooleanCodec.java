@@ -1,12 +1,12 @@
 /**
- * @author yuanwq, date: 2015年8月13日
+ * author yuanwq, date: 2015年8月13日
  */
 package protobufframework.core.codec;
 
 import javax.annotation.Nullable;
 
 /**
- * @author yuanwq
+ * author yuanwq
  */
 public class BooleanCodec implements ICodec<Boolean> {
   public static final BooleanCodec INSTANCE = new BooleanCodec();

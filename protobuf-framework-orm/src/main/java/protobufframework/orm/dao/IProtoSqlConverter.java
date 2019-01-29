@@ -5,8 +5,8 @@ import com.google.protobuf.Message;
 import protobufframework.core.ProtoMessageHelper;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/20
+ * author: yuanwq
+ * date: 2018/7/20
  */
 public interface IProtoSqlConverter extends ISqlConverter<Message> {
   /**

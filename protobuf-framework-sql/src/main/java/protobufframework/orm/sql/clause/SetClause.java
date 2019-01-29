@@ -13,8 +13,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/12
+ * author: yuanwq
+ * date: 2018/7/12
  */
 @Data
 public class SetClause extends AbstractSqlObject {

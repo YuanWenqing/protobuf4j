@@ -12,8 +12,8 @@ import java.util.List;
 import static com.google.common.base.Preconditions.*;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/16
+ * author: yuanwq
+ * date: 2018/7/16
  */
 @Data
 public class SimpleTable extends AbstractSqlObject implements ITableRef {

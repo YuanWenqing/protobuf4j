@@ -1,5 +1,5 @@
 /**
- * @author yuanwq, date: 2017年4月27日
+ * author yuanwq, date: 2017年4月27日
  */
 package protobufframework.orm.dao;
 

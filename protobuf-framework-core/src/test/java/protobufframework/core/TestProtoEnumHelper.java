@@ -7,8 +7,8 @@ import protobufframework.test.proto.TestModel;
 import static org.junit.Assert.*;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/9
+ * author: yuanwq
+ * date: 2018/7/9
  */
 public class TestProtoEnumHelper {
   private ProtoEnumHelper<TestModel.EnumA> helper;

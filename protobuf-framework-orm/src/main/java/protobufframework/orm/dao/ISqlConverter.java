@@ -1,10 +1,10 @@
 /**
- * @author yuanwq, date: 2017年4月27日
+ * author yuanwq, date: 2017年4月27日
  */
 package protobufframework.orm.dao;
 
 /**
- * @author yuanwq
+ * author yuanwq
  */
 public interface ISqlConverter<T> {
   /**

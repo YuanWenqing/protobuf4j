@@ -8,8 +8,8 @@ import javax.annotation.Nonnull;
  * 逻辑表达式：AND OR XOR
  * <p>
  *
- * @author: yuanwq
- * @date: 2018/7/11
+ * author: yuanwq
+ * date: 2018/7/11
  */
 public class LogicalExpr extends AbstractBinaryExpr<LogicalOp> {
 

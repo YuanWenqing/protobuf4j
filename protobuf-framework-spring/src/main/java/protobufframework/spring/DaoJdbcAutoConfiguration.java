@@ -11,8 +11,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 /**
  * 自动配置dao的jdbc
  *
- * @author: yuanwq
- * @date: 2018/9/24
+ * author: yuanwq
+ * date: 2018/9/24
  */
 @Configuration
 @ConditionalOnProperty(value = "protobuf-framework.datasource.auto-enable", matchIfMissing = true)

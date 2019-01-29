@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/23
+ * author: yuanwq
+ * date: 2018/7/23
  */
 public class PrimaryKeyProtoMessageDao<K, T extends Message> extends ProtoMessageDao<T>
     implements IPrimaryKeyMessageDao<K, T> {

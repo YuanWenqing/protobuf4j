@@ -1,5 +1,5 @@
 /**
- * @author yuanwq, date: 2017年2月17日
+ * author yuanwq, date: 2017年2月17日
  */
 package protobufframework.spring;
 
@@ -20,7 +20,7 @@ import java.io.IOException;
 import static com.google.common.base.Preconditions.*;
 
 /**
- * @author yuanwq
+ * author yuanwq
  */
 public class ProtoMessageConverter
     implements ConverterFactory<String, Message>, ConditionalConverter, InitializingBean {

@@ -8,8 +8,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import protobufframework.orm.dao.IMessageDao;
 
 /**
- * @author: yuanwq
- * @date: 2018/9/24
+ * author: yuanwq
+ * date: 2018/9/24
  */
 class DaoJdbcTemplatePostProcessor implements BeanPostProcessor, ApplicationContextAware {
   private ApplicationContext applicationContext;

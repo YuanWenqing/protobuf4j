@@ -6,8 +6,8 @@ import protobufframework.orm.sql.IExpression;
 /**
  * 表达式基类，实现一些同一的方法
  *
- * @author: yuanwq
- * @date: 2018/7/16
+ * author: yuanwq
+ * date: 2018/7/16
  */
 public abstract class AbstractExpression extends AbstractSqlObject implements IExpression {
   @Override

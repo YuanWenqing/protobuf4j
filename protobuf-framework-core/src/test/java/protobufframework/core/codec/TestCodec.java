@@ -12,8 +12,8 @@ import java.io.IOException;
 import static org.junit.Assert.*;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/5
+ * author: yuanwq
+ * date: 2018/7/5
  */
 @SuppressWarnings("unchecked")
 public class TestCodec {

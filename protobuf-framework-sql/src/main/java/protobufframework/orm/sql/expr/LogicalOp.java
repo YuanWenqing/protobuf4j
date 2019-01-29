@@ -6,8 +6,8 @@ import protobufframework.orm.sql.ISqlOperator;
 import static com.google.common.base.Preconditions.*;
 
 /**
- * @author: yuanwq
- * @date: 2018/7/11
+ * author: yuanwq
+ * date: 2018/7/11
  */
 
 public enum LogicalOp implements ISqlOperator {
