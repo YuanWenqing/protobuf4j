@@ -143,7 +143,7 @@ public class TestProtoSqlConverter {
     assertEquals(1.1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("double"), 1.1));
     assertEquals(1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool"), true));
     assertEquals(0, sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool"), false));
-    assertEquals("1", sqlConverter.toSqlValue(helperA.getFieldDescriptor("string"), 1));
+    assertEquals("1", sqlConverter.toSqlValue(helperA.getFieldDescriptor("string"), "1"));
     assertEquals("str", sqlConverter.toSqlValue(helperA.getFieldDescriptor("string"), "str"));
     assertEquals(0,
         sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma"), TestModel.EnumA.EA0));
