@@ -4,8 +4,8 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
     compileOnly("org.projectlombok:lombok:$lombokVersion")
 
-    api(project(":protobuf-framework-core"))
-    api(project(":protobuf-framework-sql"))
+    api(project(":protobuf4j-core"))
+    api(project(":protobuf4j-sql"))
 
     // db
     api("org.springframework:spring-jdbc:${springVersion}")
