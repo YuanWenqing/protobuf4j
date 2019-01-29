@@ -17,21 +17,19 @@ public class BooleanTypeConverter implements ITypeConverter {
 
   @Override
   public Object toSqlValue(Object fieldValue) {
-    if (fieldValue.getClass().equals(Boolean.class)) {
+    if (fieldValue instanceof Boolean) {
       return (Boolean) fieldValue ? 1 : 0;
     }
-    if (fieldValue.getClass().equals(Integer.class)) {
+    if (fieldValue instanceof Integer) {
       int i = (Integer) fieldValue;
-      if (i == 0 || i == 1) {
-        return i;
-      }
+      return i == 0 ? i : 1;
     }
     throw new TypeConversionException(getJavaType(), fieldValue, getSqlValueType());
   }
 
   @Override
   public Object fromSqlValue(Object sqlValue) {
-    if (sqlValue.getClass().equals(Integer.class)) {
+    if (sqlValue instanceof Integer) {
       return !Objects.equals(sqlValue, 0);
     }
     throw new TypeConversionException(getJavaType(), sqlValue);

@@ -23,9 +23,8 @@ public class TypeConversionException extends TypeMismatchDataAccessException {
    */
   public TypeConversionException(Descriptors.FieldDescriptor.JavaType javaType, Object fieldValue,
       Class<?> sqlValueType) {
-    super("fail to convert to sql value, javaType=" + javaType + ", field.value=`" + fieldValue +
-        "`, value.type=" + fieldValue.getClass().getName() + ", sqlValue.type=" +
-        sqlValueType.getName());
+    super("fail to convert to sql value, javaType=" + javaType + ", fieldValue=" +
+        toString(fieldValue) + ", sqlValueType=" + sqlValueType.getName());
   }
 
   /**
@@ -35,7 +34,13 @@ public class TypeConversionException extends TypeMismatchDataAccessException {
    * @param javaType
    */
   public TypeConversionException(Descriptors.FieldDescriptor.JavaType javaType, Object sqlValue) {
-    super("fail to parse sql value, sqlValue=`" + sqlValue + "`, sqlValue.type=" +
-        sqlValue.getClass().getName() + ", javaType=" + javaType);
+    super("fail to parse sql value, sqlValue=" + toString(sqlValue) + ", javaType=" + javaType);
+  }
+
+  private static String toString(Object value) {
+    if (value == null) {
+      return "null";
+    }
+    return String.format("`%s`[%s]", value, value.getClass().getName());
   }
 }
