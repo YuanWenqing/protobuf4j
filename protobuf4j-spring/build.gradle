@@ -1,0 +1,12 @@
+
+dependencies {
+    api(project(":protobuf4j-orm"))
+
+    // https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/index.html#boot-features-custom-starter-module-autoconfigure
+    // 生成自动配置有关的配置项
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
+    api("org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}")
+
+    // test
+    testImplementation(project(":test-proto"))
+}
