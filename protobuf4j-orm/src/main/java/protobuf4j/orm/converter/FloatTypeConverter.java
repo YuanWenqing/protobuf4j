@@ -23,6 +23,9 @@ public class FloatTypeConverter implements ITypeConverter {
 
   @Override
   public Object fromSqlValue(Object sqlValue) {
+    if (sqlValue == null) {
+      return 0f;
+    }
     if (sqlValue instanceof Number) {
       return ((Number) sqlValue).floatValue();
     }

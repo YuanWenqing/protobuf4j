@@ -23,6 +23,9 @@ public class LongTypeConverter implements ITypeConverter {
 
   @Override
   public Object fromSqlValue(Object sqlValue) {
+    if (sqlValue == null) {
+      return 0L;
+    }
     if (sqlValue instanceof Long || sqlValue instanceof Integer) {
       return ((Number) sqlValue).longValue();
     }

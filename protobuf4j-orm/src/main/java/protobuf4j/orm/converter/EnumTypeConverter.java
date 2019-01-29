@@ -27,6 +27,9 @@ public class EnumTypeConverter implements ITypeConverter {
 
   @Override
   public Object fromSqlValue(Object sqlValue) {
+    if (sqlValue == null) {
+      return 0;
+    }
     if (sqlValue instanceof Integer) {
       return sqlValue;
     }

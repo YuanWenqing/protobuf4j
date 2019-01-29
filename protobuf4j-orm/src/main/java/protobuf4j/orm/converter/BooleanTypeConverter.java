@@ -29,6 +29,9 @@ public class BooleanTypeConverter implements ITypeConverter {
 
   @Override
   public Object fromSqlValue(Object sqlValue) {
+    if (sqlValue == null) {
+      return false;
+    }
     if (sqlValue instanceof Integer) {
       return !Objects.equals(sqlValue, 0);
     }

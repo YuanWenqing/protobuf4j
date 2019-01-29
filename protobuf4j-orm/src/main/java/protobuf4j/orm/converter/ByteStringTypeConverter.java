@@ -24,6 +24,9 @@ public class ByteStringTypeConverter implements ITypeConverter {
 
   @Override
   public Object fromSqlValue(Object sqlValue) {
+    if (sqlValue == null) {
+      return ByteString.EMPTY;
+    }
     if (sqlValue instanceof String) {
       return ByteString.copyFromUtf8((String) sqlValue);
     }

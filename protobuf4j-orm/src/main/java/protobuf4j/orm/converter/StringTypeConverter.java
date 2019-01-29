@@ -15,6 +15,9 @@ public class StringTypeConverter implements ITypeConverter {
 
   @Override
   public Object toSqlValue(Object fieldValue) {
+    if (fieldValue == null) {
+      return "";
+    }
     if (fieldValue instanceof String) {
       return fieldValue;
     }
@@ -23,6 +26,9 @@ public class StringTypeConverter implements ITypeConverter {
 
   @Override
   public Object fromSqlValue(Object sqlValue) {
+    if (sqlValue == null) {
+      return "";
+    }
     if (sqlValue instanceof String) {
       return sqlValue;
     }

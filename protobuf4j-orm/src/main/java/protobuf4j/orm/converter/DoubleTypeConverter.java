@@ -23,6 +23,9 @@ public class DoubleTypeConverter implements ITypeConverter {
 
   @Override
   public Object fromSqlValue(Object sqlValue) {
+    if (sqlValue == null) {
+      return 0d;
+    }
     if (sqlValue instanceof Number) {
       return ((Number) sqlValue).doubleValue();
     }
