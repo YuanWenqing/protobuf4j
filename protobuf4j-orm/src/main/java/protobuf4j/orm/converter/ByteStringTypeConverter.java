@@ -19,7 +19,7 @@ public class ByteStringTypeConverter implements ITypeConverter {
     if (fieldValue instanceof ByteString) {
       return ((ByteString) fieldValue).toStringUtf8();
     }
-    return String.valueOf(fieldValue);
+    throw new TypeConversionException(getJavaType(), fieldValue, getSqlValueType());
   }
 
   @Override
