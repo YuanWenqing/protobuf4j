@@ -29,9 +29,10 @@ public class TestByteStringTypeConverter {
     String s = "sldjflsdjfl";
     ByteString byteString = ByteString.copyFromUtf8(s);
     assertEquals(byteString, converter.fromSqlValue(s));
+    assertEquals(ByteString.EMPTY, converter.fromSqlValue(null));
 
     try {
-      converter.fromSqlValue(null);
+      converter.fromSqlValue(1);
       fail();
     } catch (TypeConversionException e) {
       System.out.println(e.getMessage());

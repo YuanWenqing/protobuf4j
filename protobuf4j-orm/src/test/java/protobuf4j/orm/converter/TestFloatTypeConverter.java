@@ -25,6 +25,7 @@ public class TestFloatTypeConverter {
 
   @Test
   public void testFromSqlValue() {
+    assertEquals(0f, converter.fromSqlValue(null));
     assertEquals(0f, converter.fromSqlValue(0));
     assertEquals(1f, converter.fromSqlValue(1d));
     assertEquals(-1f, converter.fromSqlValue(-1f));

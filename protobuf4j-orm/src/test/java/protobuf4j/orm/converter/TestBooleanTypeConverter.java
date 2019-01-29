@@ -29,9 +29,10 @@ public class TestBooleanTypeConverter {
     assertEquals(Boolean.TRUE, converter.fromSqlValue(1));
     assertEquals(Boolean.TRUE, converter.fromSqlValue(2));
     assertEquals(Boolean.FALSE, converter.fromSqlValue(0));
+    assertEquals(Boolean.FALSE, converter.fromSqlValue(null));
 
     try {
-      converter.fromSqlValue(null);
+      converter.fromSqlValue("");
       fail();
     } catch (TypeConversionException e) {
       System.out.println(e.getMessage());

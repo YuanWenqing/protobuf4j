@@ -25,6 +25,7 @@ public class TestLongTypeConverter {
 
   @Test
   public void testFromSqlValue() {
+    assertEquals(0L, converter.fromSqlValue(null));
     assertEquals(0L, converter.fromSqlValue(0L));
     assertEquals(1L, converter.fromSqlValue(1));
     assertEquals(-1L, converter.fromSqlValue(-1));

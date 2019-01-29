@@ -10,16 +10,23 @@ public class TestStringTypeConverter {
   @Test
   public void testToSqlValue() {
     assertEquals("", converter.toSqlValue(""));
-    assertEquals("1", converter.toSqlValue(1));
+    assertEquals("", converter.toSqlValue(null));
+    try {
+      converter.toSqlValue(1);
+      fail();
+    } catch (TypeConversionException e) {
+      System.out.println(e.getMessage());
+    }
   }
 
   @Test
   public void testFromSqlValue() {
     assertEquals("", converter.fromSqlValue(""));
     assertEquals("1", converter.fromSqlValue("1"));
+    assertEquals("", converter.fromSqlValue(null));
 
     try {
-      converter.fromSqlValue(null);
+      converter.fromSqlValue(1);
       fail();
     } catch (TypeConversionException e) {
       System.out.println(e.getMessage());

@@ -25,6 +25,7 @@ public class TestDoubleTypeConverter {
 
   @Test
   public void testFromSqlValue() {
+    assertEquals(0d, converter.fromSqlValue(null));
     assertEquals(0d, converter.fromSqlValue(0));
     assertEquals(1d, converter.fromSqlValue(1d));
     assertEquals(-1d, converter.fromSqlValue(-1f));

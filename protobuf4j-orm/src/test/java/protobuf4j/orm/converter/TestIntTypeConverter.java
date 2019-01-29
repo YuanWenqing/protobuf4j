@@ -25,6 +25,7 @@ public class TestIntTypeConverter {
 
   @Test
   public void testFromSqlValue() {
+    assertEquals(0, converter.fromSqlValue(null));
     assertEquals(0, converter.fromSqlValue(0));
     assertEquals(1, converter.fromSqlValue(1));
     assertEquals(-1, converter.fromSqlValue(-1));

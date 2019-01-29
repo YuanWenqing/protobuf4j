@@ -21,7 +21,7 @@ public class StringTypeConverter implements ITypeConverter {
     if (fieldValue instanceof String) {
       return fieldValue;
     }
-    return String.valueOf(fieldValue);
+    throw new TypeConversionException(getJavaType(), fieldValue, getSqlValueType());
   }
 
   @Override
