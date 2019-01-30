@@ -3,7 +3,6 @@
  */
 package protobuf4j.orm.dao;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -27,9 +26,11 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Preconditions.*;
+
 /**
  */
-public class ProtoSqlHandler implements IProtoMessageSqlHandler {
+public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandler {
   protected static final String LIST_SEP = ",";
   protected static final String MAP_KV_SEP = ":";
   protected static final String MAP_ENTRY_SEP = ";";
@@ -66,18 +67,17 @@ public class ProtoSqlHandler implements IProtoMessageSqlHandler {
   protected static final Splitter.MapSplitter MAP_SPLITTER =
       MAP_ENTRY_SPLITTER.withKeyValueSeparator(MAP_KV_SEP);
 
-  private static final ProtoSqlHandler instance = new ProtoSqlHandler();
-
-  public static ProtoSqlHandler getInstance() {
-    return instance;
-  }
-
+  private final Class<M> messageClass;
+  private final ProtoMessageHelper<M> messageHelper;
   private final Map<Descriptors.FieldDescriptor.JavaType, IFieldConverter> typeConverterMap;
   private final TimestampFieldConverter timestampFieldConverter;
 
-  protected ProtoSqlHandler() {
-    timestampFieldConverter = new TimestampFieldConverter();
-    typeConverterMap = Maps.newHashMap();
+  public ProtoSqlHandler(Class<M> messageClass) {
+    checkNotNull(messageClass);
+    this.messageClass = messageClass;
+    this.messageHelper = ProtoMessageHelper.getHelper(messageClass);
+    this.timestampFieldConverter = new TimestampFieldConverter();
+    this.typeConverterMap = Maps.newHashMap();
     registerDefaultTypeConverters();
   }
 
@@ -93,11 +93,9 @@ public class ProtoSqlHandler implements IProtoMessageSqlHandler {
     typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.STRING, new StringFieldConverter());
   }
 
-
   @Override
-  public <B extends Message> Object toSqlValue(Class<B> messageClass, String field, Object value) {
-    ProtoMessageHelper<B> helper = ProtoMessageHelper.getHelper(messageClass);
-    Descriptors.FieldDescriptor fd = helper.checkFieldDescriptor(field);
+  public Object toSqlValue(String field, Object value) {
+    Descriptors.FieldDescriptor fd = messageHelper.checkFieldDescriptor(field);
     return toSqlValue(fd, value);
   }
 
@@ -260,19 +258,16 @@ public class ProtoSqlHandler implements IProtoMessageSqlHandler {
   }
 
   @Override
-  public <B extends Message> Object fromSqlValue(Class<B> messageClass, String field,
-      Object sqlValue) {
-    ProtoMessageHelper<B> helper = ProtoMessageHelper.getHelper(messageClass);
-    Descriptors.FieldDescriptor fd = helper.checkFieldDescriptor(field);
-    return fromSqlValue(helper, fd, sqlValue);
+  public Object fromSqlValue(String field, Object sqlValue) {
+    Descriptors.FieldDescriptor fd = messageHelper.checkFieldDescriptor(field);
+    return fromSqlValue(fd, sqlValue);
   }
 
   @Override
-  public <M extends Message> Object fromSqlValue(ProtoMessageHelper<M> helper,
-      Descriptors.FieldDescriptor fd, Object sqlValue) {
+  public Object fromSqlValue(Descriptors.FieldDescriptor fd, Object sqlValue) {
     if (fd.isMapField()) {
       // check map first, for map field is also repeated
-      return parseMapFromString(helper, fd, sqlValue);
+      return parseMapFromString(fd, sqlValue);
     } else if (fd.isRepeated()) {
       return parseListFromString(fd, sqlValue);
     } else if (fd.getJavaType().equals(Descriptors.FieldDescriptor.JavaType.ENUM)) {
@@ -305,8 +300,7 @@ public class ProtoSqlHandler implements IProtoMessageSqlHandler {
   /**
    * @return a list of {@link MapEntry}, because setter of a map field only accept value of this kind
    */
-  protected List<MapEntry<?, ?>> parseMapFromString(ProtoMessageHelper<?> helper,
-      Descriptors.FieldDescriptor fd, Object value) {
+  protected List<MapEntry<?, ?>> parseMapFromString(Descriptors.FieldDescriptor fd, Object value) {
     if (value == null) {
       return Collections.emptyList();
     }
@@ -326,7 +320,8 @@ public class ProtoSqlHandler implements IProtoMessageSqlHandler {
     for (Map.Entry<String, String> entry : map.entrySet()) {
       Object k = lookupTransform(keyFd).apply(MAP_VALUE_UNESCAPE.translate(entry.getKey()));
       Object v = lookupTransform(valFd).apply(MAP_VALUE_UNESCAPE.translate(entry.getValue()));
-      MapEntry.Builder<?, ?> entryBuilder = (MapEntry.Builder<?, ?>) helper.newBuilderForField(fd);
+      MapEntry.Builder<?, ?> entryBuilder =
+          (MapEntry.Builder<?, ?>) messageHelper.newBuilderForField(fd);
       entryBuilder.setField(keyFd, k).setField(valFd, v);
       mapEntries.add(entryBuilder.build());
     }
