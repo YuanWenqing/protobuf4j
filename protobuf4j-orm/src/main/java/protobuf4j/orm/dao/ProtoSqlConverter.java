@@ -73,8 +73,10 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   }
 
   private final Map<Descriptors.FieldDescriptor.JavaType, IFieldConverter> typeConverterMap;
+  private final TimestampFieldConverter timestampFieldConverter;
 
   protected ProtoSqlConverter() {
+    timestampFieldConverter = new TimestampFieldConverter();
     typeConverterMap = Maps.newHashMap();
     registerDefaultTypeConverters();
   }
@@ -113,8 +115,28 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
     } else if (isTimestampField(fd)) {
       return toSqlTimestamp(value);
     } else {
-      return toSqlValue(fd.getJavaType(), value);
+      IFieldConverter fieldConverter = findFieldConverter(fd);
+      if (!fieldConverter.supportConversion(fd, value)) {
+        throw new TypeConversionException(
+            "converter not support conversion, converter=" + fieldConverter.getClass().getName() +
+                ", field=" + fd + ", value=`" + value + "`, valueType=" +
+                value.getClass().getName());
+      }
+      return fieldConverter.toSqlValue(value);
     }
+  }
+
+  private IFieldConverter findFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
+    if (isTimestampField(fieldDescriptor)) {
+      return timestampFieldConverter;
+    }
+    IFieldConverter fieldConverter = typeConverterMap.get(fieldDescriptor.getJavaType());
+    if (fieldConverter == null) {
+      throw new TypeConversionException(
+          "no converter found, field=" + fieldDescriptor + ", javaType=" +
+              fieldDescriptor.getJavaType());
+    }
+    return fieldConverter;
   }
 
   public boolean isTimestampField(Descriptors.FieldDescriptor fd) {
