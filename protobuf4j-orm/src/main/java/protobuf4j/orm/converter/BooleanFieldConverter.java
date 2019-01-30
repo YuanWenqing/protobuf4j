@@ -6,12 +6,6 @@ import java.util.Objects;
 
 public class BooleanFieldConverter implements IFieldValueConverter {
   @Override
-  public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
-    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.BOOLEAN &&
-        (fieldValue instanceof Boolean || fieldValue instanceof Integer);
-  }
-
-  @Override
   public Class<?> getSqlValueType() {
     return Integer.class;
   }

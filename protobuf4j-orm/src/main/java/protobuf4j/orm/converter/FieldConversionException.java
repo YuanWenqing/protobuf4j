@@ -15,6 +15,15 @@ public class FieldConversionException extends TypeMismatchDataAccessException {
   }
 
   /**
+   * generic construction
+   *
+   * @param msg
+   */
+  public FieldConversionException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
+
+  /**
    * construction when failing to convert
    *
    * @param javaType
@@ -37,7 +46,7 @@ public class FieldConversionException extends TypeMismatchDataAccessException {
     super("fail to parse sql value, sqlValue=" + toString(sqlValue) + ", javaType=" + javaType);
   }
 
-  private static String toString(Object value) {
+  public static String toString(Object value) {
     if (value == null) {
       return "null";
     }

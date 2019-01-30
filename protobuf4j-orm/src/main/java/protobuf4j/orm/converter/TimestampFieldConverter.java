@@ -6,13 +6,6 @@ import com.google.protobuf.util.Timestamps;
 
 public class TimestampFieldConverter implements IFieldValueConverter {
   @Override
-  public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
-    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.MESSAGE &&
-        (fieldValue instanceof Timestamp || fieldValue instanceof Long ||
-            fieldValue instanceof Integer);
-  }
-
-  @Override
   public Class<?> getSqlValueType() {
     return java.sql.Timestamp.class;
   }

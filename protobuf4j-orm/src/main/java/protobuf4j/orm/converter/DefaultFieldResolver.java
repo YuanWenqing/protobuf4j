@@ -17,7 +17,10 @@ import org.springframework.dao.TypeMismatchDataAccessException;
 import protobuf4j.core.ProtoMessageHelper;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -84,12 +87,6 @@ public class DefaultFieldResolver<M extends Message> implements IFieldResolver {
       return encodeListToString(fd, value);
     } else {
       IFieldValueConverter fieldConverter = findFieldConverter(fd);
-      if (!fieldConverter.supportConversion(fd, value)) {
-        throw new FieldConversionException(
-            "converter not support conversion, converter=" + fieldConverter.getClass().getName() +
-                ", field=" + fd + ", value=`" + value + "`, valueType=" +
-                value.getClass().getName());
-      }
       return fieldConverter.toSqlValue(value);
     }
   }
@@ -102,70 +99,6 @@ public class DefaultFieldResolver<M extends Message> implements IFieldResolver {
       return timestampFieldConverter;
     }
     return basicTypeFieldResolver.findFieldConverter(fieldDescriptor);
-  }
-
-  static class MapFieldConverter implements IFieldValueConverter {
-    private final Descriptors.FieldDescriptor keyFd;
-    private final Descriptors.FieldDescriptor valFd;
-
-    public MapFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
-      keyFd = fieldDescriptor.getMessageType().findFieldByName("key");
-      valFd = fieldDescriptor.getMessageType().findFieldByName("value");
-    }
-
-    @Override
-    public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor,
-        Object fieldValue) {
-      return fieldDescriptor.isMapField() &&
-          (fieldValue instanceof Map || fieldValue instanceof Collection);
-    }
-
-    @Override
-    public Class<?> getSqlValueType() {
-      return String.class;
-    }
-
-    @Override
-    public Object toSqlValue(Object fieldValue) {
-      try {
-        if (fieldValue instanceof Map) {
-          Map<?, ?> map = (Map<?, ?>) fieldValue;
-          StringBuilder sb = new StringBuilder();
-          for (Map.Entry<?, ?> entry : map.entrySet()) {
-            Object k = toSqlValue(keyFd.getJavaType(), entry.getKey());
-            k = MAP_VALUE_ESCAPE.translate(String.valueOf(k));
-            Object v = toSqlValue(valFd.getJavaType(), entry.getValue());
-            v = MAP_VALUE_ESCAPE.translate(String.valueOf(v));
-            sb.append(k).append(MAP_KV_SEP).append(v).append(MAP_ENTRY_SEP);
-          }
-          return sb.toString();
-        } else if (fieldValue instanceof List) {
-          List<? extends MapEntry> list = (List<? extends MapEntry>) fieldValue;
-          StringBuilder sb = new StringBuilder();
-          for (MapEntry entry : list) {
-            Object k = toSqlValue(keyFd.getJavaType(), entry.getKey());
-            k = MAP_VALUE_ESCAPE.translate(String.valueOf(k));
-            Object v = toSqlValue(valFd.getJavaType(), entry.getValue());
-            v = MAP_VALUE_ESCAPE.translate(String.valueOf(v));
-            sb.append(k).append(MAP_KV_SEP).append(v).append(MAP_ENTRY_SEP);
-          }
-          return sb.toString();
-        }
-      } catch (TypeMismatchDataAccessException e) {
-        throw new TypeMismatchDataAccessException(
-            "fail to encode map value, fd=" + fd + ", value=`" + fieldValue + "`, valueType=" +
-                fieldValue.getClass().getName(), e);
-      }
-      throw new TypeMismatchDataAccessException(
-          "fail to encode map value, fd=" + fd + ", value=`" + fieldValue + "`, valueType=" +
-              fieldValue.getClass().getName());
-    }
-
-    @Override
-    public Object fromSqlValue(Object sqlValue) {
-      // TODO: impl 2019/1/30
-      return null;
-    }
   }
 
   public boolean isTimestampField(Descriptors.FieldDescriptor fd) {
@@ -289,12 +222,6 @@ public class DefaultFieldResolver<M extends Message> implements IFieldResolver {
     }
     throw new TypeMismatchDataAccessException(
         "fail to convert timestamp, value=`" + v + "`, valueType=" + v.getClass().getName());
-  }
-
-  @Override
-  public Object fromSqlValue(String field, Object sqlValue) {
-    Descriptors.FieldDescriptor fd = messageHelper.checkFieldDescriptor(field);
-    return fromSqlValue(fd, sqlValue);
   }
 
   @Override

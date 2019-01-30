@@ -5,12 +5,6 @@ import com.google.protobuf.Internal;
 
 public class EnumFieldConverter implements IFieldValueConverter {
   @Override
-  public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
-    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.ENUM &&
-        (fieldValue instanceof Internal.EnumLite || fieldValue instanceof Integer);
-  }
-
-  @Override
   public Class<?> getSqlValueType() {
     return Integer.class;
   }

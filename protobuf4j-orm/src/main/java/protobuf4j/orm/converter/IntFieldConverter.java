@@ -4,12 +4,6 @@ import com.google.protobuf.Descriptors;
 
 public class IntFieldConverter implements IFieldValueConverter {
   @Override
-  public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
-    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.INT &&
-        fieldValue instanceof Integer;
-  }
-
-  @Override
   public Class<?> getSqlValueType() {
     return Integer.class;
   }

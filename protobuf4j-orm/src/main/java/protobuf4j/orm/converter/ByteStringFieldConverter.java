@@ -5,12 +5,6 @@ import com.google.protobuf.Descriptors;
 
 public class ByteStringFieldConverter implements IFieldValueConverter {
   @Override
-  public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
-    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.BYTE_STRING &&
-        fieldValue instanceof ByteString;
-  }
-
-  @Override
   public Class<?> getSqlValueType() {
     return String.class;
   }
