@@ -41,7 +41,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
   private final Class<T> mappedClass;
   @NonNull
   private final ProtoMessageHelper<T> messageHelper;
-  private final IProtoMessageSqlHandler sqlHandler;
+  private final IProtoSqlHandler sqlHandler;
   /**
    * Set whether we're strictly validating that all bean properties have been mapped from
    * corresponding database fields.
@@ -50,7 +50,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    */
   private boolean checkFullyPopulated = false;
 
-  public ProtoMessageRowMapper(Class<T> mappedClass, IProtoMessageSqlHandler sqlHandler) {
+  public ProtoMessageRowMapper(Class<T> mappedClass, IProtoSqlHandler sqlHandler) {
     this.mappedClass = mappedClass;
     this.messageHelper = ProtoMessageHelper.getHelper(mappedClass);
     this.sqlHandler = sqlHandler;

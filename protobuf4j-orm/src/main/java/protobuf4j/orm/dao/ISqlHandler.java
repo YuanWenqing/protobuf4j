@@ -6,7 +6,7 @@ package protobuf4j.orm.dao;
 /**
  * author yuanwq
  */
-public interface IMessageSqlHandler {
+public interface ISqlHandler {
 
   /**
    * 将{@code field}的值{@code value}转换为对应sql类型的值

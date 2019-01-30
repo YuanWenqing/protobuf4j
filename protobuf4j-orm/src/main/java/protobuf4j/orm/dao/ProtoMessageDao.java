@@ -45,7 +45,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
    */
   protected final Class<T> messageType;
   protected final ProtoMessageHelper<T> messageHelper;
-  protected final IProtoMessageSqlHandler sqlHandler;
+  protected final IProtoSqlHandler sqlHandler;
   protected final ProtoMessageRowMapper<T> messageMapper;
   /**
    * 访问的数据表名
@@ -69,7 +69,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
   /**
    * @param tableName 为空，表示使用默认规则生成表名
    */
-  public ProtoMessageDao(@Nonnull Class<T> messageType, IProtoMessageSqlHandler sqlHandler,
+  public ProtoMessageDao(@Nonnull Class<T> messageType, IProtoSqlHandler sqlHandler,
       @Nullable String tableName) {
     this.messageType = checkNotNull(messageType);
     this.sqlHandler = checkNotNull(sqlHandler);

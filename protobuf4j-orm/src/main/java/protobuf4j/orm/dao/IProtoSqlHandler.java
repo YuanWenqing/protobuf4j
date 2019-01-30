@@ -6,7 +6,7 @@ import com.google.protobuf.Descriptors;
  * author: yuanwq
  * date: 2018/7/20
  */
-public interface IProtoMessageSqlHandler extends IMessageSqlHandler {
+public interface IProtoSqlHandler {
   /**
    * 将{@code fd}字段的值{@code value}转换为对应sql类型的值
    *
