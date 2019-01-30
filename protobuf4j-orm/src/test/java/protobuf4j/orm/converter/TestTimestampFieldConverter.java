@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import static org.junit.Assert.*;
 
 public class TestTimestampFieldConverter {
-  IFieldConverter converter = new TimestampFieldConverter();
+  IFieldTypeConverter converter = new TimestampFieldConverter();
 
   @Test
   public void testToSqlValue() {

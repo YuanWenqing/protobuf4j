@@ -1,13 +1,12 @@
-package protobuf4j.orm.dao;
+package protobuf4j.orm.converter;
 
 import com.google.common.collect.Maps;
 import com.google.protobuf.Descriptors;
-import protobuf4j.orm.converter.*;
 
 import java.util.Map;
 
 /**
- * 基本类型的字段值转换器：
+ * 处理基本类型的字段值：
  * <ul>
  * <li>boolean</li>
  * <li>bytes</li>
@@ -19,10 +18,10 @@ import java.util.Map;
  * <li>string</li>
  * </ul>
  */
-public class BasicTypeSqlHandler implements IProtoSqlHandler {
-  private final Map<Descriptors.FieldDescriptor.JavaType, IFieldConverter> typeConverterMap;
+public class BasicTypeFieldResolver implements IFieldResolver {
+  private final Map<Descriptors.FieldDescriptor.JavaType, IFieldTypeConverter> typeConverterMap;
 
-  public BasicTypeSqlHandler() {
+  public BasicTypeFieldResolver() {
     typeConverterMap = Maps.newHashMap();
     typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.BOOLEAN, new BooleanFieldConverter());
     typeConverterMap
@@ -35,8 +34,8 @@ public class BasicTypeSqlHandler implements IProtoSqlHandler {
     typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.STRING, new StringFieldConverter());
   }
 
-  public IFieldConverter findFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
-    IFieldConverter fieldConverter = typeConverterMap.get(fieldDescriptor.getJavaType());
+  public IFieldTypeConverter findFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
+    IFieldTypeConverter fieldConverter = typeConverterMap.get(fieldDescriptor.getJavaType());
     if (fieldConverter == null) {
       throw new FieldConversionException(
           "no converter found, field=" + fieldDescriptor + ", javaType=" +

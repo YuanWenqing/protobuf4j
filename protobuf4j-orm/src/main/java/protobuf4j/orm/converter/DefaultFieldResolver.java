@@ -1,12 +1,11 @@
 /**
  * author yuanwq, date: 2017年4月27日
  */
-package protobuf4j.orm.dao;
+package protobuf4j.orm.converter;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Internal;
 import com.google.protobuf.MapEntry;
@@ -19,10 +18,7 @@ import protobuf4j.core.ProtoMessageHelper;
 import protobuf4j.orm.converter.*;
 
 import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -30,7 +26,7 @@ import static com.google.common.base.Preconditions.*;
 
 /**
  */
-public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandler {
+public class DefaultFieldResolver<M extends Message> implements IFieldResolver {
   protected static final String LIST_SEP = ",";
   protected static final String MAP_KV_SEP = ":";
   protected static final String MAP_ENTRY_SEP = ";";
@@ -69,34 +65,15 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
 
   private final Class<M> messageClass;
   private final ProtoMessageHelper<M> messageHelper;
-  private final Map<Descriptors.FieldDescriptor.JavaType, IFieldConverter> typeConverterMap;
+  private final BasicTypeFieldResolver basicTypeFieldResolver;
   private final TimestampFieldConverter timestampFieldConverter;
 
-  public ProtoSqlHandler(Class<M> messageClass) {
+  public DefaultFieldResolver(Class<M> messageClass) {
     checkNotNull(messageClass);
     this.messageClass = messageClass;
     this.messageHelper = ProtoMessageHelper.getHelper(messageClass);
+    this.basicTypeFieldResolver = new BasicTypeFieldResolver();
     this.timestampFieldConverter = new TimestampFieldConverter();
-    this.typeConverterMap = Maps.newHashMap();
-    registerDefaultTypeConverters();
-  }
-
-  private void registerDefaultTypeConverters() {
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.BOOLEAN, new BooleanFieldConverter());
-    typeConverterMap
-        .put(Descriptors.FieldDescriptor.JavaType.BYTE_STRING, new ByteStringFieldConverter());
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.DOUBLE, new DoubleFieldConverter());
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.ENUM, new EnumFieldConverter());
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.FLOAT, new FloatFieldConverter());
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.INT, new IntFieldConverter());
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.LONG, new LongFieldConverter());
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.STRING, new StringFieldConverter());
-  }
-
-  @Override
-  public Object toSqlValue(String field, Object value) {
-    Descriptors.FieldDescriptor fd = messageHelper.checkFieldDescriptor(field);
-    return toSqlValue(fd, value);
   }
 
   @Override
@@ -107,7 +84,7 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
     } else if (fd.isRepeated()) {
       return encodeListToString(fd, value);
     } else {
-      IFieldConverter fieldConverter = findFieldConverter(fd);
+      IFieldTypeConverter fieldConverter = findFieldConverter(fd);
       if (!fieldConverter.supportConversion(fd, value)) {
         throw new FieldConversionException(
             "converter not support conversion, converter=" + fieldConverter.getClass().getName() +
@@ -118,17 +95,78 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
     }
   }
 
-  private IFieldConverter findFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
+  private IFieldTypeConverter findFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
+    if (fieldDescriptor.isMapField()) {
+      return new MapFieldConverter();
+    }
     if (isTimestampField(fieldDescriptor)) {
       return timestampFieldConverter;
     }
-    IFieldConverter fieldConverter = typeConverterMap.get(fieldDescriptor.getJavaType());
-    if (fieldConverter == null) {
-      throw new FieldConversionException(
-          "no converter found, field=" + fieldDescriptor + ", javaType=" +
-              fieldDescriptor.getJavaType());
+    return basicTypeFieldResolver.findFieldConverter(fieldDescriptor);
+  }
+
+  static class MapFieldConverter implements IFieldTypeConverter {
+    private final Descriptors.FieldDescriptor keyFd;
+    private final Descriptors.FieldDescriptor valFd;
+
+    public MapFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
+      keyFd = fieldDescriptor.getMessageType().findFieldByName("key");
+      valFd = fieldDescriptor.getMessageType().findFieldByName("value");
     }
-    return fieldConverter;
+
+    @Override
+    public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor,
+        Object fieldValue) {
+      return fieldDescriptor.isMapField() &&
+          (fieldValue instanceof Map || fieldValue instanceof Collection);
+    }
+
+    @Override
+    public Class<?> getSqlValueType() {
+      return String.class;
+    }
+
+    @Override
+    public Object toSqlValue(Object fieldValue) {
+      try {
+        if (fieldValue instanceof Map) {
+          Map<?, ?> map = (Map<?, ?>) fieldValue;
+          StringBuilder sb = new StringBuilder();
+          for (Map.Entry<?, ?> entry : map.entrySet()) {
+            Object k = toSqlValue(keyFd.getJavaType(), entry.getKey());
+            k = MAP_VALUE_ESCAPE.translate(String.valueOf(k));
+            Object v = toSqlValue(valFd.getJavaType(), entry.getValue());
+            v = MAP_VALUE_ESCAPE.translate(String.valueOf(v));
+            sb.append(k).append(MAP_KV_SEP).append(v).append(MAP_ENTRY_SEP);
+          }
+          return sb.toString();
+        } else if (fieldValue instanceof List) {
+          List<? extends MapEntry> list = (List<? extends MapEntry>) fieldValue;
+          StringBuilder sb = new StringBuilder();
+          for (MapEntry entry : list) {
+            Object k = toSqlValue(keyFd.getJavaType(), entry.getKey());
+            k = MAP_VALUE_ESCAPE.translate(String.valueOf(k));
+            Object v = toSqlValue(valFd.getJavaType(), entry.getValue());
+            v = MAP_VALUE_ESCAPE.translate(String.valueOf(v));
+            sb.append(k).append(MAP_KV_SEP).append(v).append(MAP_ENTRY_SEP);
+          }
+          return sb.toString();
+        }
+      } catch (TypeMismatchDataAccessException e) {
+        throw new TypeMismatchDataAccessException(
+            "fail to encode map value, fd=" + fd + ", value=`" + fieldValue + "`, valueType=" +
+                fieldValue.getClass().getName(), e);
+      }
+      throw new TypeMismatchDataAccessException(
+          "fail to encode map value, fd=" + fd + ", value=`" + fieldValue + "`, valueType=" +
+              fieldValue.getClass().getName());
+    }
+
+    @Override
+    public Object fromSqlValue(Object sqlValue) {
+      // TODO: impl 2019/1/30
+      return null;
+    }
   }
 
   public boolean isTimestampField(Descriptors.FieldDescriptor fd) {
@@ -143,7 +181,7 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
    * @param value
    */
   protected Object toSqlValue(Descriptors.FieldDescriptor.JavaType javaType, Object value) {
-    IFieldConverter converter = typeConverterMap.get(javaType);
+    IFieldTypeConverter converter = typeConverterMap.get(javaType);
     if (converter == null) {
       throw new FieldConversionException(
           "no converter found, javaType=" + javaType + ", value=`" + value + "`, valueType=" +
@@ -271,7 +309,7 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
       // EnumValueDescriptor
       return fd.getEnumType().findValueByNumber(parseInt(sqlValue));
     } else {
-      IFieldConverter converter = typeConverterMap.get(fd.getJavaType());
+      IFieldTypeConverter converter = typeConverterMap.get(fd.getJavaType());
       if (converter == null) {
         throw new FieldConversionException(
             "no converter found, javaType=" + fd.getJavaType() + ", sqlValue=`" + sqlValue +
@@ -368,9 +406,8 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
   public Class<?> resolveSqlValueType(Descriptors.FieldDescriptor fd) {
     // map/list 使用string拼接
     if (fd.isMapField() || fd.isRepeated()) return String.class;
-    IFieldConverter fieldConverter = findFieldConverter(fd);
+    IFieldTypeConverter fieldConverter = findFieldConverter(fd);
     return fieldConverter.getSqlValueType();
   }
-
 
 }

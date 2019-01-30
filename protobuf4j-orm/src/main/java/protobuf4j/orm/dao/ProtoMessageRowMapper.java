@@ -19,6 +19,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import protobuf4j.core.ProtoMessageHelper;
+import protobuf4j.orm.converter.IFieldResolver;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -41,7 +42,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
   private final Class<T> mappedClass;
   @NonNull
   private final ProtoMessageHelper<T> messageHelper;
-  private final IProtoSqlHandler sqlHandler;
+  private final IFieldResolver fieldResolver;
   /**
    * Set whether we're strictly validating that all bean properties have been mapped from
    * corresponding database fields.
@@ -50,10 +51,10 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    */
   private boolean checkFullyPopulated = false;
 
-  public ProtoMessageRowMapper(Class<T> mappedClass, IProtoSqlHandler sqlHandler) {
+  public ProtoMessageRowMapper(Class<T> mappedClass, IFieldResolver fieldResolver) {
     this.mappedClass = mappedClass;
     this.messageHelper = ProtoMessageHelper.getHelper(mappedClass);
-    this.sqlHandler = sqlHandler;
+    this.fieldResolver = fieldResolver;
   }
 
   /**
@@ -80,7 +81,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
         try {
           value = getColumnValue(rs, index, fd);
           if (value == null) continue;
-          value = sqlHandler.fromSqlValue(fd, value);
+          value = fieldResolver.fromSqlValue(fd, value);
           builder.setField(fd, value);
           if (checkFullyPopulated) {
             populatedProperties.add(fd.getName());
@@ -118,7 +119,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    * @see JdbcUtils#getResultSetValue(ResultSet, int, Class)
    */
   public Object getColumnValue(ResultSet rs, int index, FieldDescriptor fd) throws SQLException {
-    return JdbcUtils.getResultSetValue(rs, index, sqlHandler.resolveSqlValueType(fd));
+    return JdbcUtils.getResultSetValue(rs, index, fieldResolver.resolveSqlValueType(fd));
   }
 
 }

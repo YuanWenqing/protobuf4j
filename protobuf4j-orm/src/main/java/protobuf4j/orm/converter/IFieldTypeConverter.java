@@ -3,9 +3,9 @@ package protobuf4j.orm.converter;
 import com.google.protobuf.Descriptors;
 
 /**
- * handle conversion between value of field and sql-style value
+ * handle type conversion between value of field and sql-style value
  */
-public interface IFieldConverter {
+public interface IFieldTypeConverter {
   /**
    * whether support conversion to sql-style value
    *
