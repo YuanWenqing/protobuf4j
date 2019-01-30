@@ -41,7 +41,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
   private final Class<T> mappedClass;
   @NonNull
   private final ProtoMessageHelper<T> messageHelper;
-  private final IProtoMessageSqlHandler sqlConverter;
+  private final IProtoMessageSqlHandler sqlHandler;
   /**
    * Set whether we're strictly validating that all bean properties have been mapped from
    * corresponding database fields.
@@ -50,10 +50,10 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    */
   private boolean checkFullyPopulated = false;
 
-  public ProtoMessageRowMapper(Class<T> mappedClass, IProtoMessageSqlHandler sqlConverter) {
+  public ProtoMessageRowMapper(Class<T> mappedClass, IProtoMessageSqlHandler sqlHandler) {
     this.mappedClass = mappedClass;
     this.messageHelper = ProtoMessageHelper.getHelper(mappedClass);
-    this.sqlConverter = sqlConverter;
+    this.sqlHandler = sqlHandler;
   }
 
   /**
@@ -80,7 +80,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
         try {
           value = getColumnValue(rs, index, fd);
           if (value == null) continue;
-          value = sqlConverter.fromSqlValue(fd, value);
+          value = sqlHandler.fromSqlValue(fd, value);
           builder.setField(fd, value);
           if (checkFullyPopulated) {
             populatedProperties.add(fd.getName());
@@ -118,7 +118,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    * @see JdbcUtils#getResultSetValue(ResultSet, int, Class)
    */
   public Object getColumnValue(ResultSet rs, int index, FieldDescriptor fd) throws SQLException {
-    return JdbcUtils.getResultSetValue(rs, index, sqlConverter.resolveSqlValueType(fd));
+    return JdbcUtils.getResultSetValue(rs, index, sqlHandler.resolveSqlValueType(fd));
   }
 
 }
