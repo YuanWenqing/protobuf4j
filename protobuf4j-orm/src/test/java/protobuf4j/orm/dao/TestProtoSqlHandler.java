@@ -23,8 +23,8 @@ import static org.junit.Assert.*;
  * author: yuanwq
  * date: 2018/7/23
  */
-public class TestProtoSqlConverter {
-  private ProtoSqlConverter sqlConverter = ProtoSqlConverter.getInstance();
+public class TestProtoSqlHandler {
+  private ProtoSqlHandler sqlConverter = ProtoSqlHandler.getInstance();
   private ProtoMessageHelper<TestModel.MsgA> helperA =
       ProtoMessageHelper.getHelper(TestModel.MsgA.class);
   private ProtoMessageHelper<TestModel.MsgB> helperB =

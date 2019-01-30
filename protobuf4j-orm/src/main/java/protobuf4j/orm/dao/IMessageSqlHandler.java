@@ -6,7 +6,7 @@ package protobuf4j.orm.dao;
 /**
  * author yuanwq
  */
-public interface ISqlConverter<T> {
+public interface IMessageSqlHandler<T> {
   /**
    * 默认的table name
    */

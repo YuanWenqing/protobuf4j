@@ -44,7 +44,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
    */
   protected final Class<T> messageType;
   protected final ProtoMessageHelper<T> messageHelper;
-  protected final IProtoSqlConverter sqlConverter;
+  protected final IProtoMessageSqlHandler sqlConverter;
   protected final ProtoMessageRowMapper<T> messageMapper;
   /**
    * 访问的数据表名
@@ -63,14 +63,14 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
 
   public ProtoMessageDao(@Nonnull Class<T> messageType) {
     this(messageType,
-        (IProtoSqlConverter) SqlConverterRegistry.getInstance().findSqlConverter(messageType),
+        (IProtoMessageSqlHandler) SqlConverterRegistry.getInstance().findSqlConverter(messageType),
         null);
   }
 
   /**
    * @param tableName 为空，表示使用默认规则生成表名
    */
-  public ProtoMessageDao(@Nonnull Class<T> messageType, IProtoSqlConverter sqlConverter,
+  public ProtoMessageDao(@Nonnull Class<T> messageType, IProtoMessageSqlHandler sqlConverter,
       @Nullable String tableName) {
     this.messageType = checkNotNull(messageType);
     this.messageHelper = ProtoMessageHelper.getHelper(messageType);

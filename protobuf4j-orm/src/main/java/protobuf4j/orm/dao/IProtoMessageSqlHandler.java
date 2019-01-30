@@ -8,7 +8,7 @@ import protobuf4j.core.ProtoMessageHelper;
  * author: yuanwq
  * date: 2018/7/20
  */
-public interface IProtoSqlConverter extends ISqlConverter<Message> {
+public interface IProtoMessageSqlHandler extends IMessageSqlHandler<Message> {
   /**
    * 将{@code fd}字段的值{@code value}转换为对应sql类型的值
    *

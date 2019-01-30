@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 /**
  */
-public class ProtoSqlConverter implements IProtoSqlConverter {
+public class ProtoSqlHandler implements IProtoMessageSqlHandler {
   protected static final String LIST_SEP = ",";
   protected static final String MAP_KV_SEP = ":";
   protected static final String MAP_ENTRY_SEP = ";";
@@ -66,16 +66,16 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   protected static final Splitter.MapSplitter MAP_SPLITTER =
       MAP_ENTRY_SPLITTER.withKeyValueSeparator(MAP_KV_SEP);
 
-  private static final ProtoSqlConverter instance = new ProtoSqlConverter();
+  private static final ProtoSqlHandler instance = new ProtoSqlHandler();
 
-  public static ProtoSqlConverter getInstance() {
+  public static ProtoSqlHandler getInstance() {
     return instance;
   }
 
   private final Map<Descriptors.FieldDescriptor.JavaType, IFieldConverter> typeConverterMap;
   private final TimestampFieldConverter timestampFieldConverter;
 
-  protected ProtoSqlConverter() {
+  protected ProtoSqlHandler() {
     timestampFieldConverter = new TimestampFieldConverter();
     typeConverterMap = Maps.newHashMap();
     registerDefaultTypeConverters();
