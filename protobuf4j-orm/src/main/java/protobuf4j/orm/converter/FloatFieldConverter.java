@@ -21,8 +21,7 @@ public class FloatFieldConverter implements IFieldValueConverter {
   public Object fromSqlValue(Object sqlValue) {
     if (sqlValue == null) {
       return 0f;
-    }
-    if (sqlValue instanceof Number) {
+    } else if (sqlValue instanceof Number) {
       return ((Number) sqlValue).floatValue();
     }
     throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.FLOAT, sqlValue);

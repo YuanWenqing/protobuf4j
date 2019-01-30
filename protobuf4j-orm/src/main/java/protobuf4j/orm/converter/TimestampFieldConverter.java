@@ -16,6 +16,8 @@ public class TimestampFieldConverter implements IFieldValueConverter {
       return new java.sql.Timestamp(Timestamps.toMillis((Timestamp) fieldValue));
     } else if (fieldValue instanceof Long || fieldValue instanceof Integer) {
       return new java.sql.Timestamp(((Number) fieldValue).longValue());
+    } else if (fieldValue instanceof java.sql.Timestamp) {
+      return fieldValue;
     }
     throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, fieldValue,
         getSqlValueType());
@@ -25,9 +27,10 @@ public class TimestampFieldConverter implements IFieldValueConverter {
   public Object fromSqlValue(Object sqlValue) {
     if (sqlValue == null) {
       return Timestamps.fromMillis(0L);
-    }
-    if (sqlValue instanceof java.sql.Timestamp) {
+    } else if (sqlValue instanceof java.sql.Timestamp) {
       return Timestamps.fromMillis(((java.sql.Timestamp) sqlValue).getTime());
+    } else if (sqlValue instanceof Timestamp) {
+      return sqlValue;
     }
     throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, sqlValue);
   }

@@ -21,8 +21,7 @@ public class DoubleFieldConverter implements IFieldValueConverter {
   public Object fromSqlValue(Object sqlValue) {
     if (sqlValue == null) {
       return 0d;
-    }
-    if (sqlValue instanceof Number) {
+    } else if (sqlValue instanceof Number) {
       return ((Number) sqlValue).doubleValue();
     }
     throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, sqlValue);

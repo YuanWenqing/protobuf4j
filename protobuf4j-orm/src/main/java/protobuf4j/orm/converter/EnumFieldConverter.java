@@ -24,8 +24,9 @@ public class EnumFieldConverter implements IFieldValueConverter {
   public Object fromSqlValue(Object sqlValue) {
     if (sqlValue == null) {
       return 0;
-    }
-    if (sqlValue instanceof Integer) {
+    } else if (sqlValue instanceof Integer) {
+      return sqlValue;
+    } else if (sqlValue instanceof Internal.EnumLite) {
       return sqlValue;
     }
     throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.ENUM, sqlValue);
