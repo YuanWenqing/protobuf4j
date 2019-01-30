@@ -3,7 +3,7 @@ package protobuf4j.orm.converter;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Internal;
 
-public class EnumFieldConverter implements IFieldTypeConverter {
+public class EnumFieldConverter implements IFieldValueConverter {
   @Override
   public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
     return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.ENUM &&

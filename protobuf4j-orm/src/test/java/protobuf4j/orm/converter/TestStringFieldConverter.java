@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class TestStringFieldConverter {
-  IFieldTypeConverter converter = new StringFieldConverter();
+  IFieldValueConverter converter = new StringFieldConverter();
 
   @Test
   public void testToSqlValue() {

@@ -4,7 +4,7 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 
-public class TimestampFieldConverter implements IFieldTypeConverter {
+public class TimestampFieldConverter implements IFieldValueConverter {
   @Override
   public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
     return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.MESSAGE &&

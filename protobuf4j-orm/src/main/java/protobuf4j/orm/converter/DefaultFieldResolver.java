@@ -15,7 +15,6 @@ import org.apache.commons.text.translate.EntityArrays;
 import org.apache.commons.text.translate.LookupTranslator;
 import org.springframework.dao.TypeMismatchDataAccessException;
 import protobuf4j.core.ProtoMessageHelper;
-import protobuf4j.orm.converter.*;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -84,7 +83,7 @@ public class DefaultFieldResolver<M extends Message> implements IFieldResolver {
     } else if (fd.isRepeated()) {
       return encodeListToString(fd, value);
     } else {
-      IFieldTypeConverter fieldConverter = findFieldConverter(fd);
+      IFieldValueConverter fieldConverter = findFieldConverter(fd);
       if (!fieldConverter.supportConversion(fd, value)) {
         throw new FieldConversionException(
             "converter not support conversion, converter=" + fieldConverter.getClass().getName() +
@@ -95,7 +94,7 @@ public class DefaultFieldResolver<M extends Message> implements IFieldResolver {
     }
   }
 
-  private IFieldTypeConverter findFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
+  private IFieldValueConverter findFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
     if (fieldDescriptor.isMapField()) {
       return new MapFieldConverter();
     }
@@ -105,7 +104,7 @@ public class DefaultFieldResolver<M extends Message> implements IFieldResolver {
     return basicTypeFieldResolver.findFieldConverter(fieldDescriptor);
   }
 
-  static class MapFieldConverter implements IFieldTypeConverter {
+  static class MapFieldConverter implements IFieldValueConverter {
     private final Descriptors.FieldDescriptor keyFd;
     private final Descriptors.FieldDescriptor valFd;
 
@@ -181,7 +180,7 @@ public class DefaultFieldResolver<M extends Message> implements IFieldResolver {
    * @param value
    */
   protected Object toSqlValue(Descriptors.FieldDescriptor.JavaType javaType, Object value) {
-    IFieldTypeConverter converter = typeConverterMap.get(javaType);
+    IFieldValueConverter converter = typeConverterMap.get(javaType);
     if (converter == null) {
       throw new FieldConversionException(
           "no converter found, javaType=" + javaType + ", value=`" + value + "`, valueType=" +
@@ -309,7 +308,7 @@ public class DefaultFieldResolver<M extends Message> implements IFieldResolver {
       // EnumValueDescriptor
       return fd.getEnumType().findValueByNumber(parseInt(sqlValue));
     } else {
-      IFieldTypeConverter converter = typeConverterMap.get(fd.getJavaType());
+      IFieldValueConverter converter = typeConverterMap.get(fd.getJavaType());
       if (converter == null) {
         throw new FieldConversionException(
             "no converter found, javaType=" + fd.getJavaType() + ", sqlValue=`" + sqlValue +
@@ -406,7 +405,7 @@ public class DefaultFieldResolver<M extends Message> implements IFieldResolver {
   public Class<?> resolveSqlValueType(Descriptors.FieldDescriptor fd) {
     // map/list 使用string拼接
     if (fd.isMapField() || fd.isRepeated()) return String.class;
-    IFieldTypeConverter fieldConverter = findFieldConverter(fd);
+    IFieldValueConverter fieldConverter = findFieldConverter(fd);
     return fieldConverter.getSqlValueType();
   }
 

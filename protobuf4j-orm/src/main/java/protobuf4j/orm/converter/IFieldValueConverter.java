@@ -5,7 +5,7 @@ import com.google.protobuf.Descriptors;
 /**
  * handle type conversion between value of field and sql-style value
  */
-public interface IFieldTypeConverter {
+public interface IFieldValueConverter {
   /**
    * whether support conversion to sql-style value
    *

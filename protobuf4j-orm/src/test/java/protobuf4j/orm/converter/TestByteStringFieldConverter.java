@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class TestByteStringFieldConverter {
-  IFieldTypeConverter converter = new ByteStringFieldConverter();
+  IFieldValueConverter converter = new ByteStringFieldConverter();
 
   @Test
   public void testToSqlValue() {

@@ -4,7 +4,7 @@ import com.google.protobuf.Descriptors;
 
 import java.util.Objects;
 
-public class BooleanFieldConverter implements IFieldTypeConverter {
+public class BooleanFieldConverter implements IFieldValueConverter {
   @Override
   public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
     return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.BOOLEAN &&
