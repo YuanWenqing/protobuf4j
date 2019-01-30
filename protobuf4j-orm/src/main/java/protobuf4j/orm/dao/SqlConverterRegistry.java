@@ -16,7 +16,7 @@ public class SqlConverterRegistry {
 
   private static SqlConverterRegistry buildRegistry() {
     SqlConverterRegistry registry = new SqlConverterRegistry();
-    registry.register(Message.class, ProtoSqlConverter.getInstance());
+    registry.register(Message.class, ProtoSqlHandler.getInstance());
     return registry;
   }
 
@@ -24,38 +24,38 @@ public class SqlConverterRegistry {
     return instance;
   }
 
-  private final ConcurrentHashMap<Class<?>, ISqlConverter<?>> cache;
+  private final ConcurrentHashMap<Class<?>, IMessageSqlHandler<?>> cache;
 
   private SqlConverterRegistry() {
     this.cache = new ConcurrentHashMap<>(100);
   }
 
   public <T> void register(@Nonnull Class<T> beanClass,
-      @Nonnull ISqlConverter<? super T> sqlConverter) {
+      @Nonnull IMessageSqlHandler<? super T> sqlConverter) {
     checkNotNull(beanClass);
     this.cache.put(beanClass, sqlConverter);
   }
 
   @SuppressWarnings("unchecked")
-  public <T> ISqlConverter<? super T> findSqlConverter(@Nonnull Class<T> beanClass) {
+  public <T> IMessageSqlHandler<? super T> findSqlConverter(@Nonnull Class<T> beanClass) {
     checkNotNull(beanClass);
     if (this.cache.containsKey(beanClass)) {
-      return (ISqlConverter<? super T>) this.cache.get(beanClass);
+      return (IMessageSqlHandler<? super T>) this.cache.get(beanClass);
     }
     Class<?> superClass = beanClass.getSuperclass();
     if (superClass == null) {
       return null;
     }
-    ISqlConverter<?> converter = findSqlConverter(superClass);
+    IMessageSqlHandler<?> converter = findSqlConverter(superClass);
     if (converter != null) {
       this.cache.putIfAbsent(beanClass, converter);
-      return (ISqlConverter<? super T>) converter;
+      return (IMessageSqlHandler<? super T>) converter;
     }
     for (Class<?> intf : beanClass.getInterfaces()) {
       converter = findSqlConverter(intf);
       if (converter != null) {
         this.cache.putIfAbsent(beanClass, converter);
-        return (ISqlConverter<? super T>) converter;
+        return (IMessageSqlHandler<? super T>) converter;
       }
     }
     return null;

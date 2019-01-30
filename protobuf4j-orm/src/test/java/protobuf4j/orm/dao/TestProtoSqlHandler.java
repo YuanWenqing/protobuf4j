@@ -2,6 +2,7 @@ package protobuf4j.orm.dao;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.MapEntry;
 import org.junit.Test;
@@ -22,8 +23,8 @@ import static org.junit.Assert.*;
  * author: yuanwq
  * date: 2018/7/23
  */
-public class TestProtoSqlConverter {
-  private ProtoSqlConverter sqlConverter = ProtoSqlConverter.getInstance();
+public class TestProtoSqlHandler {
+  private ProtoSqlHandler sqlConverter = ProtoSqlHandler.getInstance();
   private ProtoMessageHelper<TestModel.MsgA> helperA =
       ProtoMessageHelper.getHelper(TestModel.MsgA.class);
   private ProtoMessageHelper<TestModel.MsgB> helperB =
@@ -142,7 +143,7 @@ public class TestProtoSqlConverter {
     assertEquals(1.1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("double"), 1.1));
     assertEquals(1, sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool"), true));
     assertEquals(0, sqlConverter.toSqlValue(helperA.getFieldDescriptor("bool"), false));
-    assertEquals("1", sqlConverter.toSqlValue(helperA.getFieldDescriptor("string"), 1));
+    assertEquals("1", sqlConverter.toSqlValue(helperA.getFieldDescriptor("string"), "1"));
     assertEquals("str", sqlConverter.toSqlValue(helperA.getFieldDescriptor("string"), "str"));
     assertEquals(0,
         sqlConverter.toSqlValue(helperA.getFieldDescriptor("enuma"), TestModel.EnumA.EA0));
@@ -324,16 +325,19 @@ public class TestProtoSqlConverter {
   @SuppressWarnings("rawtype")
   public void testFromSqlValue() {
     assertEquals(1, sqlConverter.fromSqlValue(TestModel.MsgA.class, "int32", 1));
-    assertEquals(1, sqlConverter.fromSqlValue(TestModel.MsgA.class, "int64", 1));
+    assertEquals(1L, sqlConverter.fromSqlValue(TestModel.MsgA.class, "int64", 1));
     assertEquals(1L, sqlConverter.fromSqlValue(TestModel.MsgA.class, "int64", 1L));
-    assertEquals(1, sqlConverter.fromSqlValue(TestModel.MsgA.class, "float", 1));
+    assertEquals(1f, sqlConverter.fromSqlValue(TestModel.MsgA.class, "float", 1));
     assertEquals(1f, sqlConverter.fromSqlValue(TestModel.MsgA.class, "float", 1f));
-    assertEquals(1, sqlConverter.fromSqlValue(TestModel.MsgA.class, "double", 1));
+    assertEquals(1d, sqlConverter.fromSqlValue(TestModel.MsgA.class, "double", 1));
     assertEquals(1.0, sqlConverter.fromSqlValue(TestModel.MsgA.class, "double", 1.0));
     assertEquals(true, sqlConverter.fromSqlValue(TestModel.MsgA.class, "bool", 1));
     assertEquals(false, sqlConverter.fromSqlValue(TestModel.MsgA.class, "bool", 0));
     assertEquals(TestModel.EnumA.EA0.getValueDescriptor(),
         sqlConverter.fromSqlValue(TestModel.MsgA.class, "enuma", 0));
+    ByteString bytes = ByteString.copyFrom(getClass().getName().getBytes());
+    assertEquals(bytes,
+        sqlConverter.fromSqlValue(TestModel.MsgA.class, "bytes", bytes.toStringUtf8()));
 
     try {
       sqlConverter.fromSqlValue(TestModel.MsgA.class, "bool", 1.0);
@@ -342,13 +346,7 @@ public class TestProtoSqlConverter {
       System.out.println(e.getMessage());
     }
     try {
-      sqlConverter.fromSqlValue(TestModel.MsgA.class, "bytes", null);
-      fail();
-    } catch (TypeMismatchDataAccessException e) {
-      System.out.println(e.getMessage());
-    }
-    try {
-      sqlConverter.fromSqlValue(TestModel.MsgA.class, "msgb", null);
+      sqlConverter.fromSqlValue(TestModel.MsgA.class, "msgb", "");
       fail();
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());

@@ -16,7 +16,7 @@ public class TestSqlConverterRegistry {
   @Test
   public void testRegistry() {
     SqlConverterRegistry registry = SqlConverterRegistry.getInstance();
-    IProtoSqlConverter converter = ProtoSqlConverter.getInstance();
+    IProtoMessageSqlHandler converter = ProtoSqlHandler.getInstance();
 
     assertEquals(converter, registry.findSqlConverter(Message.class));
     assertEquals(converter, registry.findSqlConverter(AbstractMessage.class));
@@ -28,11 +28,11 @@ public class TestSqlConverterRegistry {
     assertEquals(converter, registry.findSqlConverter(TestModel.MsgA.class));
     registry.register(AbstractMessage.class, converter);
     assertEquals(converter, registry.findSqlConverter(AbstractMessage.class));
-    assertEquals(ProtoSqlConverter.getInstance(),
+    assertEquals(ProtoSqlHandler.getInstance(),
         registry.findSqlConverter(GeneratedMessageV3.class));
   }
 
-  private static class SqlConverterForTest extends ProtoSqlConverter {
+  private static class SqlConverterForTest extends ProtoSqlHandler {
   }
 
 }

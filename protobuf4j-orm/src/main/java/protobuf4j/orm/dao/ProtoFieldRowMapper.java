@@ -21,11 +21,11 @@ import java.sql.SQLException;
 public class ProtoFieldRowMapper<F> implements RowMapper<F> {
 
   private final ProtoMessageHelper<?> messageHelper;
-  private final IProtoSqlConverter sqlConverter;
+  private final IProtoMessageSqlHandler sqlConverter;
   private final FieldDescriptor fd;
 
   public ProtoFieldRowMapper(@Nonnull ProtoMessageHelper<?> messageHelper,
-      @Nonnull IProtoSqlConverter sqlConverter, @Nonnull FieldDescriptor fd) {
+      @Nonnull IProtoMessageSqlHandler sqlConverter, @Nonnull FieldDescriptor fd) {
     if (fd.isRepeated()) {
       throw new UnsupportedOperationException(
           "not supported for repeated field, field=" + fd.getFullName());

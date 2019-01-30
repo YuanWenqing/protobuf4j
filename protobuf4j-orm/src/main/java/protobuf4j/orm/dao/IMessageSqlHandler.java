@@ -6,11 +6,7 @@ package protobuf4j.orm.dao;
 /**
  * author yuanwq
  */
-public interface ISqlConverter<T> {
-  /**
-   * 默认的table name
-   */
-  String tableName(Class<? extends T> beanClass);
+public interface IMessageSqlHandler<T> {
 
   /**
    * 将{@code beanClass}实例的字段值{@code value}转换为对应sql类型的值
