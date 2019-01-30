@@ -7,11 +7,12 @@ import com.google.protobuf.Descriptors;
  */
 public interface ITypeConverter {
   /**
-   * which JavaType this converter supports
+   * whether support conversion for {@code fieldDescriptor}
    *
+   * @param fieldDescriptor
    * @return
    */
-  Descriptors.FieldDescriptor.JavaType getJavaType();
+  boolean supports(Descriptors.FieldDescriptor fieldDescriptor);
 
   /**
    * type of converted sql-like value

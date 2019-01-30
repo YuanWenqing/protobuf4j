@@ -4,8 +4,8 @@ import com.google.protobuf.Descriptors;
 
 public class IntTypeConverter implements ITypeConverter {
   @Override
-  public Descriptors.FieldDescriptor.JavaType getJavaType() {
-    return Descriptors.FieldDescriptor.JavaType.INT;
+  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.INT;
   }
 
   @Override
@@ -18,7 +18,8 @@ public class IntTypeConverter implements ITypeConverter {
     if (fieldValue instanceof Integer) {
       return fieldValue;
     }
-    throw new TypeConversionException(getJavaType(), fieldValue, getSqlValueType());
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.INT, fieldValue,
+        getSqlValueType());
   }
 
   @Override
@@ -29,6 +30,6 @@ public class IntTypeConverter implements ITypeConverter {
     if (sqlValue instanceof Integer) {
       return sqlValue;
     }
-    throw new TypeConversionException(getJavaType(), sqlValue);
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.INT, sqlValue);
   }
 }

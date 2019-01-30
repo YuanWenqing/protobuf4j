@@ -5,8 +5,8 @@ import com.google.protobuf.Internal;
 
 public class EnumTypeConverter implements ITypeConverter {
   @Override
-  public Descriptors.FieldDescriptor.JavaType getJavaType() {
-    return Descriptors.FieldDescriptor.JavaType.ENUM;
+  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.ENUM;
   }
 
   @Override
@@ -22,7 +22,8 @@ public class EnumTypeConverter implements ITypeConverter {
     if (fieldValue instanceof Integer) {
       return fieldValue;
     }
-    throw new TypeConversionException(getJavaType(), fieldValue, getSqlValueType());
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.ENUM, fieldValue,
+        getSqlValueType());
   }
 
   @Override
@@ -33,6 +34,6 @@ public class EnumTypeConverter implements ITypeConverter {
     if (sqlValue instanceof Integer) {
       return sqlValue;
     }
-    throw new TypeConversionException(getJavaType(), sqlValue);
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.ENUM, sqlValue);
   }
 }

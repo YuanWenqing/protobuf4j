@@ -6,8 +6,8 @@ import java.util.Objects;
 
 public class BooleanTypeConverter implements ITypeConverter {
   @Override
-  public Descriptors.FieldDescriptor.JavaType getJavaType() {
-    return Descriptors.FieldDescriptor.JavaType.BOOLEAN;
+  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.BOOLEAN;
   }
 
   @Override
@@ -24,7 +24,8 @@ public class BooleanTypeConverter implements ITypeConverter {
       int i = (Integer) fieldValue;
       return i == 0 ? i : 1;
     }
-    throw new TypeConversionException(getJavaType(), fieldValue, getSqlValueType());
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.BOOLEAN, fieldValue,
+        getSqlValueType());
   }
 
   @Override
@@ -35,6 +36,6 @@ public class BooleanTypeConverter implements ITypeConverter {
     if (sqlValue instanceof Integer) {
       return !Objects.equals(sqlValue, 0);
     }
-    throw new TypeConversionException(getJavaType(), sqlValue);
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.BOOLEAN, sqlValue);
   }
 }

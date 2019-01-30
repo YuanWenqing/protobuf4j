@@ -5,8 +5,8 @@ import com.google.protobuf.Descriptors;
 
 public class ByteStringTypeConverter implements ITypeConverter {
   @Override
-  public Descriptors.FieldDescriptor.JavaType getJavaType() {
-    return Descriptors.FieldDescriptor.JavaType.BYTE_STRING;
+  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.BYTE_STRING;
   }
 
   @Override
@@ -19,7 +19,8 @@ public class ByteStringTypeConverter implements ITypeConverter {
     if (fieldValue instanceof ByteString) {
       return ((ByteString) fieldValue).toStringUtf8();
     }
-    throw new TypeConversionException(getJavaType(), fieldValue, getSqlValueType());
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.BYTE_STRING, fieldValue,
+        getSqlValueType());
   }
 
   @Override
@@ -30,6 +31,6 @@ public class ByteStringTypeConverter implements ITypeConverter {
     if (sqlValue instanceof String) {
       return ByteString.copyFromUtf8((String) sqlValue);
     }
-    throw new TypeConversionException(getJavaType(), sqlValue);
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.BYTE_STRING, sqlValue);
   }
 }

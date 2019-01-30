@@ -4,8 +4,8 @@ import com.google.protobuf.Descriptors;
 
 public class FloatTypeConverter implements ITypeConverter {
   @Override
-  public Descriptors.FieldDescriptor.JavaType getJavaType() {
-    return Descriptors.FieldDescriptor.JavaType.FLOAT;
+  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.FLOAT;
   }
 
   @Override
@@ -18,7 +18,8 @@ public class FloatTypeConverter implements ITypeConverter {
     if (fieldValue instanceof Number) {
       return ((Number) fieldValue).floatValue();
     }
-    throw new TypeConversionException(getJavaType(), fieldValue, getSqlValueType());
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.FLOAT, fieldValue,
+        getSqlValueType());
   }
 
   @Override
@@ -29,6 +30,6 @@ public class FloatTypeConverter implements ITypeConverter {
     if (sqlValue instanceof Number) {
       return ((Number) sqlValue).floatValue();
     }
-    throw new TypeConversionException(getJavaType(), sqlValue);
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.FLOAT, sqlValue);
   }
 }

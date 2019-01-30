@@ -4,8 +4,8 @@ import com.google.protobuf.Descriptors;
 
 public class LongTypeConverter implements ITypeConverter {
   @Override
-  public Descriptors.FieldDescriptor.JavaType getJavaType() {
-    return Descriptors.FieldDescriptor.JavaType.LONG;
+  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.LONG;
   }
 
   @Override
@@ -18,7 +18,7 @@ public class LongTypeConverter implements ITypeConverter {
     if (fieldValue instanceof Long || fieldValue instanceof Integer) {
       return ((Number) fieldValue).longValue();
     }
-    throw new TypeConversionException(getJavaType(), fieldValue, getSqlValueType());
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.LONG, fieldValue, getSqlValueType());
   }
 
   @Override
@@ -29,6 +29,6 @@ public class LongTypeConverter implements ITypeConverter {
     if (sqlValue instanceof Long || sqlValue instanceof Integer) {
       return ((Number) sqlValue).longValue();
     }
-    throw new TypeConversionException(getJavaType(), sqlValue);
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.LONG, sqlValue);
   }
 }
