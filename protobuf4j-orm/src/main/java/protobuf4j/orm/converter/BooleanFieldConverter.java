@@ -4,10 +4,12 @@ import com.google.protobuf.Descriptors;
 
 import java.util.Objects;
 
-public class BooleanTypeConverter implements ITypeConverter {
+public class BooleanFieldConverter implements IFieldConverter {
   @Override
-  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
-    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.BOOLEAN;
+  public boolean supportConversion(Descriptors.FieldDescriptor.JavaType javaType,
+      Object fieldValue) {
+    return javaType == Descriptors.FieldDescriptor.JavaType.BOOLEAN &&
+        (fieldValue instanceof Boolean || fieldValue instanceof Integer);
   }
 
   @Override
@@ -19,8 +21,7 @@ public class BooleanTypeConverter implements ITypeConverter {
   public Object toSqlValue(Object fieldValue) {
     if (fieldValue instanceof Boolean) {
       return (Boolean) fieldValue ? 1 : 0;
-    }
-    if (fieldValue instanceof Integer) {
+    } else if (fieldValue instanceof Integer) {
       int i = (Integer) fieldValue;
       return i == 0 ? i : 1;
     }

@@ -72,7 +72,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
     return instance;
   }
 
-  private final Map<Descriptors.FieldDescriptor.JavaType, ITypeConverter> typeConverterMap;
+  private final Map<Descriptors.FieldDescriptor.JavaType, IFieldConverter> typeConverterMap;
 
   protected ProtoSqlConverter() {
     typeConverterMap = Maps.newHashMap();
@@ -80,15 +80,15 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   }
 
   private void registerDefaultTypeConverters() {
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.BOOLEAN, new BooleanTypeConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.BOOLEAN, new BooleanFieldConverter());
     typeConverterMap
-        .put(Descriptors.FieldDescriptor.JavaType.BYTE_STRING, new ByteStringTypeConverter());
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.DOUBLE, new DoubleTypeConverter());
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.ENUM, new EnumTypeConverter());
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.FLOAT, new FloatTypeConverter());
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.INT, new IntTypeConverter());
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.LONG, new LongTypeConverter());
-    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.STRING, new StringTypeConverter());
+        .put(Descriptors.FieldDescriptor.JavaType.BYTE_STRING, new ByteStringFieldConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.DOUBLE, new DoubleFieldConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.ENUM, new EnumFieldConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.FLOAT, new FloatFieldConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.INT, new IntFieldConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.LONG, new LongFieldConverter());
+    typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.STRING, new StringFieldConverter());
   }
 
   @Override
@@ -128,7 +128,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
    * @see #resolveSqlValueType(Descriptors.FieldDescriptor.JavaType)
    */
   protected Object toSqlValue(Descriptors.FieldDescriptor.JavaType javaType, Object value) {
-    ITypeConverter converter = typeConverterMap.get(javaType);
+    IFieldConverter converter = typeConverterMap.get(javaType);
     if (converter == null) {
       throw new TypeConversionException(
           "no converter found, javaType=" + javaType + ", value=`" + value + "`, valueType=" +
@@ -265,7 +265,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
       Timestamp ts = (Timestamp) sqlValue;
       return ts.getTime();
     } else {
-      ITypeConverter converter = typeConverterMap.get(fd.getJavaType());
+      IFieldConverter converter = typeConverterMap.get(fd.getJavaType());
       if (converter == null) {
         throw new TypeConversionException(
             "no converter found, javaType=" + fd.getJavaType() + ", sqlValue=`" + sqlValue +

@@ -2,10 +2,11 @@ package protobuf4j.orm.converter;
 
 import com.google.protobuf.Descriptors;
 
-public class FloatTypeConverter implements ITypeConverter {
+public class FloatFieldConverter implements IFieldConverter {
   @Override
-  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
-    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.FLOAT;
+  public boolean supportConversion(Descriptors.FieldDescriptor.JavaType javaType,
+      Object fieldValue) {
+    return javaType == Descriptors.FieldDescriptor.JavaType.FLOAT && fieldValue instanceof Number;
   }
 
   @Override

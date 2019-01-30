@@ -2,10 +2,11 @@ package protobuf4j.orm.converter;
 
 import com.google.protobuf.Descriptors;
 
-public class DoubleTypeConverter implements ITypeConverter {
+public class DoubleFieldConverter implements IFieldConverter {
   @Override
-  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
-    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.DOUBLE;
+  public boolean supportConversion(Descriptors.FieldDescriptor.JavaType javaType,
+      Object fieldValue) {
+    return javaType == Descriptors.FieldDescriptor.JavaType.DOUBLE && fieldValue instanceof Number;
   }
 
   @Override

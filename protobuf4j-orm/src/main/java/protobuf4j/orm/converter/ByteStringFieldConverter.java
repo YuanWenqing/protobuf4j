@@ -3,10 +3,12 @@ package protobuf4j.orm.converter;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 
-public class ByteStringTypeConverter implements ITypeConverter {
+public class ByteStringFieldConverter implements IFieldConverter {
   @Override
-  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
-    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.BYTE_STRING;
+  public boolean supportConversion(Descriptors.FieldDescriptor.JavaType javaType,
+      Object fieldValue) {
+    return javaType == Descriptors.FieldDescriptor.JavaType.BYTE_STRING &&
+        fieldValue instanceof ByteString;
   }
 
   @Override

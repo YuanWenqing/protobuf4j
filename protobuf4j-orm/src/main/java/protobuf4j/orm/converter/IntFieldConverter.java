@@ -2,10 +2,11 @@ package protobuf4j.orm.converter;
 
 import com.google.protobuf.Descriptors;
 
-public class IntTypeConverter implements ITypeConverter {
+public class IntFieldConverter implements IFieldConverter {
   @Override
-  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
-    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.INT;
+  public boolean supportConversion(Descriptors.FieldDescriptor.JavaType javaType,
+      Object fieldValue) {
+    return javaType == Descriptors.FieldDescriptor.JavaType.INT && fieldValue instanceof Integer;
   }
 
   @Override

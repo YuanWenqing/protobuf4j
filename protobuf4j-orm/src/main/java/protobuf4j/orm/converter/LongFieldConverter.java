@@ -2,10 +2,12 @@ package protobuf4j.orm.converter;
 
 import com.google.protobuf.Descriptors;
 
-public class LongTypeConverter implements ITypeConverter {
+public class LongFieldConverter implements IFieldConverter {
   @Override
-  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
-    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.LONG;
+  public boolean supportConversion(Descriptors.FieldDescriptor.JavaType javaType,
+      Object fieldValue) {
+    return javaType == Descriptors.FieldDescriptor.JavaType.LONG &&
+        (fieldValue instanceof Long || fieldValue instanceof Integer);
   }
 
   @Override
@@ -18,7 +20,8 @@ public class LongTypeConverter implements ITypeConverter {
     if (fieldValue instanceof Long || fieldValue instanceof Integer) {
       return ((Number) fieldValue).longValue();
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.LONG, fieldValue, getSqlValueType());
+    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.LONG, fieldValue,
+        getSqlValueType());
   }
 
   @Override
