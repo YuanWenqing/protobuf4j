@@ -17,6 +17,7 @@ import protobuf4j.core.ProtoMessageHelper;
 import protobuf4j.orm.sql.*;
 import protobuf4j.orm.sql.clause.*;
 import protobuf4j.orm.sql.expr.RawExpr;
+import protobuf4j.orm.util.OrmUtils;
 import protobuf4j.orm.util.ThreadLocalTimer;
 
 import javax.annotation.Nonnull;
@@ -32,7 +33,7 @@ import static com.google.common.base.Preconditions.*;
  * <p>
  *
  * @param <T> 访问的数据表的数据元素类型
- * author yuanwq
+ *            author yuanwq
  */
 public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, InitializingBean {
   protected static final ThreadLocalTimer timer = new ThreadLocalTimer();
@@ -77,8 +78,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
     this.sqlConverter = sqlConverter;
     checkNotNull(this.sqlConverter, "no available sqlConverter for " + messageType.getName());
     this.messageMapper = new ProtoMessageRowMapper<>(messageType, this.sqlConverter);
-    this.tableName =
-        StringUtils.defaultIfBlank(tableName, this.sqlConverter.tableName(messageType));
+    this.tableName = StringUtils.defaultIfBlank(tableName, OrmUtils.tableName(messageType));
     this.fromClause = QueryCreator.from(this.tableName);
 
     this.daoLogger = LoggerFactory

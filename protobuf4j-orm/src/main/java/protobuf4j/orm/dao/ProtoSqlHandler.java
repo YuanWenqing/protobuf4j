@@ -93,10 +93,6 @@ public class ProtoSqlHandler implements IProtoMessageSqlHandler {
     typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.STRING, new StringFieldConverter());
   }
 
-  @Override
-  public String tableName(Class<? extends Message> messageClass) {
-    return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, messageClass.getSimpleName());
-  }
 
   @Override
   public <B extends Message> Object toSqlValue(Class<B> messageClass, String field, Object value) {
