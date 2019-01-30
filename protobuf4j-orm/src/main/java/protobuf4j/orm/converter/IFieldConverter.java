@@ -9,11 +9,11 @@ public interface IFieldConverter {
   /**
    * whether support conversion to sql-style value
    *
-   * @param javaType
+   * @param fieldDescriptor
    * @param fieldValue
    * @return
    */
-  boolean supportConversion(Descriptors.FieldDescriptor.JavaType javaType, Object fieldValue);
+  boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue);
 
   /**
    * type of converted sql-style value

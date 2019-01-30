@@ -5,9 +5,8 @@ import com.google.protobuf.Descriptors;
 
 public class ByteStringFieldConverter implements IFieldConverter {
   @Override
-  public boolean supportConversion(Descriptors.FieldDescriptor.JavaType javaType,
-      Object fieldValue) {
-    return javaType == Descriptors.FieldDescriptor.JavaType.BYTE_STRING &&
+  public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.BYTE_STRING &&
         fieldValue instanceof ByteString;
   }
 

@@ -5,9 +5,8 @@ import com.google.protobuf.Internal;
 
 public class EnumFieldConverter implements IFieldConverter {
   @Override
-  public boolean supportConversion(Descriptors.FieldDescriptor.JavaType javaType,
-      Object fieldValue) {
-    return javaType == Descriptors.FieldDescriptor.JavaType.ENUM &&
+  public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.ENUM &&
         (fieldValue instanceof Internal.EnumLite || fieldValue instanceof Integer);
   }
 

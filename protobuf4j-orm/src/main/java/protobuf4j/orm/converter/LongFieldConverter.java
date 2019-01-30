@@ -4,9 +4,8 @@ import com.google.protobuf.Descriptors;
 
 public class LongFieldConverter implements IFieldConverter {
   @Override
-  public boolean supportConversion(Descriptors.FieldDescriptor.JavaType javaType,
-      Object fieldValue) {
-    return javaType == Descriptors.FieldDescriptor.JavaType.LONG &&
+  public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.LONG &&
         (fieldValue instanceof Long || fieldValue instanceof Integer);
   }
 

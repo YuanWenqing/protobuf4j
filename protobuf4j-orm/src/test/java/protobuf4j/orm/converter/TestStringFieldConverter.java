@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TestStringTypeConverter {
+public class TestStringFieldConverter {
   IFieldConverter converter = new StringFieldConverter();
 
   @Test

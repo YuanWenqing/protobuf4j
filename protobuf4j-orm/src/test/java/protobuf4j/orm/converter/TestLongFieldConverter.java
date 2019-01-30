@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TestLongTypeConverter {
+public class TestLongFieldConverter {
   IFieldConverter converter = new LongFieldConverter();
 
   @Test

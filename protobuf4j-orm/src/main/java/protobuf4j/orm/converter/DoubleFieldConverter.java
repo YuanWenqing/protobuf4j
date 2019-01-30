@@ -4,9 +4,9 @@ import com.google.protobuf.Descriptors;
 
 public class DoubleFieldConverter implements IFieldConverter {
   @Override
-  public boolean supportConversion(Descriptors.FieldDescriptor.JavaType javaType,
-      Object fieldValue) {
-    return javaType == Descriptors.FieldDescriptor.JavaType.DOUBLE && fieldValue instanceof Number;
+  public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.DOUBLE &&
+        fieldValue instanceof Number;
   }
 
   @Override

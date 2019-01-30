@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TestDoubleTypeConverter {
+public class TestDoubleFieldConverter {
   IFieldConverter converter = new DoubleFieldConverter();
 
   @Test

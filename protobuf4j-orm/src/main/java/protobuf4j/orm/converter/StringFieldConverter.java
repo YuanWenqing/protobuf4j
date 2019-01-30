@@ -4,9 +4,8 @@ import com.google.protobuf.Descriptors;
 
 public class StringFieldConverter implements IFieldConverter {
   @Override
-  public boolean supportConversion(Descriptors.FieldDescriptor.JavaType javaType,
-      Object fieldValue) {
-    return javaType == Descriptors.FieldDescriptor.JavaType.STRING &&
+  public boolean supportConversion(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.STRING &&
         (fieldValue == null || fieldValue instanceof String);
   }
 
