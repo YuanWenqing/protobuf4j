@@ -28,7 +28,7 @@ import java.util.Set;
 
 /**
  * 将数据库一行数据映射为Protobuf Message
- *
+ * <p>
  * author yuanwq
  */
 @Setter
@@ -80,7 +80,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
         try {
           value = getColumnValue(rs, index, fd);
           if (value == null) continue;
-          value = sqlConverter.fromSqlValue(messageHelper, fd, value);
+          value = sqlConverter.fromSqlValue(fd, value);
           builder.setField(fd, value);
           if (checkFullyPopulated) {
             populatedProperties.add(fd.getName());
