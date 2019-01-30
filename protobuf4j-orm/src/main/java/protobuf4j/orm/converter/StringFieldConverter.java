@@ -22,7 +22,7 @@ public class StringFieldConverter implements IFieldConverter {
     if (fieldValue instanceof String) {
       return fieldValue;
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.STRING, fieldValue,
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.STRING, fieldValue,
         getSqlValueType());
   }
 
@@ -34,6 +34,6 @@ public class StringFieldConverter implements IFieldConverter {
     if (sqlValue instanceof String) {
       return sqlValue;
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.STRING, sqlValue);
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.STRING, sqlValue);
   }
 }

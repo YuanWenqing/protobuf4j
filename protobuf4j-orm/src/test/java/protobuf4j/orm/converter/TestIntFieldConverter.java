@@ -18,7 +18,7 @@ public class TestIntFieldConverter {
     try {
       converter.toSqlValue(null);
       fail();
-    } catch (TypeConversionException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
   }
@@ -35,7 +35,7 @@ public class TestIntFieldConverter {
     try {
       converter.fromSqlValue("");
       fail();
-    } catch (TypeConversionException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
 

@@ -3,14 +3,14 @@ package protobuf4j.orm.converter;
 import com.google.protobuf.Descriptors;
 import org.springframework.dao.TypeMismatchDataAccessException;
 
-public class TypeConversionException extends TypeMismatchDataAccessException {
+public class FieldConversionException extends TypeMismatchDataAccessException {
 
   /**
    * generic construction
    *
    * @param msg
    */
-  public TypeConversionException(String msg) {
+  public FieldConversionException(String msg) {
     super(msg);
   }
 
@@ -21,7 +21,7 @@ public class TypeConversionException extends TypeMismatchDataAccessException {
    * @param fieldValue
    * @param sqlValueType
    */
-  public TypeConversionException(Descriptors.FieldDescriptor.JavaType javaType, Object fieldValue,
+  public FieldConversionException(Descriptors.FieldDescriptor.JavaType javaType, Object fieldValue,
       Class<?> sqlValueType) {
     super("fail to convert to sql value, javaType=" + javaType + ", fieldValue=" +
         toString(fieldValue) + ", sqlValueType=" + sqlValueType.getName());
@@ -33,7 +33,7 @@ public class TypeConversionException extends TypeMismatchDataAccessException {
    * @param sqlValue
    * @param javaType
    */
-  public TypeConversionException(Descriptors.FieldDescriptor.JavaType javaType, Object sqlValue) {
+  public FieldConversionException(Descriptors.FieldDescriptor.JavaType javaType, Object sqlValue) {
     super("fail to parse sql value, sqlValue=" + toString(sqlValue) + ", javaType=" + javaType);
   }
 

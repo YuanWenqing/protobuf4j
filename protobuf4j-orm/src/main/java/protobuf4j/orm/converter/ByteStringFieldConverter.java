@@ -20,7 +20,7 @@ public class ByteStringFieldConverter implements IFieldConverter {
     if (fieldValue instanceof ByteString) {
       return ((ByteString) fieldValue).toStringUtf8();
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.BYTE_STRING, fieldValue,
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.BYTE_STRING, fieldValue,
         getSqlValueType());
   }
 
@@ -32,6 +32,6 @@ public class ByteStringFieldConverter implements IFieldConverter {
     if (sqlValue instanceof String) {
       return ByteString.copyFromUtf8((String) sqlValue);
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.BYTE_STRING, sqlValue);
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.BYTE_STRING, sqlValue);
   }
 }

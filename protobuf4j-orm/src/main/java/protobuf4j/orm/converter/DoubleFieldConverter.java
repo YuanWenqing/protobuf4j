@@ -19,7 +19,7 @@ public class DoubleFieldConverter implements IFieldConverter {
     if (fieldValue instanceof Number) {
       return ((Number) fieldValue).doubleValue();
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, fieldValue,
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, fieldValue,
         getSqlValueType());
   }
 
@@ -31,6 +31,6 @@ public class DoubleFieldConverter implements IFieldConverter {
     if (sqlValue instanceof Number) {
       return ((Number) sqlValue).doubleValue();
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, sqlValue);
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, sqlValue);
   }
 }

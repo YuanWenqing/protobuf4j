@@ -19,7 +19,7 @@ public class LongFieldConverter implements IFieldConverter {
     if (fieldValue instanceof Long || fieldValue instanceof Integer) {
       return ((Number) fieldValue).longValue();
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.LONG, fieldValue,
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.LONG, fieldValue,
         getSqlValueType());
   }
 
@@ -31,6 +31,6 @@ public class LongFieldConverter implements IFieldConverter {
     if (sqlValue instanceof Long || sqlValue instanceof Integer) {
       return ((Number) sqlValue).longValue();
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.LONG, sqlValue);
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.LONG, sqlValue);
   }
 }

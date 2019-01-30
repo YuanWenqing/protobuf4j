@@ -24,7 +24,7 @@ public class TimestampFieldConverter implements IFieldConverter {
     } else if (fieldValue instanceof Long || fieldValue instanceof Integer) {
       return new java.sql.Timestamp(((Number) fieldValue).longValue());
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, fieldValue,
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, fieldValue,
         getSqlValueType());
   }
 
@@ -36,6 +36,6 @@ public class TimestampFieldConverter implements IFieldConverter {
     if (sqlValue instanceof java.sql.Timestamp) {
       return Timestamps.fromMillis(((java.sql.Timestamp) sqlValue).getTime());
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, sqlValue);
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, sqlValue);
   }
 }

@@ -117,7 +117,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
     } else {
       IFieldConverter fieldConverter = findFieldConverter(fd);
       if (!fieldConverter.supportConversion(fd, value)) {
-        throw new TypeConversionException(
+        throw new FieldConversionException(
             "converter not support conversion, converter=" + fieldConverter.getClass().getName() +
                 ", field=" + fd + ", value=`" + value + "`, valueType=" +
                 value.getClass().getName());
@@ -132,7 +132,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
     }
     IFieldConverter fieldConverter = typeConverterMap.get(fieldDescriptor.getJavaType());
     if (fieldConverter == null) {
-      throw new TypeConversionException(
+      throw new FieldConversionException(
           "no converter found, field=" + fieldDescriptor + ", javaType=" +
               fieldDescriptor.getJavaType());
     }
@@ -152,7 +152,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
   protected Object toSqlValue(Descriptors.FieldDescriptor.JavaType javaType, Object value) {
     IFieldConverter converter = typeConverterMap.get(javaType);
     if (converter == null) {
-      throw new TypeConversionException(
+      throw new FieldConversionException(
           "no converter found, javaType=" + javaType + ", value=`" + value + "`, valueType=" +
               value.getClass().getName());
     }
@@ -289,7 +289,7 @@ public class ProtoSqlConverter implements IProtoSqlConverter {
     } else {
       IFieldConverter converter = typeConverterMap.get(fd.getJavaType());
       if (converter == null) {
-        throw new TypeConversionException(
+        throw new FieldConversionException(
             "no converter found, javaType=" + fd.getJavaType() + ", sqlValue=`" + sqlValue +
                 "`, sqlValue.type=" + sqlValue.getClass().getName());
       }

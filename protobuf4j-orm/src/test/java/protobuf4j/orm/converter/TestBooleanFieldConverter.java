@@ -19,7 +19,7 @@ public class TestBooleanFieldConverter {
     try {
       converter.toSqlValue("");
       fail();
-    } catch (TypeConversionException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
   }
@@ -34,7 +34,7 @@ public class TestBooleanFieldConverter {
     try {
       converter.fromSqlValue("");
       fail();
-    } catch (TypeConversionException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
 

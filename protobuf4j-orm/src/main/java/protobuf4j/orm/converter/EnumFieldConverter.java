@@ -22,7 +22,7 @@ public class EnumFieldConverter implements IFieldConverter {
     } else if (fieldValue instanceof Integer) {
       return fieldValue;
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.ENUM, fieldValue,
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.ENUM, fieldValue,
         getSqlValueType());
   }
 
@@ -34,6 +34,6 @@ public class EnumFieldConverter implements IFieldConverter {
     if (sqlValue instanceof Integer) {
       return sqlValue;
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.ENUM, sqlValue);
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.ENUM, sqlValue);
   }
 }

@@ -18,7 +18,7 @@ public class TestByteStringFieldConverter {
     try {
       converter.toSqlValue("");
       fail();
-    } catch (TypeConversionException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
   }
@@ -34,7 +34,7 @@ public class TestByteStringFieldConverter {
     try {
       converter.fromSqlValue(1);
       fail();
-    } catch (TypeConversionException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
 

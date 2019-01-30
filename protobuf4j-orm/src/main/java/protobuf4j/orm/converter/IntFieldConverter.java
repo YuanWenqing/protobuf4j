@@ -19,7 +19,7 @@ public class IntFieldConverter implements IFieldConverter {
     if (fieldValue instanceof Integer) {
       return fieldValue;
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.INT, fieldValue,
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.INT, fieldValue,
         getSqlValueType());
   }
 
@@ -31,6 +31,6 @@ public class IntFieldConverter implements IFieldConverter {
     if (sqlValue instanceof Integer) {
       return sqlValue;
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.INT, sqlValue);
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.INT, sqlValue);
   }
 }

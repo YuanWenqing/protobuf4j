@@ -19,7 +19,7 @@ public class FloatFieldConverter implements IFieldConverter {
     if (fieldValue instanceof Number) {
       return ((Number) fieldValue).floatValue();
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.FLOAT, fieldValue,
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.FLOAT, fieldValue,
         getSqlValueType());
   }
 
@@ -31,6 +31,6 @@ public class FloatFieldConverter implements IFieldConverter {
     if (sqlValue instanceof Number) {
       return ((Number) sqlValue).floatValue();
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.FLOAT, sqlValue);
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.FLOAT, sqlValue);
   }
 }

@@ -22,7 +22,7 @@ public class TestTimestampFieldConverter {
     try {
       converter.toSqlValue(null);
       fail();
-    } catch (TypeConversionException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
   }
@@ -38,7 +38,7 @@ public class TestTimestampFieldConverter {
     try {
       converter.fromSqlValue("");
       fail();
-    } catch (TypeConversionException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
 

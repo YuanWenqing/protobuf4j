@@ -24,7 +24,7 @@ public class BooleanFieldConverter implements IFieldConverter {
       int i = (Integer) fieldValue;
       return i == 0 ? i : 1;
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.BOOLEAN, fieldValue,
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.BOOLEAN, fieldValue,
         getSqlValueType());
   }
 
@@ -36,6 +36,6 @@ public class BooleanFieldConverter implements IFieldConverter {
     if (sqlValue instanceof Integer) {
       return !Objects.equals(sqlValue, 0);
     }
-    throw new TypeConversionException(Descriptors.FieldDescriptor.JavaType.BOOLEAN, sqlValue);
+    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.BOOLEAN, sqlValue);
   }
 }
