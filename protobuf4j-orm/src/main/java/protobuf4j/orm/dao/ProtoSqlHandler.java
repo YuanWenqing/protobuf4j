@@ -106,8 +106,6 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
       return encodeMapToString(fd, value);
     } else if (fd.isRepeated()) {
       return encodeListToString(fd, value);
-    } else if (isTimestampField(fd)) {
-      return toSqlTimestamp(value);
     } else {
       IFieldConverter fieldConverter = findFieldConverter(fd);
       if (!fieldConverter.supportConversion(fd, value)) {
@@ -141,7 +139,8 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
   /**
    * 字段值映射：{@code proto type -> sql type}
    *
-   * @see #resolveSqlValueType(Descriptors.FieldDescriptor.JavaType)
+   * @param javaType
+   * @param value
    */
   protected Object toSqlValue(Descriptors.FieldDescriptor.JavaType javaType, Object value) {
     IFieldConverter converter = typeConverterMap.get(javaType);
@@ -158,7 +157,6 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
     Descriptors.FieldDescriptor keyFd = fd.getMessageType().findFieldByName("key");
     Descriptors.FieldDescriptor valFd = fd.getMessageType().findFieldByName("value");
     try {
-      resolveSqlValueType(valFd.getJavaType()); // fast fail if not support
       if (value instanceof Map) {
         Map<?, ?> map = (Map<?, ?>) value;
         StringBuilder sb = new StringBuilder();
@@ -194,7 +192,6 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
 
   protected String encodeListToString(Descriptors.FieldDescriptor fd, Object value) {
     try {
-      resolveSqlValueType(fd.getJavaType()); // fast fail if not support
       if (value instanceof Iterable) {
         StringBuilder sb = new StringBuilder();
         Iterable<?> list = (Iterable<?>) value;
@@ -273,10 +270,6 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
     } else if (fd.getJavaType().equals(Descriptors.FieldDescriptor.JavaType.ENUM)) {
       // EnumValueDescriptor
       return fd.getEnumType().findValueByNumber(parseInt(sqlValue));
-    } else if (isTimestampField(fd)) {
-      // 处理时间，把Timestamp映射成long
-      Timestamp ts = (Timestamp) sqlValue;
-      return ts.getTime();
     } else {
       IFieldConverter converter = typeConverterMap.get(fd.getJavaType());
       if (converter == null) {
@@ -348,9 +341,6 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
         .collect(Collectors.toList());
   }
 
-  /**
-   * @see #resolveSqlValueType(Descriptors.FieldDescriptor.JavaType)
-   */
   protected Function<String, Object> lookupTransform(Descriptors.FieldDescriptor fd) {
     switch (fd.getJavaType()) {
       case BOOLEAN:
@@ -378,43 +368,9 @@ public class ProtoSqlHandler<M extends Message> implements IProtoMessageSqlHandl
   public Class<?> resolveSqlValueType(Descriptors.FieldDescriptor fd) {
     // map/list 使用string拼接
     if (fd.isMapField() || fd.isRepeated()) return String.class;
-    // 特殊处理时间field
-    if (isTimestampField(fd)) {
-      return Timestamp.class;
-    }
-    try {
-      return resolveSqlValueType(fd.getJavaType());
-    } catch (TypeMismatchDataAccessException e) {
-      throw new TypeMismatchDataAccessException("field=" + fd, e);
-    }
+    IFieldConverter fieldConverter = findFieldConverter(fd);
+    return fieldConverter.getSqlValueType();
   }
 
-  /**
-   * 处理{@code JavaType}到对应{@code sqlValue}类型的映射
-   *
-   * @see #toSqlValue(Descriptors.FieldDescriptor.JavaType, Object)
-   */
-  protected Class<?> resolveSqlValueType(Descriptors.FieldDescriptor.JavaType javaType) {
-    switch (javaType) {
-      case BOOLEAN:
-        return int.class;
-      case STRING:
-        return String.class;
-      case DOUBLE:
-        return double.class;
-      case FLOAT:
-        return float.class;
-      case INT:
-        return int.class;
-      case LONG:
-        return long.class;
-      case ENUM:
-        return int.class;
-      case MESSAGE:
-      case BYTE_STRING:
-      default:
-        throw new TypeMismatchDataAccessException("fail to resolve sql value type for " + javaType);
-    }
-  }
 
 }
