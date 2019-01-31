@@ -326,7 +326,7 @@ public class TestMessageFieldResolver {
     assertEquals(1.0, fieldResolver.fromSqlValue(helperA.getFieldDescriptor("double"), 1.0));
     assertEquals(true, fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bool"), 1));
     assertEquals(false, fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bool"), 0));
-    assertEquals(TestModel.EnumA.EA0.getValueDescriptor(),
+    assertEquals(TestModel.EnumA.EA0.getNumber(),
         fieldResolver.fromSqlValue(helperA.getFieldDescriptor("enuma"), 0));
     ByteString bytes = ByteString.copyFrom(getClass().getName().getBytes());
     assertEquals(bytes,
