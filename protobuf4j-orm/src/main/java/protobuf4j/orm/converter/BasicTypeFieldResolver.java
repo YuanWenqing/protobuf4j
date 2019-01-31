@@ -4,6 +4,8 @@ import com.google.common.collect.Maps;
 import com.google.protobuf.Descriptors;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * 处理基本类型的字段值：
@@ -57,5 +59,28 @@ public class BasicTypeFieldResolver implements IFieldResolver {
   @Override
   public Class<?> resolveSqlValueType(Descriptors.FieldDescriptor fd) {
     return findFieldConverter(fd).getSqlValueType();
+  }
+
+  public static Function<String, Object> lookupTransform(Descriptors.FieldDescriptor fd) {
+    switch (fd.getJavaType()) {
+      case BOOLEAN:
+        return text -> (Integer.parseInt(Objects.requireNonNull(text)) != 0);
+      case ENUM:
+        return text -> fd.getEnumType()
+            .findValueByNumber(Integer.parseInt(Objects.requireNonNull(text)));
+      case INT:
+        return Integer::parseInt;
+      case LONG:
+        return Long::parseLong;
+      case FLOAT:
+        return Float::parseFloat;
+      case DOUBLE:
+        return Double::parseDouble;
+      case STRING:
+        return text -> text;
+      default:
+        throw new FieldConversionException(
+            "not support java type: " + fd.getJavaType() + ", field=" + fd.getFullName());
+    }
   }
 }

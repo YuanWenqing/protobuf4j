@@ -10,7 +10,6 @@ import protobuf4j.core.ProtobufObjectMapper;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class MapFieldConverter implements IFieldValueConverter {
@@ -95,8 +94,9 @@ public class MapFieldConverter implements IFieldValueConverter {
             OBJECT_MAPPER.readValue((String) sqlValue, LinkedHashMap.class);
         List<MapEntry<?, ?>> mapEntries = Lists.newArrayList();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-          Object k = lookupTransform(keyFd).apply(entry.getKey());
-          Object v = lookupTransform(valFd).apply(String.valueOf(entry.getValue()));
+          Object k = BasicTypeFieldResolver.lookupTransform(keyFd).apply(entry.getKey());
+          Object v =
+              BasicTypeFieldResolver.lookupTransform(valFd).apply(String.valueOf(entry.getValue()));
           k = basicTypeFieldResolver.fromSqlValue(keyFd, k);
           v = basicTypeFieldResolver.fromSqlValue(valFd, v);
           MapEntry.Builder<?, ?> entryBuilder =
@@ -116,29 +116,6 @@ public class MapFieldConverter implements IFieldValueConverter {
         "fail to parse map field, field=" + fieldDescriptor + ", keyType=" + keyFd.getJavaType() +
             ", valueType=" + valFd.getJavaType() + ", sqlValue=" +
             FieldConversionException.toString(sqlValue));
-  }
-
-  private static Function<String, Object> lookupTransform(Descriptors.FieldDescriptor fd) {
-    switch (fd.getJavaType()) {
-      case BOOLEAN:
-        return text -> (Integer.parseInt(Objects.requireNonNull(text)) != 0);
-      case ENUM:
-        return text -> fd.getEnumType()
-            .findValueByNumber(Integer.parseInt(Objects.requireNonNull(text)));
-      case INT:
-        return Integer::parseInt;
-      case LONG:
-        return Long::parseLong;
-      case FLOAT:
-        return Float::parseFloat;
-      case DOUBLE:
-        return Double::parseDouble;
-      case STRING:
-        return text -> text;
-      default:
-        throw new FieldConversionException(
-            "not support java type: " + fd.getJavaType() + ", field=" + fd.getFullName());
-    }
   }
 
 }
