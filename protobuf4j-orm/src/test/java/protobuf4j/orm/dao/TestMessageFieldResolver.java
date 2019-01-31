@@ -232,15 +232,11 @@ public class TestMessageFieldResolver {
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("bool_arr"), Lists.newArrayList(0, 1)));
     assertEquals("2,",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("enuma_arr"), Lists.newArrayList(2)));
+    assertEquals("",
+        fieldResolver.toSqlValue(helperA.getFieldDescriptor("bytes_arr"), Lists.newArrayList()));
 
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32_arr"), 1);
-      fail();
-    } catch (FieldConversionException e) {
-      System.out.println(e.getMessage());
-    }
-    try {
-      fieldResolver.toSqlValue(helperA.getFieldDescriptor("bytes_arr"), Lists.newArrayList());
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());

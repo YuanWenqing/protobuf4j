@@ -27,6 +27,9 @@ public class MapFieldConverter implements IFieldValueConverter {
     this.fieldDescriptor = fieldDescriptor;
     this.keyFd = fieldDescriptor.getMessageType().findFieldByName("key");
     this.valFd = fieldDescriptor.getMessageType().findFieldByName("value");
+    // fail fast
+    BasicTypeFieldResolver.lookupTransform(keyFd);
+    BasicTypeFieldResolver.lookupTransform(valFd);
     this.basicTypeFieldResolver = basicTypeFieldResolver;
     if (valFd.getJavaType() == Descriptors.FieldDescriptor.JavaType.MESSAGE) {
       throw new FieldConversionException(

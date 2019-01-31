@@ -25,6 +25,8 @@ public class RepeatedFieldConverter implements IFieldValueConverter {
 
   public RepeatedFieldConverter(Descriptors.FieldDescriptor fieldDescriptor,
       IFieldResolver basicTypeFieldResolver) {
+    // fail fast
+    BasicTypeFieldResolver.lookupTransform(fieldDescriptor);
     this.fieldDescriptor = fieldDescriptor;
     this.basicTypeFieldResolver = basicTypeFieldResolver;
     ImmutableMap.Builder<CharSequence, CharSequence> builder = ImmutableMap.builder();
