@@ -6,8 +6,8 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.MapEntry;
 import org.junit.Test;
-import org.springframework.dao.TypeMismatchDataAccessException;
 import protobuf4j.core.ProtoMessageHelper;
+import protobuf4j.orm.converter.FieldConversionException;
 import protobuf4j.orm.converter.MessageFieldResolver;
 import protobuf4j.test.proto.TestModel;
 
@@ -52,7 +52,7 @@ public class TestMessageFieldResolver {
     try {
       fieldResolver.resolveSqlValueType(helperA.getFieldDescriptor("msgb"));
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
   }
@@ -127,7 +127,7 @@ public class TestMessageFieldResolver {
 //    try {
 //      fieldResolver.toSqlValue(helperB.getFieldDescriptor("create_time"), "");
 //      fail();
-//    } catch (TypeMismatchDataAccessException e) {
+//    } catch (FieldConversionException e) {
 //      System.out.println(e.getMessage());
 //    }
   }
@@ -161,37 +161,37 @@ public class TestMessageFieldResolver {
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32"), 1.1);
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("int64"), "");
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("float"), "");
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("double"), "");
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("bool"), "");
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("enuma"), "");
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
   }
@@ -236,19 +236,19 @@ public class TestMessageFieldResolver {
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32_arr"), 1);
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("bytes_arr"), Lists.newArrayList());
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("msgb_arr"), Lists.newArrayList());
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
   }
@@ -301,19 +301,19 @@ public class TestMessageFieldResolver {
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32_map"), 1);
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("bytes_map"), map());
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("msgb_map"), map());
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
   }
@@ -339,13 +339,13 @@ public class TestMessageFieldResolver {
     try {
       fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bool"), 1.0);
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.fromSqlValue(helperA.getFieldDescriptor("msgb"), "");
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
   }
@@ -391,19 +391,19 @@ public class TestMessageFieldResolver {
     try {
       fieldResolver.fromSqlValue(helperA.getFieldDescriptor("int32_arr"), 1);
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bytes_arr"), "a");
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.fromSqlValue(helperA.getFieldDescriptor("msgb_arr"), "a");
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
   }
@@ -435,19 +435,19 @@ public class TestMessageFieldResolver {
     try {
       fieldResolver.fromSqlValue(helperA.getFieldDescriptor("int32_map"), 1);
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bytes_map"), "a:1");
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
     try {
       fieldResolver.fromSqlValue(helperA.getFieldDescriptor("msgb_map"), "a:1");
       fail();
-    } catch (TypeMismatchDataAccessException e) {
+    } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
   }
