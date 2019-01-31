@@ -25,7 +25,8 @@ import static org.junit.Assert.*;
 public class TestMessageFieldResolver {
   private ProtoMessageHelper<TestModel.MsgA> helperA =
       ProtoMessageHelper.getHelper(TestModel.MsgA.class);
-  MessageFieldResolver<TestModel.MsgA> fieldResolver = new MessageFieldResolver<>(TestModel.MsgA.class);
+  MessageFieldResolver<TestModel.MsgA> fieldResolver =
+      new MessageFieldResolver<>(TestModel.MsgA.class);
   private ProtoMessageHelper<TestModel.MsgB> helperB =
       ProtoMessageHelper.getHelper(TestModel.MsgB.class);
 
@@ -33,8 +34,10 @@ public class TestMessageFieldResolver {
   public void testResolveSqlValueTypeSimple() {
     assertEquals(Integer.class,
         fieldResolver.resolveSqlValueType(helperA.getFieldDescriptor("int32")));
-    assertEquals(Long.class, fieldResolver.resolveSqlValueType(helperA.getFieldDescriptor("int64")));
-    assertEquals(Float.class, fieldResolver.resolveSqlValueType(helperA.getFieldDescriptor("float")));
+    assertEquals(Long.class,
+        fieldResolver.resolveSqlValueType(helperA.getFieldDescriptor("int64")));
+    assertEquals(Float.class,
+        fieldResolver.resolveSqlValueType(helperA.getFieldDescriptor("float")));
     assertEquals(Double.class,
         fieldResolver.resolveSqlValueType(helperA.getFieldDescriptor("double")));
     assertEquals(Integer.class,
@@ -199,8 +202,8 @@ public class TestMessageFieldResolver {
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32_arr"), Lists.newArrayList()));
     assertEquals("",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32_arr"), Sets.newHashSet()));
-    assertEquals("1,2,",
-        fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32_arr"), Lists.newArrayList(1, 2)));
+    assertEquals("1,2,", fieldResolver
+        .toSqlValue(helperA.getFieldDescriptor("int32_arr"), Lists.newArrayList(1, 2)));
     assertEquals("1,2,", fieldResolver
         .toSqlValue(helperA.getFieldDescriptor("int64_arr"), Lists.newArrayList(1L, 2L)));
     assertEquals("1.1,2.2,", fieldResolver
@@ -213,18 +216,18 @@ public class TestMessageFieldResolver {
         .toSqlValue(helperA.getFieldDescriptor("string_arr"), Lists.newArrayList("", "a")));
     assertEquals(",",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("string_arr"), Lists.newArrayList("")));
-    assertEquals("%2c,",
-        fieldResolver.toSqlValue(helperA.getFieldDescriptor("string_arr"), Lists.newArrayList(",")));
-    assertEquals("%2c%25,",
-        fieldResolver.toSqlValue(helperA.getFieldDescriptor("string_arr"), Lists.newArrayList(",%")));
+    assertEquals("%2c,", fieldResolver
+        .toSqlValue(helperA.getFieldDescriptor("string_arr"), Lists.newArrayList(",")));
+    assertEquals("%2c%25,", fieldResolver
+        .toSqlValue(helperA.getFieldDescriptor("string_arr"), Lists.newArrayList(",%")));
     assertEquals("2,0,", fieldResolver.toSqlValue(helperA.getFieldDescriptor("enuma_arr"),
         Lists.newArrayList(TestModel.EnumA.EA2, TestModel.EnumA.EA0)));
 
     // 兼容
-    assertEquals("1,2,",
-        fieldResolver.toSqlValue(helperA.getFieldDescriptor("int64_arr"), Lists.newArrayList(1, 2)));
-    assertEquals("1.0,2.0,",
-        fieldResolver.toSqlValue(helperA.getFieldDescriptor("double_arr"), Lists.newArrayList(1, 2)));
+    assertEquals("1,2,", fieldResolver
+        .toSqlValue(helperA.getFieldDescriptor("int64_arr"), Lists.newArrayList(1, 2)));
+    assertEquals("1.0,2.0,", fieldResolver
+        .toSqlValue(helperA.getFieldDescriptor("double_arr"), Lists.newArrayList(1, 2)));
     assertEquals("0,1,",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("bool_arr"), Lists.newArrayList(0, 1)));
     assertEquals("2,",
@@ -282,15 +285,16 @@ public class TestMessageFieldResolver {
     // list
     TestModel.MsgA msga =
         TestModel.MsgA.newBuilder().putInt64Map("a", 1).putInt64Map("b", 2).build();
-    assertEquals("a:1;b:2;",
-        fieldResolver.toSqlValue("int64_map", helperA.getFieldValue(msga, "int64_map")));
+    assertEquals("a:1;b:2;", fieldResolver.toSqlValue(helperA.getFieldDescriptor("int64_map"),
+        helperA.getFieldValue(msga, "int64_map")));
 
     // 兼容
     assertEquals(":2;",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("int64_map"), map("", 2)));
     assertEquals("a:2.0;",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("double_map"), map("a", 2)));
-    assertEquals("0:1;", fieldResolver.toSqlValue(helperA.getFieldDescriptor("bool_map"), map(0, 1)));
+    assertEquals("0:1;",
+        fieldResolver.toSqlValue(helperA.getFieldDescriptor("bool_map"), map(0, 1)));
     assertEquals("a:2;",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("enuma_map"), map("a", 2)));
 
@@ -317,27 +321,29 @@ public class TestMessageFieldResolver {
   @Test
   @SuppressWarnings("rawtype")
   public void testFromSqlValue() {
-    assertEquals(1, fieldResolver.fromSqlValue("int32", 1));
-    assertEquals(1L, fieldResolver.fromSqlValue("int64", 1));
-    assertEquals(1L, fieldResolver.fromSqlValue("int64", 1L));
-    assertEquals(1f, fieldResolver.fromSqlValue("float", 1));
-    assertEquals(1f, fieldResolver.fromSqlValue("float", 1f));
-    assertEquals(1d, fieldResolver.fromSqlValue("double", 1));
-    assertEquals(1.0, fieldResolver.fromSqlValue("double", 1.0));
-    assertEquals(true, fieldResolver.fromSqlValue("bool", 1));
-    assertEquals(false, fieldResolver.fromSqlValue("bool", 0));
-    assertEquals(TestModel.EnumA.EA0.getValueDescriptor(), fieldResolver.fromSqlValue("enuma", 0));
+    assertEquals(1, fieldResolver.fromSqlValue(helperA.getFieldDescriptor("int32"), 1));
+    assertEquals(1L, fieldResolver.fromSqlValue(helperA.getFieldDescriptor("int64"), 1));
+    assertEquals(1L, fieldResolver.fromSqlValue(helperA.getFieldDescriptor("int64"), 1L));
+    assertEquals(1f, fieldResolver.fromSqlValue(helperA.getFieldDescriptor("float"), 1));
+    assertEquals(1f, fieldResolver.fromSqlValue(helperA.getFieldDescriptor("float"), 1f));
+    assertEquals(1d, fieldResolver.fromSqlValue(helperA.getFieldDescriptor("double"), 1));
+    assertEquals(1.0, fieldResolver.fromSqlValue(helperA.getFieldDescriptor("double"), 1.0));
+    assertEquals(true, fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bool"), 1));
+    assertEquals(false, fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bool"), 0));
+    assertEquals(TestModel.EnumA.EA0.getValueDescriptor(),
+        fieldResolver.fromSqlValue(helperA.getFieldDescriptor("enuma"), 0));
     ByteString bytes = ByteString.copyFrom(getClass().getName().getBytes());
-    assertEquals(bytes, fieldResolver.fromSqlValue("bytes", bytes.toStringUtf8()));
+    assertEquals(bytes,
+        fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bytes"), bytes.toStringUtf8()));
 
     try {
-      fieldResolver.fromSqlValue("bool", 1.0);
+      fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bool"), 1.0);
       fail();
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());
     }
     try {
-      fieldResolver.fromSqlValue("msgb", "");
+      fieldResolver.fromSqlValue(helperA.getFieldDescriptor("msgb"), "");
       fail();
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());
@@ -383,19 +389,19 @@ public class TestMessageFieldResolver {
         fieldResolver.fromSqlValue(helperA.getFieldDescriptor("string_arr"), "%25,"));
 
     try {
-      fieldResolver.fromSqlValue("int32_arr", 1);
+      fieldResolver.fromSqlValue(helperA.getFieldDescriptor("int32_arr"), 1);
       fail();
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());
     }
     try {
-      fieldResolver.fromSqlValue("bytes_arr", "a");
+      fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bytes_arr"), "a");
       fail();
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());
     }
     try {
-      fieldResolver.fromSqlValue("msgb_arr", "a");
+      fieldResolver.fromSqlValue(helperA.getFieldDescriptor("msgb_arr"), "a");
       fail();
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());
@@ -405,7 +411,8 @@ public class TestMessageFieldResolver {
   @SuppressWarnings("unchecked")
   @Test
   public void testFromSqlValueMap() {
-    assertEquals(Collections.emptyList(), fieldResolver.fromSqlValue("int32_map", null));
+    assertEquals(Collections.emptyList(),
+        fieldResolver.fromSqlValue(helperA.getFieldDescriptor("int32_map"), null));
 
     List<MapEntry> mapEntries;
 
@@ -419,26 +426,26 @@ public class TestMessageFieldResolver {
     assertEquals("a", mapEntries.get(0).getKey());
     assertEquals(1L, mapEntries.get(0).getValue());
 
-    mapEntries =
-        (List<MapEntry>) fieldResolver.fromSqlValue(helperA.getFieldDescriptor("int64_map"), "a:1;");
+    mapEntries = (List<MapEntry>) fieldResolver
+        .fromSqlValue(helperA.getFieldDescriptor("int64_map"), "a:1;");
     assertEquals(1, mapEntries.size());
     assertEquals("a", mapEntries.get(0).getKey());
     assertEquals(1L, mapEntries.get(0).getValue());
 
     try {
-      fieldResolver.fromSqlValue("int32_map", 1);
+      fieldResolver.fromSqlValue(helperA.getFieldDescriptor("int32_map"), 1);
       fail();
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());
     }
     try {
-      fieldResolver.fromSqlValue("bytes_map", "a:1");
+      fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bytes_map"), "a:1");
       fail();
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());
     }
     try {
-      fieldResolver.fromSqlValue("msgb_map", "a:1");
+      fieldResolver.fromSqlValue(helperA.getFieldDescriptor("msgb_map"), "a:1");
       fail();
     } catch (TypeMismatchDataAccessException e) {
       System.out.println(e.getMessage());
