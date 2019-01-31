@@ -8,7 +8,7 @@ import com.google.protobuf.MapEntry;
 import org.junit.Test;
 import org.springframework.dao.TypeMismatchDataAccessException;
 import protobuf4j.core.ProtoMessageHelper;
-import protobuf4j.orm.converter.DefaultFieldResolver;
+import protobuf4j.orm.converter.MessageFieldResolver;
 import protobuf4j.test.proto.TestModel;
 
 import java.util.Collections;
@@ -22,10 +22,10 @@ import static org.junit.Assert.*;
  * author: yuanwq
  * date: 2018/7/23
  */
-public class TestDefaultFieldResolver {
+public class TestMessageFieldResolver {
   private ProtoMessageHelper<TestModel.MsgA> helperA =
       ProtoMessageHelper.getHelper(TestModel.MsgA.class);
-  DefaultFieldResolver<TestModel.MsgA> fieldResolver = new DefaultFieldResolver<>(TestModel.MsgA.class);
+  MessageFieldResolver<TestModel.MsgA> fieldResolver = new MessageFieldResolver<>(TestModel.MsgA.class);
   private ProtoMessageHelper<TestModel.MsgB> helperB =
       ProtoMessageHelper.getHelper(TestModel.MsgB.class);
 
@@ -103,7 +103,7 @@ public class TestDefaultFieldResolver {
 //    assertFalse(fieldResolver.isTimestampField(helperA.getFieldDescriptor("float")));
 //    assertFalse(fieldResolver.isTimestampField(helperA.getFieldDescriptor("int64")));
 //
-//    DefaultFieldResolver<TestModel.MsgA> fieldResolver = new DefaultFieldResolver<>(TestModel.MsgA.class);
+//    MessageFieldResolver<TestModel.MsgA> fieldResolver = new MessageFieldResolver<>(TestModel.MsgA.class);
 //
 //    Descriptors.FieldDescriptor timeFd = helperB.getFieldDescriptor("create_time");
 //    assertTrue(fieldResolver.isTimestampField(timeFd));

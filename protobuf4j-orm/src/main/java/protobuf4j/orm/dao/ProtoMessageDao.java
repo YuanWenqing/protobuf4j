@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import protobuf4j.core.ProtoMessageHelper;
-import protobuf4j.orm.converter.DefaultFieldResolver;
+import protobuf4j.orm.converter.MessageFieldResolver;
 import protobuf4j.orm.converter.IFieldResolver;
 import protobuf4j.orm.sql.*;
 import protobuf4j.orm.sql.clause.*;
@@ -65,7 +65,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
   protected JdbcTemplate jdbcTemplate;
 
   public ProtoMessageDao(@Nonnull Class<T> messageType) {
-    this(messageType, new DefaultFieldResolver<>(messageType), null);
+    this(messageType, new MessageFieldResolver<>(messageType), null);
   }
 
   /**
