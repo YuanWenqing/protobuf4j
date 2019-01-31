@@ -413,17 +413,23 @@ public class TestMessageFieldResolver {
         (List<MapEntry>) fieldResolver.fromSqlValue(helperA.getFieldDescriptor("int64_map"), "");
     assertEquals(0, mapEntries.size());
 
-    mapEntries =
-        (List<MapEntry>) fieldResolver.fromSqlValue(helperA.getFieldDescriptor("int64_map"), "a:1");
+    mapEntries = (List<MapEntry>) fieldResolver
+        .fromSqlValue(helperA.getFieldDescriptor("int64_map"), "{\"a\":1}");
     assertEquals(1, mapEntries.size());
     assertEquals("a", mapEntries.get(0).getKey());
     assertEquals(1L, mapEntries.get(0).getValue());
 
     mapEntries = (List<MapEntry>) fieldResolver
-        .fromSqlValue(helperA.getFieldDescriptor("int64_map"), "a:1;");
+        .fromSqlValue(helperA.getFieldDescriptor("int64_map"), "{\"a\":1}");
     assertEquals(1, mapEntries.size());
     assertEquals("a", mapEntries.get(0).getKey());
     assertEquals(1L, mapEntries.get(0).getValue());
+
+    mapEntries = (List<MapEntry>) fieldResolver
+        .fromSqlValue(helperA.getFieldDescriptor("bytes_map"), "{\"a\":1}");
+    assertEquals(1, mapEntries.size());
+    assertEquals("a", mapEntries.get(0).getKey());
+    assertEquals(ByteString.copyFromUtf8("1"), mapEntries.get(0).getValue());
 
     try {
       fieldResolver.fromSqlValue(helperA.getFieldDescriptor("int32_map"), 1);
@@ -432,13 +438,7 @@ public class TestMessageFieldResolver {
       System.out.println(e.getMessage());
     }
     try {
-      fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bytes_map"), "a:1");
-      fail();
-    } catch (FieldConversionException e) {
-      System.out.println(e.getMessage());
-    }
-    try {
-      fieldResolver.fromSqlValue(helperA.getFieldDescriptor("msgb_map"), "a:1");
+      fieldResolver.fromSqlValue(helperA.getFieldDescriptor("msgb_map"), "{\"a\":1}");
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
