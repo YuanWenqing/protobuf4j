@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.MapEntry;
+import org.apache.commons.lang3.StringUtils;
 import protobuf4j.core.ProtoMessageHelper;
 import protobuf4j.core.ProtobufObjectMapper;
 
@@ -92,6 +93,9 @@ public class MapFieldConverter implements IFieldValueConverter {
       return Collections.emptyList();
     }
     if (sqlValue instanceof String) {
+      if (StringUtils.isBlank((String) sqlValue)) {
+        return Collections.emptyList();
+      }
       try {
         LinkedHashMap<String, Object> map =
             OBJECT_MAPPER.readValue((String) sqlValue, LinkedHashMap.class);

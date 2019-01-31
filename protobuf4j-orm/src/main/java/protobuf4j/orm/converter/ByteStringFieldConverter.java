@@ -23,7 +23,7 @@ public class ByteStringFieldConverter implements IFieldValueConverter {
   @Override
   public Object fromSqlValue(Object sqlValue) {
     if (sqlValue == null) {
-      return ByteString.EMPTY;
+      return ByteString.copyFromUtf8("");
     } else if (sqlValue instanceof String) {
       return ByteString.copyFromUtf8((String) sqlValue);
     } else if (sqlValue instanceof ByteString) {

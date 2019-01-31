@@ -264,8 +264,8 @@ public class TestMessageFieldResolver {
   @Test
   public void testToSqlValueMap() {
     // map
-    assertEquals("", fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32_map"), map()));
-    assertEquals("a:1;b:2;",
+    assertEquals("{}", fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32_map"), map()));
+    assertEquals("{\"a\":1,\"b\":2}",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32_map"), map("a", 1, "b", 2)));
     assertEquals("1:1;",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("bool_map"), map(1, true)));
@@ -368,6 +368,9 @@ public class TestMessageFieldResolver {
         fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bool_arr"), "1"));
     assertEquals(Lists.newArrayList(false),
         fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bool_arr"), "0"));
+    List list = (List) fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bytes_arr"), ",");
+    assertEquals(1, list.size());
+    assertEquals(ByteString.copyFromUtf8(""), list.get(0));
 
     assertEquals(Lists.newArrayList(),
         fieldResolver.fromSqlValue(helperA.getFieldDescriptor("string_arr"), null));
@@ -391,7 +394,6 @@ public class TestMessageFieldResolver {
       System.out.println(e.getMessage());
     }
     try {
-      fieldResolver.fromSqlValue(helperA.getFieldDescriptor("bytes_arr"), "a");
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());

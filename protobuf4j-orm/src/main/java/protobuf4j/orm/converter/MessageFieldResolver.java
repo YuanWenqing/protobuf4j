@@ -65,12 +65,11 @@ public class MessageFieldResolver<M extends Message> implements IFieldResolver {
               "`, sqlValue.type=" + sqlValue.getClass().getName());
     }
     Object value = converter.fromSqlValue(sqlValue);
-    if (fd.getJavaType() == Descriptors.FieldDescriptor.JavaType.ENUM) {
-      // EnumValueDescriptor
-      return fd.getEnumType().findValueByNumber((Integer) value);
-    } else {
-      return value;
-    }
+//    if (fd.getJavaType() == Descriptors.FieldDescriptor.JavaType.ENUM) {
+//      // EnumValueDescriptor
+//      return fd.getEnumType().findValueByNumber((Integer) value);
+//    }
+    return value;
   }
 
   @Override
