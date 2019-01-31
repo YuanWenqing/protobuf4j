@@ -267,41 +267,38 @@ public class TestMessageFieldResolver {
     assertEquals("{}", fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32_map"), map()));
     assertEquals("{\"a\":1,\"b\":2}",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32_map"), map("a", 1, "b", 2)));
-    assertEquals("1:1;",
+    assertEquals("{\"1\":1}",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("bool_map"), map(1, true)));
-    assertEquals(":a;",
+    assertEquals("{\"\":\"a\"}",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("string_map"), map("", "a")));
-    assertEquals("%3a:%3b;",
+    assertEquals("{\":\":\";\"}",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("string_map"), map(":", ";")));
-    assertEquals("%3a:%25;",
+    assertEquals("{\":\":\"%\"}",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("string_map"), map(":", "%")));
-    assertEquals("a:0;", fieldResolver
+    assertEquals("{\"a\":0}", fieldResolver
         .toSqlValue(helperA.getFieldDescriptor("enuma_map"), map("a", TestModel.EnumA.EA0)));
 
     // list
     TestModel.MsgA msga =
         TestModel.MsgA.newBuilder().putInt64Map("a", 1).putInt64Map("b", 2).build();
-    assertEquals("a:1;b:2;", fieldResolver.toSqlValue(helperA.getFieldDescriptor("int64_map"),
-        helperA.getFieldValue(msga, "int64_map")));
+    assertEquals("{\"a\":1,\"b\":2}", fieldResolver
+        .toSqlValue(helperA.getFieldDescriptor("int64_map"),
+            helperA.getFieldValue(msga, "int64_map")));
 
     // 兼容
-    assertEquals(":2;",
+    assertEquals("{\"\":2}",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("int64_map"), map("", 2)));
-    assertEquals("a:2.0;",
+    assertEquals("{\"a\":2.0}",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("double_map"), map("a", 2)));
-    assertEquals("0:1;",
+    assertEquals("{\"0\":1}",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("bool_map"), map(0, 1)));
-    assertEquals("a:2;",
+    assertEquals("{\"a\":2}",
         fieldResolver.toSqlValue(helperA.getFieldDescriptor("enuma_map"), map("a", 2)));
+
+    assertEquals("{}", fieldResolver.toSqlValue(helperA.getFieldDescriptor("bytes_map"), map()));
 
     try {
       fieldResolver.toSqlValue(helperA.getFieldDescriptor("int32_map"), 1);
-      fail();
-    } catch (FieldConversionException e) {
-      System.out.println(e.getMessage());
-    }
-    try {
-      fieldResolver.toSqlValue(helperA.getFieldDescriptor("bytes_map"), map());
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
