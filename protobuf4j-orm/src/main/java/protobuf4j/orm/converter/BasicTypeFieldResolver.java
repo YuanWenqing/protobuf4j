@@ -64,7 +64,7 @@ public class BasicTypeFieldResolver implements IFieldResolver {
   public static Function<String, Object> lookupTransform(Descriptors.FieldDescriptor fd) {
     switch (fd.getJavaType()) {
       case BOOLEAN:
-        return text -> (Integer.parseInt(Objects.requireNonNull(text)) != 0);
+        return text -> Integer.parseInt(Objects.requireNonNull(text));
       case ENUM:
         return text -> fd.getEnumType()
             .findValueByNumber(Integer.parseInt(Objects.requireNonNull(text)));

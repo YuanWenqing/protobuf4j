@@ -394,11 +394,6 @@ public class TestMessageFieldResolver {
       System.out.println(e.getMessage());
     }
     try {
-      fail();
-    } catch (FieldConversionException e) {
-      System.out.println(e.getMessage());
-    }
-    try {
       fieldResolver.fromSqlValue(helperA.getFieldDescriptor("msgb_arr"), "a");
       fail();
     } catch (FieldConversionException e) {

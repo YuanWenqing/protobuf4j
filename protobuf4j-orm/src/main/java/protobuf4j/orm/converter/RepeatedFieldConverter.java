@@ -78,6 +78,8 @@ public class RepeatedFieldConverter implements IFieldValueConverter {
     if (text.endsWith(listSep)) text = text.substring(0, text.length() - listSep.length());
     List<String> list = listSplitter.splitToList(text);
     return list.stream().map(listValueUnescaper::translate)
-        .map(BasicTypeFieldResolver.lookupTransform(fieldDescriptor)).collect(Collectors.toList());
+        .map(BasicTypeFieldResolver.lookupTransform(fieldDescriptor))
+        .map(v -> basicTypeFieldResolver.fromSqlValue(fieldDescriptor, v))
+        .collect(Collectors.toList());
   }
 }
