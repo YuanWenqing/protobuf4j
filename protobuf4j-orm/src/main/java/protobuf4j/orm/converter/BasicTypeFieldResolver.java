@@ -78,6 +78,8 @@ public class BasicTypeFieldResolver implements IFieldResolver {
         return Double::parseDouble;
       case STRING:
         return text -> text;
+      case BYTE_STRING:
+        return text -> text;
       default:
         throw new FieldConversionException(
             "not support java type: " + fd.getJavaType() + ", field=" + fd.getFullName());
