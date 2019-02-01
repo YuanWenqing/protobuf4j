@@ -6,12 +6,17 @@ import com.google.protobuf.util.Timestamps;
 
 public class TimestampFieldConverter implements IFieldConverter {
   @Override
+  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.MESSAGE;
+  }
+
+  @Override
   public Class<?> getSqlValueType() {
     return java.sql.Timestamp.class;
   }
 
   @Override
-  public Object toSqlValue(Object fieldValue) {
+  public Object toSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
     if (fieldValue instanceof Timestamp) {
       return new java.sql.Timestamp(Timestamps.toMillis((Timestamp) fieldValue));
     } else if (fieldValue instanceof Long || fieldValue instanceof Integer) {
@@ -19,12 +24,14 @@ public class TimestampFieldConverter implements IFieldConverter {
     } else if (fieldValue instanceof java.sql.Timestamp) {
       return fieldValue;
     }
-    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, fieldValue,
-        getSqlValueType());
+    throw new FieldConversionException(
+        "fail to convert to sql value for timestamp field, fieldValue=" +
+            FieldConversionException.toString(fieldValue) + ", sqlValueType=" +
+            getSqlValueType().getName());
   }
 
   @Override
-  public Object fromSqlValue(Object sqlValue) {
+  public Object fromSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object sqlValue) {
     if (sqlValue == null) {
       return Timestamps.fromMillis(0L);
     } else if (sqlValue instanceof java.sql.Timestamp) {
@@ -32,6 +39,7 @@ public class TimestampFieldConverter implements IFieldConverter {
     } else if (sqlValue instanceof Timestamp) {
       return sqlValue;
     }
-    throw new FieldConversionException(Descriptors.FieldDescriptor.JavaType.DOUBLE, sqlValue);
+    throw new FieldConversionException("fail to parse sql value for timestamp field, sqlValue=" +
+        FieldConversionException.toString(sqlValue));
   }
 }

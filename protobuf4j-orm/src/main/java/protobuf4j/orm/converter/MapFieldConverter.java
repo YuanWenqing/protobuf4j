@@ -17,26 +17,22 @@ public class MapFieldConverter implements IFieldConverter {
   private static final ObjectMapper OBJECT_MAPPER = ProtobufObjectMapper.DEFAULT;
 
   private final ProtoMessageHelper<?> messageHelper;
-  private final Descriptors.FieldDescriptor fieldDescriptor;
-  private final Descriptors.FieldDescriptor keyFd;
-  private final Descriptors.FieldDescriptor valFd;
-  private final IFieldResolver basicTypeFieldResolver;
+  private final BasicTypeFieldResolver basicTypeFieldResolver;
 
   public MapFieldConverter(ProtoMessageHelper<?> protoMessageHelper,
-      Descriptors.FieldDescriptor fieldDescriptor, IFieldResolver basicTypeFieldResolver) {
+      BasicTypeFieldResolver basicTypeFieldResolver) {
     this.messageHelper = protoMessageHelper;
-    this.fieldDescriptor = fieldDescriptor;
-    this.keyFd = fieldDescriptor.getMessageType().findFieldByName("key");
-    this.valFd = fieldDescriptor.getMessageType().findFieldByName("value");
-    // fail fast
-    BasicTypeFieldResolver.lookupTransform(keyFd);
-    BasicTypeFieldResolver.lookupTransform(valFd);
     this.basicTypeFieldResolver = basicTypeFieldResolver;
-    if (valFd.getJavaType() == Descriptors.FieldDescriptor.JavaType.MESSAGE) {
-      throw new FieldConversionException(
-          "not support map field with message value type, field=" + fieldDescriptor +
-              ", javaType=" + fieldDescriptor.getJavaType());
+  }
+
+  @Override
+  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
+    if (!fieldDescriptor.isMapField()) {
+      return false;
     }
+    Descriptors.FieldDescriptor keyFd = fieldDescriptor.getMessageType().findFieldByName("key");
+    Descriptors.FieldDescriptor valFd = fieldDescriptor.getMessageType().findFieldByName("value");
+    return basicTypeFieldResolver.supports(keyFd) && basicTypeFieldResolver.supports(valFd);
   }
 
   @Override
@@ -45,12 +41,22 @@ public class MapFieldConverter implements IFieldConverter {
   }
 
   @Override
-  public Object toSqlValue(Object fieldValue) {
+  public Object toSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
+    Descriptors.FieldDescriptor keyFd = fieldDescriptor.getMessageType().findFieldByName("key");
+    Descriptors.FieldDescriptor valFd = fieldDescriptor.getMessageType().findFieldByName("value");
+    // fail fast
+    BasicTypeFieldResolver.lookupTransform(keyFd);
+    BasicTypeFieldResolver.lookupTransform(valFd);
+    if (valFd.getJavaType() == Descriptors.FieldDescriptor.JavaType.MESSAGE) {
+      throw new FieldConversionException(
+          "not support map field with message value type, field=" + fieldDescriptor +
+              ", javaType=" + fieldDescriptor.getJavaType());
+    }
     Map<Object, Object> map;
     if (fieldValue instanceof Collection) {
-      map = collectionToMap((Collection<? extends MapEntry>) fieldValue);
+      map = collectionToMap((Collection<? extends MapEntry>) fieldValue, keyFd, valFd);
     } else if (fieldValue instanceof Map) {
-      map = mapToMap((Map) fieldValue);
+      map = mapToMap((Map) fieldValue, keyFd, valFd);
     } else {
       throw new FieldConversionException(
           "fail to convert map field, field=" + fieldDescriptor + ", keyType=" +
@@ -67,7 +73,8 @@ public class MapFieldConverter implements IFieldConverter {
     }
   }
 
-  private Map<Object, Object> mapToMap(Map<?, ?> map) {
+  private Map<Object, Object> mapToMap(Map<?, ?> map, Descriptors.FieldDescriptor keyFd,
+      Descriptors.FieldDescriptor valFd) {
     Map<Object, Object> newMap = Maps.newLinkedHashMapWithExpectedSize(map.size());
     for (Map.Entry entry : map.entrySet()) {
       Object key = basicTypeFieldResolver.toSqlValue(keyFd, entry.getKey());
@@ -77,7 +84,8 @@ public class MapFieldConverter implements IFieldConverter {
     return newMap;
   }
 
-  private Map<Object, Object> collectionToMap(Collection<? extends MapEntry> valueCollection) {
+  private Map<Object, Object> collectionToMap(Collection<? extends MapEntry> valueCollection,
+      Descriptors.FieldDescriptor keyFd, Descriptors.FieldDescriptor valFd) {
     Map<Object, Object> map = Maps.newLinkedHashMapWithExpectedSize(valueCollection.size());
     for (MapEntry entry : valueCollection) {
       Object key = basicTypeFieldResolver.toSqlValue(keyFd, entry.getKey());
@@ -88,7 +96,17 @@ public class MapFieldConverter implements IFieldConverter {
   }
 
   @Override
-  public Object fromSqlValue(Object sqlValue) {
+  public Object fromSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object sqlValue) {
+    Descriptors.FieldDescriptor keyFd = fieldDescriptor.getMessageType().findFieldByName("key");
+    Descriptors.FieldDescriptor valFd = fieldDescriptor.getMessageType().findFieldByName("value");
+    // fail fast
+    BasicTypeFieldResolver.lookupTransform(keyFd);
+    BasicTypeFieldResolver.lookupTransform(valFd);
+    if (valFd.getJavaType() == Descriptors.FieldDescriptor.JavaType.MESSAGE) {
+      throw new FieldConversionException(
+          "not support map field with message value type, field=" + fieldDescriptor +
+              ", javaType=" + fieldDescriptor.getJavaType());
+    }
     if (sqlValue == null) {
       return Collections.emptyList();
     }

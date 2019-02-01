@@ -3,12 +3,9 @@
  */
 package protobuf4j.orm.converter;
 
-import com.google.common.collect.Maps;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Message;
 import protobuf4j.core.ProtoMessageHelper;
-
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.*;
 
@@ -20,63 +17,73 @@ public class MessageFieldResolver<M extends Message> implements IFieldResolver {
 
   private final ProtoMessageHelper<M> messageHelper;
   private final BasicTypeFieldResolver basicTypeFieldResolver;
-
-  private final Map<String, IFieldConverter> fieldConverterMap;
+  private final MapFieldConverter mapFieldConverter;
+  private final RepeatedFieldConverter repeatedFieldConverter;
 
   public MessageFieldResolver(Class<M> messageClass) {
     checkNotNull(messageClass);
     this.messageHelper = ProtoMessageHelper.getHelper(messageClass);
     this.basicTypeFieldResolver = new BasicTypeFieldResolver();
-    this.fieldConverterMap = Maps.newConcurrentMap();
+    this.mapFieldConverter = new MapFieldConverter(messageHelper, basicTypeFieldResolver);
+    this.repeatedFieldConverter = new RepeatedFieldConverter(basicTypeFieldResolver);
   }
 
   @Override
-  public Object toSqlValue(Descriptors.FieldDescriptor fd, Object value) {
-    IFieldConverter fieldConverter = findFieldConverter(fd);
-    return fieldConverter.toSqlValue(value);
+  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
+    return true;
+  }
+
+  @Override
+  public Class<?> getSqlValueType() {
+    return Object.class;
+  }
+
+  @Override
+  public Object toSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object value) {
+    IFieldConverter fieldConverter = findFieldConverter(fieldDescriptor);
+    return fieldConverter.toSqlValue(fieldDescriptor, value);
   }
 
   private IFieldConverter findFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
     if (fieldDescriptor.isMapField()) {
       // check map first, because map field is also repeated
-      return this.fieldConverterMap.computeIfAbsent(fieldDescriptor.getName(),
-          fd -> new MapFieldConverter(messageHelper, fieldDescriptor, basicTypeFieldResolver));
+      return mapFieldConverter;
     } else if (fieldDescriptor.isRepeated()) {
-      return this.fieldConverterMap.computeIfAbsent(fieldDescriptor.getName(),
-          fd -> new RepeatedFieldConverter(fieldDescriptor, basicTypeFieldResolver));
+      return repeatedFieldConverter;
     } else if (isTimestampField(fieldDescriptor)) {
       return timestampFieldConverter;
     }
     return basicTypeFieldResolver.findFieldConverter(fieldDescriptor);
   }
 
-  public boolean isTimestampField(Descriptors.FieldDescriptor fd) {
+  public boolean isTimestampField(Descriptors.FieldDescriptor fieldDescriptor) {
     // TODO: check timestamp class
-    return !fd.isRepeated() && Descriptors.FieldDescriptor.JavaType.LONG.equals(fd.getJavaType()) &&
-        fd.getName().endsWith("_time");
+    return !fieldDescriptor.isRepeated() &&
+        Descriptors.FieldDescriptor.JavaType.LONG.equals(fieldDescriptor.getJavaType()) &&
+        fieldDescriptor.getName().endsWith("_time");
   }
 
   @Override
-  public Object fromSqlValue(Descriptors.FieldDescriptor fd, Object sqlValue) {
-    IFieldConverter converter = findFieldConverter(fd);
+  public Object fromSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object sqlValue) {
+    IFieldConverter converter = findFieldConverter(fieldDescriptor);
     if (converter == null) {
       throw new FieldConversionException(
-          "no converter found, javaType=" + fd.getJavaType() + ", sqlValue=`" + sqlValue +
-              "`, sqlValue.type=" + sqlValue.getClass().getName());
+          "no converter found, javaType=" + fieldDescriptor.getJavaType() + ", sqlValue=`" +
+              sqlValue + "`, sqlValue.type=" + sqlValue.getClass().getName());
     }
-    Object value = converter.fromSqlValue(sqlValue);
-//    if (fd.getJavaType() == Descriptors.FieldDescriptor.JavaType.ENUM) {
+    Object value = converter.fromSqlValue(fieldDescriptor, sqlValue);
+//    if (fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.ENUM) {
 //      // EnumValueDescriptor
-//      return fd.getEnumType().findValueByNumber((Integer) value);
+//      return fieldDescriptor.getEnumType().findValueByNumber((Integer) value);
 //    }
     return value;
   }
 
   @Override
-  public Class<?> resolveSqlValueType(Descriptors.FieldDescriptor fd) {
+  public Class<?> resolveSqlValueType(Descriptors.FieldDescriptor fieldDescriptor) {
     // map/list 使用string拼接
-    if (fd.isMapField() || fd.isRepeated()) return String.class;
-    IFieldConverter fieldConverter = findFieldConverter(fd);
+    if (fieldDescriptor.isMapField() || fieldDescriptor.isRepeated()) return String.class;
+    IFieldConverter fieldConverter = findFieldConverter(fieldDescriptor);
     return fieldConverter.getSqlValueType();
   }
 

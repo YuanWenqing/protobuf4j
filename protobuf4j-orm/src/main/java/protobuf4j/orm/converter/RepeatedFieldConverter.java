@@ -19,15 +19,9 @@ public class RepeatedFieldConverter implements IFieldConverter {
   private final String listSep = ",";
   private final Splitter listSplitter = Splitter.on(listSep);
 
-  //  private final ProtoMessageHelper<?> messageHelper;
-  private final Descriptors.FieldDescriptor fieldDescriptor;
-  private final IFieldResolver basicTypeFieldResolver;
+  private final BasicTypeFieldResolver basicTypeFieldResolver;
 
-  public RepeatedFieldConverter(Descriptors.FieldDescriptor fieldDescriptor,
-      IFieldResolver basicTypeFieldResolver) {
-    // fail fast
-    BasicTypeFieldResolver.lookupTransform(fieldDescriptor);
-    this.fieldDescriptor = fieldDescriptor;
+  public RepeatedFieldConverter(BasicTypeFieldResolver basicTypeFieldResolver) {
     this.basicTypeFieldResolver = basicTypeFieldResolver;
     ImmutableMap.Builder<CharSequence, CharSequence> builder = ImmutableMap.builder();
     builder.put(",", "%2c");
@@ -38,12 +32,18 @@ public class RepeatedFieldConverter implements IFieldConverter {
   }
 
   @Override
+  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
+    return fieldDescriptor.isRepeated() && basicTypeFieldResolver.supports(fieldDescriptor);
+  }
+
+  @Override
   public Class<?> getSqlValueType() {
     return String.class;
   }
 
   @Override
-  public Object toSqlValue(Object fieldValue) {
+  public Object toSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
+    BasicTypeFieldResolver.lookupTransform(fieldDescriptor);
     if (fieldValue instanceof Iterable) {
       StringBuilder sb = new StringBuilder();
       Iterable<?> list = (Iterable<?>) fieldValue;
@@ -61,7 +61,7 @@ public class RepeatedFieldConverter implements IFieldConverter {
   }
 
   @Override
-  public Object fromSqlValue(Object sqlValue) {
+  public Object fromSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object sqlValue) {
     if (sqlValue == null) {
       return Collections.emptyList();
     }

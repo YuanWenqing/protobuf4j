@@ -47,26 +47,37 @@ public class BasicTypeFieldResolver implements IFieldResolver {
   }
 
   @Override
-  public Object toSqlValue(Descriptors.FieldDescriptor fd, Object value) {
-    return findFieldConverter(fd).toSqlValue(value);
+  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
+    return typeConverterMap.containsKey(fieldDescriptor.getJavaType());
   }
 
   @Override
-  public Object fromSqlValue(Descriptors.FieldDescriptor fd, Object sqlValue) {
-    return findFieldConverter(fd).fromSqlValue(sqlValue);
+  public Class<?> getSqlValueType() {
+    return Object.class;
   }
 
   @Override
-  public Class<?> resolveSqlValueType(Descriptors.FieldDescriptor fd) {
-    return findFieldConverter(fd).getSqlValueType();
+  public Object toSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object value) {
+    return findFieldConverter(fieldDescriptor).toSqlValue(fieldDescriptor, value);
   }
 
-  public static Function<String, Object> lookupTransform(Descriptors.FieldDescriptor fd) {
-    switch (fd.getJavaType()) {
+  @Override
+  public Object fromSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object sqlValue) {
+    return findFieldConverter(fieldDescriptor).fromSqlValue(fieldDescriptor, sqlValue);
+  }
+
+  @Override
+  public Class<?> resolveSqlValueType(Descriptors.FieldDescriptor fieldDescriptor) {
+    return findFieldConverter(fieldDescriptor).getSqlValueType();
+  }
+
+  public static Function<String, Object> lookupTransform(
+      Descriptors.FieldDescriptor fieldDescriptor) {
+    switch (fieldDescriptor.getJavaType()) {
       case BOOLEAN:
         return text -> Integer.parseInt(Objects.requireNonNull(text));
       case ENUM:
-        return text -> fd.getEnumType()
+        return text -> fieldDescriptor.getEnumType()
             .findValueByNumber(Integer.parseInt(Objects.requireNonNull(text)));
       case INT:
         return Integer::parseInt;
@@ -82,7 +93,8 @@ public class BasicTypeFieldResolver implements IFieldResolver {
         return text -> text;
       default:
         throw new FieldConversionException(
-            "not support java type: " + fd.getJavaType() + ", field=" + fd.getFullName());
+            "not support java type: " + fieldDescriptor.getJavaType() + ", field=" +
+                fieldDescriptor.getFullName());
     }
   }
 }

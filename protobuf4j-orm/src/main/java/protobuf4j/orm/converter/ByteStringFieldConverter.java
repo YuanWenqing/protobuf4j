@@ -5,12 +5,17 @@ import com.google.protobuf.Descriptors;
 
 public class ByteStringFieldConverter implements IFieldConverter {
   @Override
+  public boolean supports(Descriptors.FieldDescriptor fieldDescriptor) {
+    return fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.BYTE_STRING;
+  }
+
+  @Override
   public Class<?> getSqlValueType() {
     return String.class;
   }
 
   @Override
-  public Object toSqlValue(Object fieldValue) {
+  public Object toSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
     if (fieldValue instanceof ByteString) {
       return ((ByteString) fieldValue).toStringUtf8();
     } else if (fieldValue instanceof String) {
@@ -21,7 +26,7 @@ public class ByteStringFieldConverter implements IFieldConverter {
   }
 
   @Override
-  public Object fromSqlValue(Object sqlValue) {
+  public Object fromSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object sqlValue) {
     if (sqlValue == null) {
       return ByteString.copyFromUtf8("");
     } else if (sqlValue instanceof String) {
