@@ -5,7 +5,7 @@ import java.util.Set;
 
 /**
  * 通过反射处理bean的辅助类
- *
+ * <p>
  * author: yuanwq
  * date: 2018/7/2
  */
@@ -27,7 +27,7 @@ public interface IMessageHelper<T> {
    * message为空=所有字段未set
    *
    * @return true=null or equals to default instance
-   * @see #isFieldSet(T, String)
+   * @see #isFieldSet(Object, String)
    */
   boolean isEmpty(T message);
 
@@ -73,7 +73,7 @@ public interface IMessageHelper<T> {
    * </ul>
    *
    * @throws RuntimeException no field found
-   * @see #isFieldSet(T, String)
+   * @see #isFieldSet(Object, String)
    */
   Object getFieldValue(T message, String fieldName);
 

@@ -3,6 +3,8 @@ package test;
 
 // 测试用的proto定义
 
+import "google/protobuf/timestamp.proto";
+
 option java_package = "protobuf4j.test.proto";
 option java_outer_classname = "TestModel";
 
@@ -80,5 +82,5 @@ message DbMsg {
   map<string, string> string_map = 26;
   map<string, EnumA> enuma_map = 27;
 
-  int64 create_time = 50;
+  google.protobuf.Timestamp create_time = 50;
 }

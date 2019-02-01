@@ -14,9 +14,12 @@ import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import protobuf4j.core.ProtoMessageHelper;
+import protobuf4j.orm.converter.IFieldResolver;
+import protobuf4j.orm.converter.MessageFieldResolver;
 import protobuf4j.orm.sql.*;
 import protobuf4j.orm.sql.clause.*;
 import protobuf4j.orm.sql.expr.RawExpr;
+import protobuf4j.orm.util.OrmUtils;
 import protobuf4j.orm.util.ThreadLocalTimer;
 
 import javax.annotation.Nonnull;
@@ -32,7 +35,7 @@ import static com.google.common.base.Preconditions.*;
  * <p>
  *
  * @param <T> 访问的数据表的数据元素类型
- * author yuanwq
+ *            author yuanwq
  */
 public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, InitializingBean {
   protected static final ThreadLocalTimer timer = new ThreadLocalTimer();
@@ -44,7 +47,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
    */
   protected final Class<T> messageType;
   protected final ProtoMessageHelper<T> messageHelper;
-  protected final IProtoSqlConverter sqlConverter;
+  protected final IFieldResolver fieldResolver;
   protected final ProtoMessageRowMapper<T> messageMapper;
   /**
    * 访问的数据表名
@@ -62,23 +65,19 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
   protected JdbcTemplate jdbcTemplate;
 
   public ProtoMessageDao(@Nonnull Class<T> messageType) {
-    this(messageType,
-        (IProtoSqlConverter) SqlConverterRegistry.getInstance().findSqlConverter(messageType),
-        null);
+    this(messageType, new MessageFieldResolver<>(messageType), null);
   }
 
   /**
    * @param tableName 为空，表示使用默认规则生成表名
    */
-  public ProtoMessageDao(@Nonnull Class<T> messageType, IProtoSqlConverter sqlConverter,
+  public ProtoMessageDao(@Nonnull Class<T> messageType, MessageFieldResolver<T> fieldResolver,
       @Nullable String tableName) {
     this.messageType = checkNotNull(messageType);
+    this.fieldResolver = checkNotNull(fieldResolver);
     this.messageHelper = ProtoMessageHelper.getHelper(messageType);
-    this.sqlConverter = sqlConverter;
-    checkNotNull(this.sqlConverter, "no available sqlConverter for " + messageType.getName());
-    this.messageMapper = new ProtoMessageRowMapper<>(messageType, this.sqlConverter);
-    this.tableName =
-        StringUtils.defaultIfBlank(tableName, this.sqlConverter.tableName(messageType));
+    this.messageMapper = new ProtoMessageRowMapper<>(messageType, fieldResolver);
+    this.tableName = StringUtils.defaultIfBlank(tableName, OrmUtils.tableName(messageType));
     this.fromClause = QueryCreator.from(this.tableName);
 
     this.daoLogger = LoggerFactory
@@ -127,7 +126,8 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
       if (StringUtils.isBlank(sqlValue.getField())) {
         value = sqlValue.getValue();
       } else {
-        value = sqlConverter.toSqlValue(messageType, sqlValue.getField(), sqlValue.getValue());
+        value = fieldResolver.toSqlValue(messageHelper.checkFieldDescriptor(sqlValue.getField()),
+            sqlValue.getValue());
       }
       values.add(value);
     }
@@ -232,7 +232,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
           for (String name : used) {
             FieldDescriptor fd = messageHelper.getFieldDescriptor(name);
             Object value = messageHelper.getFieldValue(message, name);
-            value = sqlConverter.toSqlValue(fd, value);
+            value = fieldResolver.toSqlValue(fd, value);
             ps.setObject(j++, value);
           }
         }
@@ -491,7 +491,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
   protected <V> RowMapper<V> getSingleColumnMapper(String column) {
     FieldDescriptor fd = messageHelper.checkFieldDescriptor(column);
     // 与ProtoMessageRowMapper类似的方式处理我们约定的字段类型
-    return new ProtoFieldRowMapper<>(messageHelper, sqlConverter, fd);
+    return new ProtoFieldRowMapper<>(fieldResolver, fd);
   }
 
   @Override
@@ -557,7 +557,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
       if (obj == null) {
         k = null;
       } else {
-        k = (K) sqlConverter.fromSqlValue(messageHelper, fd, obj);
+        k = (K) fieldResolver.fromSqlValue(fd, obj);
       }
       int count = rs.getInt(2);
       return Pair.of(k, count);
