@@ -9,10 +9,10 @@ public class TestStringFieldConverter {
 
   @Test
   public void testToSqlValue() {
-    assertEquals("", converter.toSqlValue(""));
-    assertEquals("", converter.toSqlValue(null));
+    assertEquals("", converter.toSqlValue(null, ""));
+    assertEquals("", converter.toSqlValue(null, null));
     try {
-      converter.toSqlValue(1);
+      converter.toSqlValue(null, 1);
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
@@ -21,12 +21,12 @@ public class TestStringFieldConverter {
 
   @Test
   public void testFromSqlValue() {
-    assertEquals("", converter.fromSqlValue(""));
-    assertEquals("1", converter.fromSqlValue("1"));
-    assertEquals("", converter.fromSqlValue(null));
+    assertEquals("", converter.fromSqlValue(null, ""));
+    assertEquals("1", converter.fromSqlValue(null, "1"));
+    assertEquals("", converter.fromSqlValue(null, null));
 
     try {
-      converter.fromSqlValue(1);
+      converter.fromSqlValue(null, 1);
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());

@@ -16,6 +16,9 @@ public class ByteStringFieldConverter implements IFieldConverter {
 
   @Override
   public Object toSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
+    if (fieldValue == null) {
+      return "";
+    }
     if (fieldValue instanceof ByteString) {
       return ((ByteString) fieldValue).toStringUtf8();
     } else if (fieldValue instanceof String) {

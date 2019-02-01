@@ -10,13 +10,15 @@ public class TestByteStringFieldConverter {
 
   @Test
   public void testToSqlValue() {
-    assertEquals("", converter.toSqlValue(ByteString.EMPTY));
+    assertEquals("", converter.toSqlValue(null, ByteString.EMPTY));
     String s = "sldjflsdjfl";
     ByteString byteString = ByteString.copyFromUtf8(s);
-    assertEquals(s, converter.toSqlValue(byteString));
+    assertEquals(s, converter.toSqlValue(null, byteString));
+    assertEquals("", converter.toSqlValue(null, ""));
+    assertEquals("", converter.toSqlValue(null, null));
 
     try {
-      converter.toSqlValue("");
+      converter.toSqlValue(null, 1);
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
@@ -25,18 +27,17 @@ public class TestByteStringFieldConverter {
 
   @Test
   public void testFromSqlValue() {
-    assertEquals(ByteString.EMPTY, converter.fromSqlValue(""));
+    assertEquals(ByteString.EMPTY, converter.fromSqlValue(null, ""));
     String s = "sldjflsdjfl";
     ByteString byteString = ByteString.copyFromUtf8(s);
-    assertEquals(byteString, converter.fromSqlValue(s));
-    assertEquals(ByteString.EMPTY, converter.fromSqlValue(null));
+    assertEquals(byteString, converter.fromSqlValue(null, s));
+    assertEquals(ByteString.EMPTY, converter.fromSqlValue(null, null));
 
     try {
-      converter.fromSqlValue(1);
+      converter.fromSqlValue(null, 1);
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
     }
-
   }
 }

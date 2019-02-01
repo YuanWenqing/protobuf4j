@@ -9,14 +9,14 @@ public class TestLongFieldConverter {
 
   @Test
   public void testToSqlValue() {
-    assertEquals(0L, converter.toSqlValue(0));
-    assertEquals(1L, converter.toSqlValue(1L));
-    assertEquals(-1L, converter.toSqlValue(-1));
-    assertEquals(Long.MAX_VALUE, converter.toSqlValue(Long.MAX_VALUE));
-    assertEquals(Long.MIN_VALUE, converter.toSqlValue(Long.MIN_VALUE));
+    assertEquals(0L, converter.toSqlValue(null, 0));
+    assertEquals(1L, converter.toSqlValue(null, 1L));
+    assertEquals(-1L, converter.toSqlValue(null, -1));
+    assertEquals(Long.MAX_VALUE, converter.toSqlValue(null, Long.MAX_VALUE));
+    assertEquals(Long.MIN_VALUE, converter.toSqlValue(null, Long.MIN_VALUE));
 
     try {
-      converter.toSqlValue(null);
+      converter.toSqlValue(null, null);
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
@@ -25,15 +25,15 @@ public class TestLongFieldConverter {
 
   @Test
   public void testFromSqlValue() {
-    assertEquals(0L, converter.fromSqlValue(null));
-    assertEquals(0L, converter.fromSqlValue(0L));
-    assertEquals(1L, converter.fromSqlValue(1));
-    assertEquals(-1L, converter.fromSqlValue(-1));
-    assertEquals(Long.MAX_VALUE, converter.fromSqlValue(Long.MAX_VALUE));
-    assertEquals(Long.MIN_VALUE, converter.fromSqlValue(Long.MIN_VALUE));
+    assertEquals(0L, converter.fromSqlValue(null, null));
+    assertEquals(0L, converter.fromSqlValue(null, 0L));
+    assertEquals(1L, converter.fromSqlValue(null, 1));
+    assertEquals(-1L, converter.fromSqlValue(null, -1));
+    assertEquals(Long.MAX_VALUE, converter.fromSqlValue(null, Long.MAX_VALUE));
+    assertEquals(Long.MIN_VALUE, converter.fromSqlValue(null, Long.MIN_VALUE));
 
     try {
-      converter.fromSqlValue("");
+      converter.fromSqlValue(null, "");
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());

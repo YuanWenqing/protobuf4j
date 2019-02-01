@@ -12,15 +12,15 @@ public class TestTimestampFieldConverter {
 
   @Test
   public void testToSqlValue() {
-    assertEquals(new Timestamp(0), converter.toSqlValue(0));
-    assertEquals(new Timestamp(1), converter.toSqlValue(1));
-    assertEquals(new Timestamp(0), converter.toSqlValue(Timestamps.fromMillis(0)));
-    assertEquals(new Timestamp(1), converter.toSqlValue(Timestamps.fromMillis(1)));
+    assertEquals(new Timestamp(0), converter.toSqlValue(null, 0));
+    assertEquals(new Timestamp(1), converter.toSqlValue(null, 1));
+    assertEquals(new Timestamp(0), converter.toSqlValue(null, Timestamps.fromMillis(0)));
+    assertEquals(new Timestamp(1), converter.toSqlValue(null, Timestamps.fromMillis(1)));
     long now = System.currentTimeMillis();
-    assertEquals(new Timestamp(now), converter.toSqlValue(now));
+    assertEquals(new Timestamp(now), converter.toSqlValue(null, now));
 
     try {
-      converter.toSqlValue(null);
+      converter.toSqlValue(null, null);
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
@@ -29,14 +29,14 @@ public class TestTimestampFieldConverter {
 
   @Test
   public void testFromSqlValue() {
-    assertEquals(Timestamps.fromMillis(0), converter.fromSqlValue(null));
-    assertEquals(Timestamps.fromMillis(0), converter.fromSqlValue(new Timestamp(0)));
-    assertEquals(Timestamps.fromMillis(1), converter.fromSqlValue(new Timestamp(1)));
+    assertEquals(Timestamps.fromMillis(0), converter.fromSqlValue(null, null));
+    assertEquals(Timestamps.fromMillis(0), converter.fromSqlValue(null, new Timestamp(0)));
+    assertEquals(Timestamps.fromMillis(1), converter.fromSqlValue(null, new Timestamp(1)));
     long now = System.currentTimeMillis();
-    assertEquals(Timestamps.fromMillis(now), converter.fromSqlValue(new Timestamp(now)));
+    assertEquals(Timestamps.fromMillis(now), converter.fromSqlValue(null, new Timestamp(now)));
 
     try {
-      converter.fromSqlValue("");
+      converter.fromSqlValue(null, "");
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());

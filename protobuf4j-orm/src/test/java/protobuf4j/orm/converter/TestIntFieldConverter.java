@@ -9,14 +9,14 @@ public class TestIntFieldConverter {
 
   @Test
   public void testToSqlValue() {
-    assertEquals(0, converter.toSqlValue(0));
-    assertEquals(1, converter.toSqlValue(1));
-    assertEquals(-1, converter.toSqlValue(-1));
-    assertEquals(Integer.MAX_VALUE, converter.toSqlValue(Integer.MAX_VALUE));
-    assertEquals(Integer.MIN_VALUE, converter.toSqlValue(Integer.MIN_VALUE));
+    assertEquals(0, converter.toSqlValue(null, 0));
+    assertEquals(1, converter.toSqlValue(null, 1));
+    assertEquals(-1, converter.toSqlValue(null, -1));
+    assertEquals(Integer.MAX_VALUE, converter.toSqlValue(null, Integer.MAX_VALUE));
+    assertEquals(Integer.MIN_VALUE, converter.toSqlValue(null, Integer.MIN_VALUE));
 
     try {
-      converter.toSqlValue(null);
+      converter.toSqlValue(null, null);
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
@@ -25,15 +25,15 @@ public class TestIntFieldConverter {
 
   @Test
   public void testFromSqlValue() {
-    assertEquals(0, converter.fromSqlValue(null));
-    assertEquals(0, converter.fromSqlValue(0));
-    assertEquals(1, converter.fromSqlValue(1));
-    assertEquals(-1, converter.fromSqlValue(-1));
-    assertEquals(Integer.MAX_VALUE, converter.fromSqlValue(Integer.MAX_VALUE));
-    assertEquals(Integer.MIN_VALUE, converter.fromSqlValue(Integer.MIN_VALUE));
+    assertEquals(0, converter.fromSqlValue(null, null));
+    assertEquals(0, converter.fromSqlValue(null, 0));
+    assertEquals(1, converter.fromSqlValue(null, 1));
+    assertEquals(-1, converter.fromSqlValue(null, -1));
+    assertEquals(Integer.MAX_VALUE, converter.fromSqlValue(null, Integer.MAX_VALUE));
+    assertEquals(Integer.MIN_VALUE, converter.fromSqlValue(null, Integer.MIN_VALUE));
 
     try {
-      converter.fromSqlValue("");
+      converter.fromSqlValue(null, "");
       fail();
     } catch (FieldConversionException e) {
       System.out.println(e.getMessage());
