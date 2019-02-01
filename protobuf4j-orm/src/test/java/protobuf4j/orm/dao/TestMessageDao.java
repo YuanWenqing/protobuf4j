@@ -1,6 +1,8 @@
 package protobuf4j.orm.dao;
 
 import com.google.common.collect.Lists;
+import com.google.protobuf.util.Durations;
+import com.google.protobuf.util.Timestamps;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +56,7 @@ public class TestMessageDao {
             .putFloatMap(";", 0333f).putDoubleMap(",", 0.222).putBoolMap(1, true)
             .putBoolMap(0, false).putStringMap("%", "%").putStringMap(";", ";%")
             .putStringMap("%;", "%;").putEnumaMap("a", TestModel.EnumA.EA4).
-            setCreateTime(System.currentTimeMillis()).build();
+            setCreateTime(Timestamps.fromMillis(System.currentTimeMillis())).build();
   }
 
   private int[] prepare(String strValue, int num) {
@@ -84,7 +86,8 @@ public class TestMessageDao {
     assertEquals(1L, msg.getId());
     assertEquals(10, msg.getInt32V());
     assertEquals(100L, msg.getInt64V());
-    assertTrue(0 < msg.getCreateTime() && msg.getCreateTime() <= System.currentTimeMillis());
+    assertTrue(0 < msg.getCreateTime().getSeconds() &&
+        msg.getCreateTime().getSeconds() * 1000 <= System.currentTimeMillis());
 
     assertNull(dao.selectOneByPrimaryKey(-1L));
     assertNotNull(dao.selectOne(new WhereClause()));
@@ -94,15 +97,16 @@ public class TestMessageDao {
   public void testUpdate() {
     TestModel.DbMsg oldItem = dao.selectOneByPrimaryKey(1L);
     assertNotNull(oldItem);
-    TestModel.DbMsg newItem =
-        oldItem.toBuilder().addInt32Arr(1).setCreateTime(oldItem.getCreateTime() + 100).build();
+    TestModel.DbMsg newItem = oldItem.toBuilder().addInt32Arr(1)
+        .setCreateTime(Timestamps.add(oldItem.getCreateTime(), Durations.fromMillis(100))).build();
     int rows = dao.updateMessageByPrimaryKey(newItem, oldItem);
     assertEquals(1, rows);
     TestModel.DbMsg msg = dao.selectOneByPrimaryKey(1L);
     assertNotNull(msg);
     assertEquals(oldItem.getInt32ArrCount() + 1, msg.getInt32ArrCount());
     assertEquals(1, msg.getInt32Arr(oldItem.getInt32ArrCount()));
-    assertEquals(oldItem.getCreateTime() + 100, msg.getCreateTime());
+    assertEquals(Timestamps.add(oldItem.getCreateTime(), Durations.fromMillis(100)),
+        msg.getCreateTime());
 
     assertEquals(0, dao.updateMessageByPrimaryKey(msg, msg));
   }
@@ -118,7 +122,7 @@ public class TestMessageDao {
 
     // not ignore
     final long now = System.currentTimeMillis();
-    msg = TestModel.DbMsg.newBuilder().setInt64V(now).setCreateTime(now)
+    msg = TestModel.DbMsg.newBuilder().setInt64V(now).setCreateTime(Timestamps.fromMillis(now))
         .setStringV("testInsertIgnore").build();
     assertEquals(1, dao.insertIgnore(msg));
     row = dao.insertIgnoreMulti(Lists.newArrayList(msg, msg.toBuilder().setId(1).build()));
