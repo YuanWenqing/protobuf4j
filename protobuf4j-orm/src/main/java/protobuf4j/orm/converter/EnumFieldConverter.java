@@ -28,9 +28,9 @@ public class EnumFieldConverter implements IFieldConverter {
   @Override
   public Object fromSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object sqlValue) {
     if (sqlValue == null) {
-      return 0;
+      return fieldDescriptor.getEnumType().findValueByNumber(0);
     } else if (sqlValue instanceof Integer) {
-      return sqlValue;
+      return fieldDescriptor.getEnumType().findValueByNumber((Integer) sqlValue);
     } else if (sqlValue instanceof Internal.EnumLite) {
       return sqlValue;
     }
