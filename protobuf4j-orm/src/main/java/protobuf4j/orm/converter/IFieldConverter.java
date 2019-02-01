@@ -3,7 +3,7 @@ package protobuf4j.orm.converter;
 /**
  * handle type conversion between value of field and sql-style value
  */
-public interface IFieldValueConverter {
+public interface IFieldConverter {
 
   /**
    * type of converted sql-style value

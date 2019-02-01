@@ -3,7 +3,7 @@ package protobuf4j.orm.converter;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Internal;
 
-public class EnumFieldConverter implements IFieldValueConverter {
+public class EnumFieldConverter implements IFieldConverter {
   @Override
   public Class<?> getSqlValueType() {
     return Integer.class;

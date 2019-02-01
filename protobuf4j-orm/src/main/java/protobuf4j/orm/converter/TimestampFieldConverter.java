@@ -4,7 +4,7 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 
-public class TimestampFieldConverter implements IFieldValueConverter {
+public class TimestampFieldConverter implements IFieldConverter {
   @Override
   public Class<?> getSqlValueType() {
     return java.sql.Timestamp.class;

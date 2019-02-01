@@ -3,7 +3,7 @@ package protobuf4j.orm.converter;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 
-public class ByteStringFieldConverter implements IFieldValueConverter {
+public class ByteStringFieldConverter implements IFieldConverter {
   @Override
   public Class<?> getSqlValueType() {
     return String.class;

@@ -2,7 +2,7 @@ package protobuf4j.orm.converter;
 
 import com.google.protobuf.Descriptors;
 
-public class FloatFieldConverter implements IFieldValueConverter {
+public class FloatFieldConverter implements IFieldConverter {
   @Override
   public Class<?> getSqlValueType() {
     return Float.class;

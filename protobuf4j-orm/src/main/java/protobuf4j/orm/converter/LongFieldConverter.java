@@ -2,7 +2,7 @@ package protobuf4j.orm.converter;
 
 import com.google.protobuf.Descriptors;
 
-public class LongFieldConverter implements IFieldValueConverter {
+public class LongFieldConverter implements IFieldConverter {
   @Override
   public Class<?> getSqlValueType() {
     return Long.class;

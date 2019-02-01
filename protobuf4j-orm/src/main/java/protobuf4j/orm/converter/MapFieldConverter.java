@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.*;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class MapFieldConverter implements IFieldValueConverter {
+public class MapFieldConverter implements IFieldConverter {
   private static final ObjectMapper OBJECT_MAPPER = ProtobufObjectMapper.DEFAULT;
 
   private final ProtoMessageHelper<?> messageHelper;

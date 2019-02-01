@@ -21,7 +21,7 @@ import java.util.function.Function;
  * </ul>
  */
 public class BasicTypeFieldResolver implements IFieldResolver {
-  private final Map<Descriptors.FieldDescriptor.JavaType, IFieldValueConverter> typeConverterMap;
+  private final Map<Descriptors.FieldDescriptor.JavaType, IFieldConverter> typeConverterMap;
 
   public BasicTypeFieldResolver() {
     typeConverterMap = Maps.newHashMap();
@@ -36,8 +36,8 @@ public class BasicTypeFieldResolver implements IFieldResolver {
     typeConverterMap.put(Descriptors.FieldDescriptor.JavaType.STRING, new StringFieldConverter());
   }
 
-  public IFieldValueConverter findFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
-    IFieldValueConverter fieldConverter = typeConverterMap.get(fieldDescriptor.getJavaType());
+  public IFieldConverter findFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
+    IFieldConverter fieldConverter = typeConverterMap.get(fieldDescriptor.getJavaType());
     if (fieldConverter == null) {
       throw new FieldConversionException(
           "no converter found, field=" + fieldDescriptor + ", javaType=" +

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class RepeatedFieldConverter implements IFieldValueConverter {
+public class RepeatedFieldConverter implements IFieldConverter {
   private final Map<CharSequence, CharSequence> listLookupMap;
   private final LookupTranslator listValueEscaper;
   private final LookupTranslator listValueUnescaper;

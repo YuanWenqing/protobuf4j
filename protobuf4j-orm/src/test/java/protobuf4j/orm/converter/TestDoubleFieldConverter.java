@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class TestDoubleFieldConverter {
-  IFieldValueConverter converter = new DoubleFieldConverter();
+  IFieldConverter converter = new DoubleFieldConverter();
 
   @Test
   public void testToSqlValue() {

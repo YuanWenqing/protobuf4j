@@ -4,7 +4,7 @@ import com.google.protobuf.Descriptors;
 
 import java.util.Objects;
 
-public class BooleanFieldConverter implements IFieldValueConverter {
+public class BooleanFieldConverter implements IFieldConverter {
   @Override
   public Class<?> getSqlValueType() {
     return Integer.class;

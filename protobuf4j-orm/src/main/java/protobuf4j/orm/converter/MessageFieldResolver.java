@@ -21,28 +21,28 @@ public class MessageFieldResolver<M extends Message> implements IFieldResolver {
   private final ProtoMessageHelper<M> messageHelper;
   private final BasicTypeFieldResolver basicTypeFieldResolver;
 
-  private final Map<String, IFieldValueConverter> fieldValueConverterMap;
+  private final Map<String, IFieldConverter> fieldConverterMap;
 
   public MessageFieldResolver(Class<M> messageClass) {
     checkNotNull(messageClass);
     this.messageHelper = ProtoMessageHelper.getHelper(messageClass);
     this.basicTypeFieldResolver = new BasicTypeFieldResolver();
-    this.fieldValueConverterMap = Maps.newConcurrentMap();
+    this.fieldConverterMap = Maps.newConcurrentMap();
   }
 
   @Override
   public Object toSqlValue(Descriptors.FieldDescriptor fd, Object value) {
-    IFieldValueConverter fieldConverter = findFieldConverter(fd);
+    IFieldConverter fieldConverter = findFieldConverter(fd);
     return fieldConverter.toSqlValue(value);
   }
 
-  private IFieldValueConverter findFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
+  private IFieldConverter findFieldConverter(Descriptors.FieldDescriptor fieldDescriptor) {
     if (fieldDescriptor.isMapField()) {
       // check map first, because map field is also repeated
-      return this.fieldValueConverterMap.computeIfAbsent(fieldDescriptor.getName(),
+      return this.fieldConverterMap.computeIfAbsent(fieldDescriptor.getName(),
           fd -> new MapFieldConverter(messageHelper, fieldDescriptor, basicTypeFieldResolver));
     } else if (fieldDescriptor.isRepeated()) {
-      return this.fieldValueConverterMap.computeIfAbsent(fieldDescriptor.getName(),
+      return this.fieldConverterMap.computeIfAbsent(fieldDescriptor.getName(),
           fd -> new RepeatedFieldConverter(fieldDescriptor, basicTypeFieldResolver));
     } else if (isTimestampField(fieldDescriptor)) {
       return timestampFieldConverter;
@@ -58,7 +58,7 @@ public class MessageFieldResolver<M extends Message> implements IFieldResolver {
 
   @Override
   public Object fromSqlValue(Descriptors.FieldDescriptor fd, Object sqlValue) {
-    IFieldValueConverter converter = findFieldConverter(fd);
+    IFieldConverter converter = findFieldConverter(fd);
     if (converter == null) {
       throw new FieldConversionException(
           "no converter found, javaType=" + fd.getJavaType() + ", sqlValue=`" + sqlValue +
@@ -76,7 +76,7 @@ public class MessageFieldResolver<M extends Message> implements IFieldResolver {
   public Class<?> resolveSqlValueType(Descriptors.FieldDescriptor fd) {
     // map/list 使用string拼接
     if (fd.isMapField() || fd.isRepeated()) return String.class;
-    IFieldValueConverter fieldConverter = findFieldConverter(fd);
+    IFieldConverter fieldConverter = findFieldConverter(fd);
     return fieldConverter.getSqlValueType();
   }
 
