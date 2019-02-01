@@ -81,7 +81,11 @@ public class MessageFieldResolver<M extends Message> implements IFieldResolver {
   @Override
   public Class<?> resolveSqlValueType(Descriptors.FieldDescriptor fieldDescriptor) {
     // map/list 使用string拼接
-    if (fieldDescriptor.isMapField() || fieldDescriptor.isRepeated()) return String.class;
+    if (fieldDescriptor.isMapField() || fieldDescriptor.isRepeated()) {
+      return String.class;
+    } else if (isTimestampField(fieldDescriptor)) {
+      return java.sql.Timestamp.class;
+    }
     IFieldConverter fieldConverter = findFieldConverter(fieldDescriptor);
     return fieldConverter.getSqlValueType();
   }

@@ -24,7 +24,6 @@ import protobuf4j.orm.converter.MessageFieldResolver;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -120,13 +119,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    * @see JdbcUtils#getResultSetValue(ResultSet, int, Class)
    */
   public Object getColumnValue(ResultSet rs, int index, FieldDescriptor fd) throws SQLException {
-    Class<?> valueType;
-    if (fieldResolver.isTimestampField(fd)) {
-      valueType = Timestamp.class;
-    } else {
-      valueType = fieldResolver.resolveSqlValueType(fd);
-    }
-    return JdbcUtils.getResultSetValue(rs, index, valueType);
+    return JdbcUtils.getResultSetValue(rs, index, fieldResolver.resolveSqlValueType(fd));
   }
 
 }
