@@ -5,6 +5,7 @@ package protobuf4j.orm.converter;
 
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Message;
+import com.google.protobuf.Timestamp;
 import protobuf4j.core.ProtoMessageHelper;
 
 import static com.google.common.base.Preconditions.*;
@@ -57,10 +58,8 @@ public class MessageFieldResolver<M extends Message> implements IFieldResolver {
   }
 
   public boolean isTimestampField(Descriptors.FieldDescriptor fieldDescriptor) {
-    // TODO: check timestamp class
-    return !fieldDescriptor.isRepeated() &&
-        Descriptors.FieldDescriptor.JavaType.LONG.equals(fieldDescriptor.getJavaType()) &&
-        fieldDescriptor.getName().endsWith("_time");
+    return Descriptors.FieldDescriptor.JavaType.MESSAGE == fieldDescriptor.getJavaType() &&
+        messageHelper.getFieldType(fieldDescriptor.getName()).equals(Timestamp.class);
   }
 
   @Override

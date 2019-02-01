@@ -19,11 +19,12 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import protobuf4j.core.ProtoMessageHelper;
-import protobuf4j.orm.converter.IFieldResolver;
+import protobuf4j.orm.converter.MessageFieldResolver;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,7 +43,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
   private final Class<T> mappedClass;
   @NonNull
   private final ProtoMessageHelper<T> messageHelper;
-  private final IFieldResolver fieldResolver;
+  private final MessageFieldResolver<T> fieldResolver;
   /**
    * Set whether we're strictly validating that all bean properties have been mapped from
    * corresponding database fields.
@@ -51,7 +52,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    */
   private boolean checkFullyPopulated = false;
 
-  public ProtoMessageRowMapper(Class<T> mappedClass, IFieldResolver fieldResolver) {
+  public ProtoMessageRowMapper(Class<T> mappedClass, MessageFieldResolver<T> fieldResolver) {
     this.mappedClass = mappedClass;
     this.messageHelper = ProtoMessageHelper.getHelper(mappedClass);
     this.fieldResolver = fieldResolver;
@@ -119,7 +120,13 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    * @see JdbcUtils#getResultSetValue(ResultSet, int, Class)
    */
   public Object getColumnValue(ResultSet rs, int index, FieldDescriptor fd) throws SQLException {
-    return JdbcUtils.getResultSetValue(rs, index, fieldResolver.resolveSqlValueType(fd));
+    Class<?> valueType;
+    if (fieldResolver.isTimestampField(fd)) {
+      valueType = Timestamp.class;
+    } else {
+      valueType = fieldResolver.resolveSqlValueType(fd);
+    }
+    return JdbcUtils.getResultSetValue(rs, index, valueType);
   }
 
 }
