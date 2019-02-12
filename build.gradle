@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-//        mavenCentral()
         mavenLocal()
         maven {
             name "nexus"
@@ -10,6 +9,7 @@ buildscript {
                 password property("nexus.password")
             }
         }
+//        mavenCentral()
     }
     dependencies {
         classpath "com.google.protobuf:protobuf-gradle-plugin:$protobufPluginVersion"
@@ -19,7 +19,7 @@ buildscript {
 // project setting
 subprojects {
     group = "xyz.codemeans.protobuf4j"
-    version = "0.9.0"
+    version = "0.9.0.alpha"
 
     ext {
         publishable = true
@@ -35,24 +35,32 @@ subprojects {
                 password property("nexus.password")
             }
         }
+//        mavenCentral()
     }
 
     apply plugin: "java"
     apply plugin: "java-library"
-    apply plugin: "jacoco"
 
+    // artifacts
     jar << {
-//        println jar.archivePath
+        println "jar: ${archivePath}"
     }
     task sourcesJar(type: Jar, dependsOn: classes) {
         from sourceSets.main.allJava
         classifier = 'sources'
+        doLast {
+            println "sources: ${archivePath}"
+        }
     }
     task javadocJar(type: Jar, dependsOn: javadoc) {
         classifier = 'javadoc'
         from javadoc.destinationDir
+        doLast {
+            println "sources: ${archivePath}"
+        }
     }
 
+    apply plugin: "jacoco"
     jacocoTestReport.dependsOn(test)
     jacocoTestReport << {
         println jacocoTestReport.reports.html.entryPoint
@@ -74,24 +82,79 @@ project(":test-proto") {
 }
 // 配置发布
 configure(subprojects.findAll { it.ext.publishable }) {
-    // 在这里应用插件，否则相关publishing配置无法生效，but why?
-    apply plugin: 'maven-publish'
-    afterEvaluate {
-        project.publishing.publications {
+    // 在这里应用插件，否则相关publishing配置无法生效
+    apply plugin: "maven-publish"
+    publishing {
+        repositories {
+            maven {
+                name "oss"
+                def ossBaseUrl = "https://oss.sonatype.org/content/repositories"
+                url = project.hasProperty("release") ? "https://oss.sonatype.org/service/local/staging/deploy/maven2" : "$ossBaseUrl/snapshots"
+                credentials {
+                    username property("maven2.username")
+                    password property("maven2.password")
+                }
+            }
+        }
+        publications {
             mavenJava(MavenPublication) {
                 from components.java
-                artifactId project.archivesBaseName
-                version project.version
+
+                if (project.hasProperty("release")) {
+                    version = project.getVersion()
+                } else {
+                    version = project.getVersion() + "-SNAPSHOT"
+                }
 
                 artifact sourcesJar
+                artifact javadocJar
+
+                pom {
+                    name = 'Protobuf4j: A Facility Framework to Develop with Google Protobuf'
+                    description = 'A Facility Framework to Develop with Google Protobuf'
+                    url = 'https://github.com/YuanWenqing/protobuf4j'
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'yuanwq'
+                            name = 'YuanWenqing'
+                            email = 'ywq8876@163.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git://github.com:YuanWenqing/protobuf4j.git'
+                        developerConnection = 'scm:git:ssh://github.com:YuanWenqing/protobuf4j.git'
+                        url = 'https://github.com/YuanWenqing/protobuf4j'
+                    }
+                }
             }
         }
-        project.publishToMavenLocal {
-            doLast {
-                def pub = publishing.publications.mavenJava
-                println "artifact: ${pub.groupId}:${pub.artifactId}:${pub.version}"
-            }
-        }
-        project.task('local').dependsOn(project.publishToMavenLocal)
     }
+    publish {
+        doLast {
+            def pub = publishing.publications.mavenJava
+            println "artifact: ${pub.groupId}:${pub.artifactId}:${pub.version}"
+            for (repo in publishing.repositories) {
+                println "upload to ${repo.url}"
+            }
+        }
+    }
+    publishToMavenLocal {
+        doLast {
+            def pub = publishing.publications.mavenJava
+            println "artifact: ${pub.groupId}:${pub.artifactId}:${pub.version}"
+        }
+    }
+    task('local').dependsOn(publishToMavenLocal)
+
+    apply plugin: "signing"  // generate a signature file for each artifact
+    signing {
+        sign publishing.publications.mavenJava
+    }
+
 }
