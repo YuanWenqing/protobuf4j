@@ -90,7 +90,7 @@ public class TestMessageDao {
         msg.getCreateTime().getSeconds() * 1000 <= System.currentTimeMillis());
 
     assertNull(dao.selectOneByPrimaryKey(-1L));
-    assertNotNull(dao.selectOne(new WhereClause()));
+    assertNotNull(dao.selectOneByWhere(new WhereClause()));
   }
 
   @Test
@@ -140,7 +140,7 @@ public class TestMessageDao {
       assertEquals(1, rowArr[i]);
     }
     // retrieve inserted data
-    List<TestModel.DbMsg> msgs = dao.selectCond(FieldAndValue.eq("string_v", "testMulti"));
+    List<TestModel.DbMsg> msgs = dao.selectByCond(FieldAndValue.eq("string_v", "testMulti"));
     assertEquals(3, msgs.size());
     List<Long> ids = Lists.transform(msgs, TestModel.DbMsg::getId);
     // select multi
@@ -150,7 +150,7 @@ public class TestMessageDao {
     int rows = dao.deleteMultiByPrimaryKey(ids);
     assertEquals(3, rows);
     // assert after delete
-    msgs = dao.selectCond(FieldAndValue.eq("string_v", "testMulti"));
+    msgs = dao.selectByCond(FieldAndValue.eq("string_v", "testMulti"));
     assertEquals(0, msgs.size());
     map = dao.selectMultiByPrimaryKey(ids);
     assertEquals(0, msgs.size());
@@ -197,7 +197,7 @@ public class TestMessageDao {
     assertFalse(iter2.hasNext());
 
     IExpression cond = FieldAndValue.eq("string_v", "testIterator");
-    iter1 = dao.selectCond(cond).iterator();
+    iter1 = dao.selectByCond(cond).iterator();
     iter2 = dao.iterator(cond, 2);
     while (iter1.hasNext()) {
       assertTrue(iter2.hasNext());
@@ -222,7 +222,7 @@ public class TestMessageDao {
     int expectCount = dao.selectAll().size();
     Assert.assertEquals(expectCount, dao.count(null));
 
-    expectCount = dao.selectCond(cond).size();
+    expectCount = dao.selectByCond(cond).size();
     assertEquals(expectCount, dao.count(cond));
 
     int sum = 0;
@@ -266,7 +266,7 @@ public class TestMessageDao {
     RawSql rawSql = new RawSql(sql, Lists.newArrayList(time));
     int rows = dao.doRawSql(rawSql);
     assertEquals(1, rows);
-    assertTrue(dao.selectCond(FieldAndValue.eq("int64_v", time)).size() > 0);
+    assertTrue(dao.selectByCond(FieldAndValue.eq("int64_v", time)).size() > 0);
   }
 
   @Test

@@ -290,7 +290,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
       }
 
       private void setupNextIteration() {
-        delegate = ProtoMessageDao.this.selectWhere(where).iterator();
+        delegate = ProtoMessageDao.this.selectByWhere(where).iterator();
         where.setPagination(where.getPagination().next());
       }
 
@@ -315,19 +315,19 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
   ////////////////////////////// select //////////////////////////////
 
   @Override
-  public T selectOne(IExpression cond) {
+  public T selectOneByCond(IExpression cond) {
     WhereClause where = QueryCreator.where().limit(1);
     where.setCond(cond);
-    return selectOne(where);
+    return selectOneByWhere(where);
   }
 
   @Override
-  public T selectOne(@Nonnull WhereClause where) {
+  public T selectOneByWhere(@Nonnull WhereClause where) {
     checkNotNull(where);
     if (where.getPagination() == null) {
       where.limit(1);
     }
-    List<T> messages = selectWhere(where);
+    List<T> messages = selectByWhere(where);
     if (messages.isEmpty()) {
       return null;
     }
@@ -336,18 +336,18 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
 
   @Override
   public List<T> selectAll() {
-    return selectWhere(new WhereClause());
+    return selectByWhere(new WhereClause());
   }
 
   @Override
-  public List<T> selectCond(IExpression cond) {
+  public List<T> selectByCond(IExpression cond) {
     WhereClause whereClause = QueryCreator.where();
     whereClause.setCond(cond);
-    return selectWhere(whereClause);
+    return selectByWhere(whereClause);
   }
 
   @Override
-  public List<T> selectWhere(@Nonnull WhereClause where) {
+  public List<T> selectByWhere(@Nonnull WhereClause where) {
     checkNotNull(where);
     SelectClause select = new SelectClause().select(SqlUtil.SELECT_STAR);
     SelectSql sql = new SelectSql(select, fromClause);

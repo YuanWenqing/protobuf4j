@@ -70,14 +70,14 @@ public interface IMessageDao<T> {
   /**
    * 根据条件查找一条数据
    */
-  T selectOne(@Nullable IExpression cond);
+  T selectOneByCond(@Nullable IExpression cond);
 
   /**
    * 根据where子句查找一条数据
    *
    * @param where 遍历条件、排序和分页配置
    */
-  T selectOne(@Nonnull WhereClause where);
+  T selectOneByWhere(@Nonnull WhereClause where);
 
   /**
    * 返回表中的所有数据
@@ -91,14 +91,14 @@ public interface IMessageDao<T> {
    * <p>
    * 注意：条件需要制定的范围小一些，不要一次取太多！
    */
-  List<T> selectCond(@Nullable IExpression cond);
+  List<T> selectByCond(@Nullable IExpression cond);
 
   /**
    * 根据where子句返回所有数据
    *
    * @param where 遍历条件、排序和分页配置
    */
-  List<T> selectWhere(@Nonnull WhereClause where);
+  List<T> selectByWhere(@Nonnull WhereClause where);
 
   /**
    * select方法

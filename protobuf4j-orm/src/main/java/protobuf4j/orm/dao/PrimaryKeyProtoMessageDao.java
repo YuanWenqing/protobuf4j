@@ -33,7 +33,7 @@ public class PrimaryKeyProtoMessageDao<K, T extends Message> extends ProtoMessag
   @Nullable
   @Override
   public T selectOneByPrimaryKey(@Nonnull K key) {
-    return selectOne(FieldAndValue.eq(primaryKey, key));
+    return selectOneByCond(FieldAndValue.eq(primaryKey, key));
   }
 
   @SuppressWarnings("unchecked")
@@ -42,7 +42,7 @@ public class PrimaryKeyProtoMessageDao<K, T extends Message> extends ProtoMessag
     if (keys.isEmpty()) {
       return Collections.emptyMap();
     }
-    List<T> items = selectCond(FieldAndValue.in(primaryKey, keys));
+    List<T> items = selectByCond(FieldAndValue.in(primaryKey, keys));
     if (items == null || items.isEmpty()) {
       return Collections.emptyMap();
     }
