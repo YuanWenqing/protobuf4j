@@ -19,7 +19,7 @@ buildscript {
 // project setting
 subprojects {
     group = "xyz.codemeans.protobuf4j"
-    version = "0.9.0.alpha"
+    version = "0.9.1.alpha"
 
     ext {
         publishable = true
