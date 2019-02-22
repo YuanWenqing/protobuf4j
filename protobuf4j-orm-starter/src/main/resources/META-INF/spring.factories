@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  protobuf4j.spring.DaoJdbcAutoConfiguration
+  protobuf4j.orm.DaoJdbcAutoConfiguration

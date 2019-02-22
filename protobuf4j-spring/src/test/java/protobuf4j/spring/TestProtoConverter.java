@@ -32,8 +32,7 @@ public class TestProtoConverter {
 
   @Test
   public void testMessage() throws IOException {
-    ProtoMessageConverter converter = new ProtoMessageConverter();
-    converter.setObjectMapper(ProtobufObjectMapper.DEFAULT);
+    ProtoMessageConverter converter = new ProtoMessageConverter(ProtobufObjectMapper.DEFAULT);
 
     assertTrue(converter.matches(null, new TypeDescriptor(getField("msgA"))));
     assertTrue(converter.matches(null, new TypeDescriptor(getField("msgB"))));

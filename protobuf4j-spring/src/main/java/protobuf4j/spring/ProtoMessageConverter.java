@@ -3,37 +3,27 @@
  */
 package protobuf4j.spring;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.ConditionalConverter;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 import protobuf4j.core.ProtoMessageHelper;
+import protobuf4j.core.ProtobufObjectMapper;
 
 import java.io.IOException;
-
-import static com.google.common.base.Preconditions.*;
 
 /**
  * author yuanwq
  */
 public class ProtoMessageConverter
-    implements ConverterFactory<String, Message>, ConditionalConverter, InitializingBean {
-  private ObjectMapper objectMapper;
+    implements ConverterFactory<String, Message>, ConditionalConverter {
+  private final ProtobufObjectMapper objectMapper;
 
-  @Autowired
-  public void setObjectMapper(ObjectMapper objectMapper) {
+  public ProtoMessageConverter(ProtobufObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
-  }
-
-  @Override
-  public void afterPropertiesSet() {
-    checkNotNull(objectMapper, "no ObjectMapper set");
   }
 
   @Override

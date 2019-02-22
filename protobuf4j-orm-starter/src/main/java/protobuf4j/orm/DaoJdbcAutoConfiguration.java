@@ -1,4 +1,4 @@
-package protobuf4j.spring;
+package protobuf4j.orm;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

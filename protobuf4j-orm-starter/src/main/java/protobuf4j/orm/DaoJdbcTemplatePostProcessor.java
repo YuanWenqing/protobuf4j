@@ -1,4 +1,4 @@
-package protobuf4j.spring;
+package protobuf4j.orm;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
