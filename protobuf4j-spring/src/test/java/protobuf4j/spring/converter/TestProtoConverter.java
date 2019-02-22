@@ -1,4 +1,4 @@
-package protobuf4j.spring;
+package protobuf4j.spring.converter;
 
 import org.junit.Test;
 import org.springframework.core.convert.ConversionFailedException;

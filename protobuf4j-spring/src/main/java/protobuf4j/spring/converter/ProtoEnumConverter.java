@@ -1,4 +1,4 @@
-package protobuf4j.spring;
+package protobuf4j.spring.converter;
 
 import com.google.protobuf.ProtocolMessageEnum;
 import org.apache.commons.lang3.StringUtils;
