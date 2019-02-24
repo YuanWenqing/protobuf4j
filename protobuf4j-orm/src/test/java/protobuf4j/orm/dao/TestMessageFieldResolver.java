@@ -8,7 +8,7 @@ import com.google.protobuf.MapEntry;
 import org.junit.Test;
 import protobuf4j.core.ProtoMessageHelper;
 import protobuf4j.orm.converter.FieldConversionException;
-import protobuf4j.orm.converter.MessageFieldResolver;
+import protobuf4j.orm.converter.FieldResolver;
 import protobuf4j.test.proto.TestModel;
 
 import java.util.Collections;
@@ -25,8 +25,8 @@ import static org.junit.Assert.*;
 public class TestMessageFieldResolver {
   private ProtoMessageHelper<TestModel.MsgA> helperA =
       ProtoMessageHelper.getHelper(TestModel.MsgA.class);
-  MessageFieldResolver<TestModel.MsgA> fieldResolver =
-      new MessageFieldResolver<>(TestModel.MsgA.class);
+  FieldResolver<TestModel.MsgA> fieldResolver =
+      new FieldResolver<>(TestModel.MsgA.class);
   private ProtoMessageHelper<TestModel.MsgB> helperB =
       ProtoMessageHelper.getHelper(TestModel.MsgB.class);
 

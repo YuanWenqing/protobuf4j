@@ -11,8 +11,9 @@ import protobuf4j.core.ProtoMessageHelper;
 import static com.google.common.base.Preconditions.*;
 
 /**
+ * resolve value type and handle value conversion for fields of specified Message class
  */
-public class MessageFieldResolver<M extends Message> implements IFieldResolver {
+public class FieldResolver<M extends Message> implements IFieldResolver {
   private static final TimestampFieldConverter timestampFieldConverter =
       new TimestampFieldConverter();
 
@@ -21,7 +22,7 @@ public class MessageFieldResolver<M extends Message> implements IFieldResolver {
   private final MapFieldConverter mapFieldConverter;
   private final RepeatedFieldConverter repeatedFieldConverter;
 
-  public MessageFieldResolver(Class<M> messageClass) {
+  public FieldResolver(Class<M> messageClass) {
     checkNotNull(messageClass);
     this.messageHelper = ProtoMessageHelper.getHelper(messageClass);
     this.basicTypeFieldResolver = new BasicTypeFieldResolver();

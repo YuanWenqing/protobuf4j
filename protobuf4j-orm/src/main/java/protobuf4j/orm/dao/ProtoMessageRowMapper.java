@@ -19,7 +19,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import protobuf4j.core.ProtoMessageHelper;
-import protobuf4j.orm.converter.MessageFieldResolver;
+import protobuf4j.orm.converter.FieldResolver;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -42,7 +42,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
   private final Class<T> mappedClass;
   @NonNull
   private final ProtoMessageHelper<T> messageHelper;
-  private final MessageFieldResolver<T> fieldResolver;
+  private final FieldResolver<T> fieldResolver;
   /**
    * Set whether we're strictly validating that all bean properties have been mapped from
    * corresponding database fields.
@@ -51,7 +51,7 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
    */
   private boolean checkFullyPopulated = false;
 
-  public ProtoMessageRowMapper(Class<T> mappedClass, MessageFieldResolver<T> fieldResolver) {
+  public ProtoMessageRowMapper(Class<T> mappedClass, FieldResolver<T> fieldResolver) {
     this.mappedClass = mappedClass;
     this.messageHelper = ProtoMessageHelper.getHelper(mappedClass);
     this.fieldResolver = fieldResolver;
