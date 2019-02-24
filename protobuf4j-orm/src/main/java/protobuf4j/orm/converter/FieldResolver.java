@@ -58,7 +58,7 @@ public class FieldResolver<M extends Message> implements IFieldResolver {
     return basicTypeFieldResolver.findFieldConverter(fieldDescriptor);
   }
 
-  public boolean isTimestampField(Descriptors.FieldDescriptor fieldDescriptor) {
+  private boolean isTimestampField(Descriptors.FieldDescriptor fieldDescriptor) {
     return Descriptors.FieldDescriptor.JavaType.MESSAGE == fieldDescriptor.getJavaType() &&
         messageHelper.getFieldType(fieldDescriptor.getName()).equals(Timestamp.class);
   }
