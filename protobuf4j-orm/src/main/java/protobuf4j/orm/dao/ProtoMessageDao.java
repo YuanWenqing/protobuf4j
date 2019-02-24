@@ -14,8 +14,8 @@ import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import protobuf4j.core.ProtoMessageHelper;
+import protobuf4j.orm.converter.FieldResolver;
 import protobuf4j.orm.converter.IFieldResolver;
-import protobuf4j.orm.converter.MessageFieldResolver;
 import protobuf4j.orm.sql.*;
 import protobuf4j.orm.sql.clause.*;
 import protobuf4j.orm.sql.expr.RawExpr;
@@ -65,18 +65,18 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
   protected JdbcTemplate jdbcTemplate;
 
   public ProtoMessageDao(@Nonnull Class<T> messageType) {
-    this(messageType, new MessageFieldResolver<>(messageType), null);
+    this(messageType, new FieldResolver<>(messageType), null);
   }
 
   /**
    * @param tableName 为空，表示使用默认规则生成表名
    */
-  public ProtoMessageDao(@Nonnull Class<T> messageType, MessageFieldResolver<T> fieldResolver,
+  public ProtoMessageDao(@Nonnull Class<T> messageType, FieldResolver<T> fieldResolver,
       @Nullable String tableName) {
     this.messageType = checkNotNull(messageType);
     this.fieldResolver = checkNotNull(fieldResolver);
     this.messageHelper = ProtoMessageHelper.getHelper(messageType);
-    this.messageMapper = new ProtoMessageRowMapper<>(messageType, fieldResolver);
+    this.messageMapper = new ProtoMessageRowMapper<>(messageHelper, fieldResolver);
     this.tableName = StringUtils.defaultIfBlank(tableName, OrmUtils.tableName(messageType));
     this.fromClause = QueryCreator.from(this.tableName);
 

@@ -12,20 +12,16 @@ package protobuf4j.orm.dao;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.dao.DataRetrievalFailureException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import protobuf4j.core.ProtoMessageHelper;
-import protobuf4j.orm.converter.MessageFieldResolver;
+import protobuf4j.orm.converter.FieldResolver;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * 将数据库一行数据映射为Protobuf Message
@@ -35,32 +31,17 @@ import java.util.Set;
 @Setter
 @Getter
 public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
-  /**
-   * The class we are mapping to
-   */
-  @NonNull
-  private final Class<T> mappedClass;
-  @NonNull
   private final ProtoMessageHelper<T> messageHelper;
-  private final MessageFieldResolver<T> fieldResolver;
-  /**
-   * Set whether we're strictly validating that all bean properties have been mapped from
-   * corresponding database fields.
-   * <p>
-   * Default is {@code false}, accepting unpopulated properties in the target bean.
-   */
-  private boolean checkFullyPopulated = false;
+  private final FieldResolver<T> fieldResolver;
 
-  public ProtoMessageRowMapper(Class<T> mappedClass, MessageFieldResolver<T> fieldResolver) {
-    this.mappedClass = mappedClass;
-    this.messageHelper = ProtoMessageHelper.getHelper(mappedClass);
+  public ProtoMessageRowMapper(ProtoMessageHelper<T> messageHelper,
+      FieldResolver<T> fieldResolver) {
+    this.messageHelper = messageHelper;
     this.fieldResolver = fieldResolver;
   }
 
   /**
-   * Extract the values for all columns in the current row.
-   * <p>
-   * Utilizes public setters and result set metadata.
+   * map the values for all columns in the current row to a Message
    *
    * @see ResultSetMetaData
    */
@@ -70,7 +51,6 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
     Message.Builder builder = this.messageHelper.newBuilder();
     ResultSetMetaData rsmd = rs.getMetaData();
     int columnCount = rsmd.getColumnCount();
-    Set<String> populatedProperties = new HashSet<>();
 
     for (int index = 1; index <= columnCount; index++) {
       String column = JdbcUtils.lookupColumnName(rsmd, index);
@@ -83,21 +63,12 @@ public class ProtoMessageRowMapper<T extends Message> implements RowMapper<T> {
           if (value == null) continue;
           value = fieldResolver.fromSqlValue(fd, value);
           builder.setField(fd, value);
-          if (checkFullyPopulated) {
-            populatedProperties.add(fd.getName());
-          }
         } catch (Exception ex) {
           throw new DataRetrievalFailureException(
               "Unable to map column " + column + " to " + fd.getFullName() + " of type " +
                   fd.getJavaType() + ", value=" + value, ex);
         }
       }
-    }
-
-    if (checkFullyPopulated && !populatedProperties.equals(messageHelper.getFieldNames())) {
-      throw new InvalidDataAccessApiUsageException("Given ResultSet does not contain all fields " +
-          "necessary to populate object of class [" + this.mappedClass + "]: " +
-          messageHelper.getFieldNames());
     }
 
     return (T) builder.build();

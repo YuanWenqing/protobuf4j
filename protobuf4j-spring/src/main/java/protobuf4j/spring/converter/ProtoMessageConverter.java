@@ -1,7 +1,7 @@
 /**
  * author yuanwq, date: 2017年2月17日
  */
-package protobuf4j.spring;
+package protobuf4j.spring.converter;
 
 import com.google.protobuf.Message;
 import org.apache.commons.lang3.StringUtils;

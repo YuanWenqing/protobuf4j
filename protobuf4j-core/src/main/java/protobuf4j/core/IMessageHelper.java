@@ -14,7 +14,7 @@ public interface IMessageHelper<T> {
   /**
    * @return bean的类型
    */
-  Class<? extends T> getType();
+  Class<? extends T> getMessageType();
 
   /**
    * @return bean的默认值
@@ -52,6 +52,14 @@ public interface IMessageHelper<T> {
    * @return 字段名和字段类型的映射
    */
   Map<String, Class<?>> getFieldTypeMap();
+
+  /**
+   * {@code fieldName}的默认值
+   *
+   * @param fieldName
+   * @return
+   */
+  Object getFieldDefaultValue(String fieldName);
 
   /**
    * message中对应字段是否设置

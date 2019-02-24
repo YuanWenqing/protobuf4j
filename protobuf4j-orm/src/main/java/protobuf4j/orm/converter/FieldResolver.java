@@ -11,8 +11,9 @@ import protobuf4j.core.ProtoMessageHelper;
 import static com.google.common.base.Preconditions.*;
 
 /**
+ * resolve value type and handle value conversion for fields of specified Message class
  */
-public class MessageFieldResolver<M extends Message> implements IFieldResolver {
+public class FieldResolver<M extends Message> implements IFieldResolver {
   private static final TimestampFieldConverter timestampFieldConverter =
       new TimestampFieldConverter();
 
@@ -20,13 +21,15 @@ public class MessageFieldResolver<M extends Message> implements IFieldResolver {
   private final BasicTypeFieldResolver basicTypeFieldResolver;
   private final MapFieldConverter mapFieldConverter;
   private final RepeatedFieldConverter repeatedFieldConverter;
+  private final MessageFieldConverter messageFieldConverter;
 
-  public MessageFieldResolver(Class<M> messageClass) {
+  public FieldResolver(Class<M> messageClass) {
     checkNotNull(messageClass);
     this.messageHelper = ProtoMessageHelper.getHelper(messageClass);
     this.basicTypeFieldResolver = new BasicTypeFieldResolver();
     this.mapFieldConverter = new MapFieldConverter(messageHelper, basicTypeFieldResolver);
     this.repeatedFieldConverter = new RepeatedFieldConverter(basicTypeFieldResolver);
+    this.messageFieldConverter = new MessageFieldConverter(messageHelper);
   }
 
   @Override
@@ -53,11 +56,13 @@ public class MessageFieldResolver<M extends Message> implements IFieldResolver {
       return repeatedFieldConverter;
     } else if (isTimestampField(fieldDescriptor)) {
       return timestampFieldConverter;
+    } else if (fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.MESSAGE) {
+      return messageFieldConverter;
     }
     return basicTypeFieldResolver.findFieldConverter(fieldDescriptor);
   }
 
-  public boolean isTimestampField(Descriptors.FieldDescriptor fieldDescriptor) {
+  private boolean isTimestampField(Descriptors.FieldDescriptor fieldDescriptor) {
     return Descriptors.FieldDescriptor.JavaType.MESSAGE == fieldDescriptor.getJavaType() &&
         messageHelper.getFieldType(fieldDescriptor.getName()).equals(Timestamp.class);
   }

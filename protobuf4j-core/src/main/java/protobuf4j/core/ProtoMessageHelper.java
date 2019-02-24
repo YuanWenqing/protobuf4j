@@ -9,15 +9,12 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 处理Protobuf Message反射的辅助类
- *
+ * <p>
  * author: yuanwq
  * date: 2018/7/2
  */
@@ -57,15 +54,15 @@ public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> 
   private static final String METHOD_GET_DESCRIPTOR = "getDescriptor";
   private static final String METHOD_NEW_BUILDER = "newBuilder";
 
-  private final Class<T> cls;
+  private final Class<T> messageType;
   private Descriptors.Descriptor descriptor;
   private Map<String, Descriptors.FieldDescriptor> field2descriptor;
   private Map<String, Class<?>> field2type;
   private Message.Builder internalBuilder;
 
-  private ProtoMessageHelper(Class<T> cls) {
-    Preconditions.checkNotNull(cls);
-    this.cls = cls;
+  private ProtoMessageHelper(Class<T> messageType) {
+    Preconditions.checkNotNull(messageType);
+    this.messageType = messageType;
     doInit();
   }
 
@@ -193,9 +190,10 @@ public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> 
 
   private Object invokeStaticMethodUnchecked(String method) {
     try {
-      return MethodUtils.invokeStaticMethod(this.cls, method);
+      return MethodUtils.invokeStaticMethod(this.messageType, method);
     } catch (Exception e) {
-      throw new RuntimeException("fail to invoke static method `" + method + "` on " + this.cls, e);
+      throw new RuntimeException(
+          "fail to invoke static method `" + method + "` on " + this.messageType, e);
     }
   }
 
@@ -218,8 +216,8 @@ public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> 
   }
 
   @Override
-  public Class<? extends T> getType() {
-    return cls;
+  public Class<? extends T> getMessageType() {
+    return messageType;
   }
 
   @SuppressWarnings("unchecked")
@@ -248,6 +246,17 @@ public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> 
     return field2type.get(fieldName);
   }
 
+  @Override
+  public Object getFieldDefaultValue(String fieldName) {
+    Descriptors.FieldDescriptor fd = checkFieldDescriptor(fieldName);
+    if (fd.isRepeated()) {
+      return Collections.emptyList();
+    } else if (fd.getJavaType() == Descriptors.FieldDescriptor.JavaType.MESSAGE) {
+      return newBuilderForField(fd).getDefaultInstanceForType();
+    }
+    return fd.getDefaultValue();
+  }
+
   public Descriptors.FieldDescriptor getFieldDescriptor(String fieldName) {
     return field2descriptor.get(fieldName);
   }
@@ -268,7 +277,7 @@ public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> 
   public Descriptors.FieldDescriptor checkFieldDescriptor(String fieldName) {
     Descriptors.FieldDescriptor fd = getFieldDescriptor(fieldName);
     if (fd == null) {
-      throw new RuntimeException("no field named as `" + fieldName + "` in " + this.cls);
+      throw new RuntimeException("no field named as `" + fieldName + "` in " + this.messageType);
     }
     return fd;
   }
