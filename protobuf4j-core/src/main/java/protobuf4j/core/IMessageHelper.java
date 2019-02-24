@@ -54,6 +54,14 @@ public interface IMessageHelper<T> {
   Map<String, Class<?>> getFieldTypeMap();
 
   /**
+   * {@code fieldName}的默认值
+   *
+   * @param fieldName
+   * @return
+   */
+  Object getFieldDefaultValue(String fieldName);
+
+  /**
    * message中对应字段是否设置
    * <ul>
    * <li>基本类型: true=不等于默认值</li>

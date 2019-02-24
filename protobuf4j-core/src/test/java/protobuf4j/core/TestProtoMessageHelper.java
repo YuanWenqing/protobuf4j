@@ -8,6 +8,7 @@ import org.junit.Test;
 import protobuf4j.test.MsgsForTest;
 import protobuf4j.test.proto.TestModel;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -257,4 +258,40 @@ public class TestProtoMessageHelper {
     System.out.println("MsgsForTest.allSetMsgA: " + helper.toString(MsgsForTest.allSetMsgA));
   }
 
+  @Test
+  public void testFieldDefaultValue() {
+    // singular
+    assertEquals(0, helper.getFieldDefaultValue("int32"));
+    assertEquals(0L, helper.getFieldDefaultValue("int64"));
+    assertEquals(0f, helper.getFieldDefaultValue("float"));
+    assertEquals(0d, helper.getFieldDefaultValue("double"));
+    assertEquals(false, helper.getFieldDefaultValue("bool"));
+    assertEquals("", helper.getFieldDefaultValue("string"));
+    assertEquals(ByteString.EMPTY, helper.getFieldDefaultValue("bytes"));
+    assertEquals(TestModel.EnumA.EA0.getValueDescriptor(), helper.getFieldDefaultValue("enuma"));
+    assertEquals(TestModel.MsgB.getDefaultInstance(), helper.getFieldDefaultValue("msgb"));
+
+    // repeated
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("int32_arr"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("int64_arr"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("float_arr"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("double_arr"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("bool_arr"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("string_arr"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("bytes_arr"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("enuma_arr"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("msgb_arr"));
+
+    // map
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("int32_map"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("int64_map"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("float_map"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("double_map"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("bool_map"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("string_map"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("bytes_map"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("enuma_map"));
+    assertEquals(Collections.emptyList(), helper.getFieldDefaultValue("msgb_map"));
+
+  }
 }

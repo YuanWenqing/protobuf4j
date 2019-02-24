@@ -9,15 +9,12 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 处理Protobuf Message反射的辅助类
- *
+ * <p>
  * author: yuanwq
  * date: 2018/7/2
  */
@@ -195,7 +192,8 @@ public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> 
     try {
       return MethodUtils.invokeStaticMethod(this.messageType, method);
     } catch (Exception e) {
-      throw new RuntimeException("fail to invoke static method `" + method + "` on " + this.messageType, e);
+      throw new RuntimeException(
+          "fail to invoke static method `" + method + "` on " + this.messageType, e);
     }
   }
 
@@ -246,6 +244,17 @@ public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> 
   @Override
   public Class<?> getFieldType(String fieldName) {
     return field2type.get(fieldName);
+  }
+
+  @Override
+  public Object getFieldDefaultValue(String fieldName) {
+    Descriptors.FieldDescriptor fd = checkFieldDescriptor(fieldName);
+    if (fd.isRepeated()) {
+      return Collections.emptyList();
+    } else if (fd.getJavaType() == Descriptors.FieldDescriptor.JavaType.MESSAGE) {
+      return newBuilderForField(fd).getDefaultInstanceForType();
+    }
+    return fd.getDefaultValue();
   }
 
   public Descriptors.FieldDescriptor getFieldDescriptor(String fieldName) {

@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
  * author: yuanwq
  * date: 2018/7/23
  */
-public class TestMessageFieldResolver {
+public class TestFieldResolver {
   private ProtoMessageHelper<TestModel.MsgA> helperA =
       ProtoMessageHelper.getHelper(TestModel.MsgA.class);
   FieldResolver<TestModel.MsgA> fieldResolver =
