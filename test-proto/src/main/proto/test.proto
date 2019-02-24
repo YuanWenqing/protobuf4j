@@ -19,6 +19,7 @@ message MsgA {
   bytes bytes = 7;
   EnumA enuma = 8;
   MsgB msgb = 9;
+  MsgA msga = 10;
 
   repeated int32 int32_arr = 11;
   repeated int64 int64_arr = 12;

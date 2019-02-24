@@ -1,11 +1,13 @@
 package protobuf4j.orm.converter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Descriptors;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
-import com.google.protobuf.MessageOrBuilder;
-import com.google.protobuf.util.JsonFormat;
+import org.apache.commons.lang3.StringUtils;
 import protobuf4j.core.ProtoMessageHelper;
+import protobuf4j.core.ProtobufObjectMapper;
+
+import java.io.IOException;
 
 /**
  * 处理Message类型的field
@@ -15,9 +17,7 @@ import protobuf4j.core.ProtoMessageHelper;
  */
 @SuppressWarnings("unchecked")
 public class MessageFiledConverter implements IFieldConverter {
-  private static final JsonFormat.Printer printer =
-      JsonFormat.printer().preservingProtoFieldNames().omittingInsignificantWhitespace();
-  private static final JsonFormat.Parser parser = JsonFormat.parser().ignoringUnknownFields();
+  private static final ObjectMapper OBJECT_MAPPER = ProtobufObjectMapper.DEFAULT;
 
   private final ProtoMessageHelper<?> messageHelper;
 
@@ -39,8 +39,8 @@ public class MessageFiledConverter implements IFieldConverter {
   public Object toSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object fieldValue) {
     if (fieldValue instanceof Message) {
       try {
-        return printer.print((MessageOrBuilder) fieldValue);
-      } catch (InvalidProtocolBufferException e) {
+        return OBJECT_MAPPER.writeValueAsString(fieldValue);
+      } catch (IOException e) {
         throw new FieldConversionException(
             "fail to convert message field, field=" + fieldDescriptor + ", fieldValue=" +
                 ProtoMessageHelper.printToString((Message) fieldValue), e);
@@ -52,7 +52,8 @@ public class MessageFiledConverter implements IFieldConverter {
 
   @Override
   public Object fromSqlValue(Descriptors.FieldDescriptor fieldDescriptor, Object sqlValue) {
-    if (sqlValue == null) {
+    if (sqlValue == null ||
+        (sqlValue instanceof String && StringUtils.isBlank((String) sqlValue))) {
       // cannot use helper.getFieldDefaultValue, may be repeated/map field
       return messageHelper.newBuilderForField(fieldDescriptor).getDefaultInstanceForType();
     }
@@ -61,11 +62,9 @@ public class MessageFiledConverter implements IFieldConverter {
     if (fieldType.isInstance(sqlValue)) {
       return sqlValue;
     } else if (sqlValue instanceof String) {
-      Message.Builder builder = messageHelper.newBuilderForField(fieldDescriptor);
       try {
-        parser.merge((String) sqlValue, builder);
-        return builder.build();
-      } catch (InvalidProtocolBufferException e) {
+        return OBJECT_MAPPER.readValue((String) sqlValue, fieldType);
+      } catch (IOException e) {
         throw new FieldConversionException(
             "fail to parse message field, field=" + fieldDescriptor + ", sqlValue=" +
                 FieldConversionException.toString(sqlValue), e);
