@@ -16,12 +16,12 @@ import java.io.IOException;
  * Date: 2019/2/24
  */
 @SuppressWarnings("unchecked")
-public class MessageFiledConverter implements IFieldConverter {
+public class MessageFieldConverter implements IFieldConverter {
   private static final ObjectMapper OBJECT_MAPPER = ProtobufObjectMapper.DEFAULT;
 
   private final ProtoMessageHelper<?> messageHelper;
 
-  public MessageFiledConverter(ProtoMessageHelper<?> messageHelper) {
+  public MessageFieldConverter(ProtoMessageHelper<?> messageHelper) {
     this.messageHelper = messageHelper;
   }
 

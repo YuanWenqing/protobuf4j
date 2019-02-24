@@ -21,7 +21,7 @@ public class FieldResolver<M extends Message> implements IFieldResolver {
   private final BasicTypeFieldResolver basicTypeFieldResolver;
   private final MapFieldConverter mapFieldConverter;
   private final RepeatedFieldConverter repeatedFieldConverter;
-  private final MessageFiledConverter messageFiledConverter;
+  private final MessageFieldConverter messageFieldConverter;
 
   public FieldResolver(Class<M> messageClass) {
     checkNotNull(messageClass);
@@ -29,7 +29,7 @@ public class FieldResolver<M extends Message> implements IFieldResolver {
     this.basicTypeFieldResolver = new BasicTypeFieldResolver();
     this.mapFieldConverter = new MapFieldConverter(messageHelper, basicTypeFieldResolver);
     this.repeatedFieldConverter = new RepeatedFieldConverter(basicTypeFieldResolver);
-    this.messageFiledConverter = new MessageFiledConverter(messageHelper);
+    this.messageFieldConverter = new MessageFieldConverter(messageHelper);
   }
 
   @Override
@@ -57,7 +57,7 @@ public class FieldResolver<M extends Message> implements IFieldResolver {
     } else if (isTimestampField(fieldDescriptor)) {
       return timestampFieldConverter;
     } else if (fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.MESSAGE) {
-      return messageFiledConverter;
+      return messageFieldConverter;
     }
     return basicTypeFieldResolver.findFieldConverter(fieldDescriptor);
   }
