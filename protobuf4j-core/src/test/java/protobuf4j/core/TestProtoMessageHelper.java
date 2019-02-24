@@ -33,7 +33,7 @@ public class TestProtoMessageHelper {
     assertSame(helper,
         ProtoMessageHelper.<TestModel.MsgA>getHelper(TestModel.MsgA.getDefaultInstance()));
 
-    assertEquals(TestModel.MsgA.class, helper.getType());
+    assertEquals(TestModel.MsgA.class, helper.getMessageType());
     assertEquals(TestModel.MsgA.getDefaultInstance(), helper.defaultValue());
     assertEquals(TestModel.MsgA.Builder.class, helper.newBuilder().getClass());
 

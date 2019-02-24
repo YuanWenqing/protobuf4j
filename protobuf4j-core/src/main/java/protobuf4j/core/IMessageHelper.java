@@ -14,7 +14,7 @@ public interface IMessageHelper<T> {
   /**
    * @return bean的类型
    */
-  Class<? extends T> getType();
+  Class<? extends T> getMessageType();
 
   /**
    * @return bean的默认值

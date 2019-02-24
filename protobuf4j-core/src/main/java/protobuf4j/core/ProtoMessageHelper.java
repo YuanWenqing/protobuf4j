@@ -57,15 +57,15 @@ public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> 
   private static final String METHOD_GET_DESCRIPTOR = "getDescriptor";
   private static final String METHOD_NEW_BUILDER = "newBuilder";
 
-  private final Class<T> cls;
+  private final Class<T> messageType;
   private Descriptors.Descriptor descriptor;
   private Map<String, Descriptors.FieldDescriptor> field2descriptor;
   private Map<String, Class<?>> field2type;
   private Message.Builder internalBuilder;
 
-  private ProtoMessageHelper(Class<T> cls) {
-    Preconditions.checkNotNull(cls);
-    this.cls = cls;
+  private ProtoMessageHelper(Class<T> messageType) {
+    Preconditions.checkNotNull(messageType);
+    this.messageType = messageType;
     doInit();
   }
 
@@ -193,9 +193,9 @@ public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> 
 
   private Object invokeStaticMethodUnchecked(String method) {
     try {
-      return MethodUtils.invokeStaticMethod(this.cls, method);
+      return MethodUtils.invokeStaticMethod(this.messageType, method);
     } catch (Exception e) {
-      throw new RuntimeException("fail to invoke static method `" + method + "` on " + this.cls, e);
+      throw new RuntimeException("fail to invoke static method `" + method + "` on " + this.messageType, e);
     }
   }
 
@@ -218,8 +218,8 @@ public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> 
   }
 
   @Override
-  public Class<? extends T> getType() {
-    return cls;
+  public Class<? extends T> getMessageType() {
+    return messageType;
   }
 
   @SuppressWarnings("unchecked")
@@ -268,7 +268,7 @@ public class ProtoMessageHelper<T extends Message> implements IMessageHelper<T> 
   public Descriptors.FieldDescriptor checkFieldDescriptor(String fieldName) {
     Descriptors.FieldDescriptor fd = getFieldDescriptor(fieldName);
     if (fd == null) {
-      throw new RuntimeException("no field named as `" + fieldName + "` in " + this.cls);
+      throw new RuntimeException("no field named as `" + fieldName + "` in " + this.messageType);
     }
     return fd;
   }

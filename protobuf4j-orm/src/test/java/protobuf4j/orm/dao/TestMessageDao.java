@@ -74,7 +74,7 @@ public class TestMessageDao {
     assertEquals(TestModel.DbMsg.class, dao.getMessageType());
     assertEquals("db_msg", dao.getTableName());
     assertTrue(dao.getMessageMapper() instanceof ProtoMessageRowMapper);
-    Assert.assertEquals(TestModel.DbMsg.class, dao.getMessageHelper().getType());
+    Assert.assertEquals(TestModel.DbMsg.class, dao.getMessageHelper().getMessageType());
     assertEquals(jdbcTemplate, dao.getJdbcTemplate());
   }
 
