@@ -76,7 +76,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
     this.messageType = checkNotNull(messageType);
     this.fieldResolver = checkNotNull(fieldResolver);
     this.messageHelper = ProtoMessageHelper.getHelper(messageType);
-    this.messageMapper = new ProtoMessageRowMapper<>(messageType, fieldResolver);
+    this.messageMapper = new ProtoMessageRowMapper<>(messageHelper, fieldResolver);
     this.tableName = StringUtils.defaultIfBlank(tableName, OrmUtils.tableName(messageType));
     this.fromClause = QueryCreator.from(this.tableName);
 
