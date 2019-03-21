@@ -1,7 +1,7 @@
 dependencies {
     api(project(":protobuf4j-core"))
 
-    implementation("org.springframework:spring-core:$springVersion")
+    api("org.springframework:spring-core:$springVersion")
 
     // test
     testImplementation(project(":test-proto"))
