@@ -1,4 +1,3 @@
-
 dependencies {
     // protobuf
     api("com.google.protobuf:protobuf-java:$protobufJavaVersion")
