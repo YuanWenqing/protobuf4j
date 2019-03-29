@@ -592,8 +592,12 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
     }
 
     public void log(Logger logger, long cost) {
-      logger.info("cost={}, {}, values: {}, {}", cost, this.sqlTemplate, this.values,
-          this.sqlStatement.toString().replace("\n", " "));
+      if (logger.isDebugEnabled()) {
+        logger.debug("cost={}, {}, values: {}, {}", cost, this.sqlTemplate, this.values,
+            this.sqlStatement.toString().replace("\n", " "));
+      } else {
+        logger.info("cost={}, {}, values: {}", cost, this.sqlTemplate, this.values);
+      }
     }
   }
 }
