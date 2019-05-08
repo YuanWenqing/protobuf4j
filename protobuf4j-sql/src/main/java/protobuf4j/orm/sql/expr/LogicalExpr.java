@@ -19,55 +19,5 @@ public class LogicalExpr extends AbstractBinaryExpr<LogicalOp> {
     super(left, op, right);
   }
 
-  public static LogicalExpr and(IExpression left, IExpression right) {
-    return new LogicalExpr(left, LogicalOp.AND, right);
-  }
 
-  public static LogicalExpr or(IExpression left, IExpression right) {
-    return new LogicalExpr(left, LogicalOp.OR, right);
-  }
-
-  public static LogicalExpr xor(IExpression left, IExpression right) {
-    return new LogicalExpr(left, LogicalOp.XOR, right);
-  }
-
-  public static LogicalExpr not(IExpression expr) {
-    return new LogicalExpr(null, LogicalOp.NOT, expr);
-  }
-
-  public static IExpression and(Collection<IExpression> conds) {
-    if (conds.isEmpty()) {
-      return null;
-    }
-    Iterator<IExpression> iterator = conds.iterator();
-    IExpression cond = iterator.next();
-    while (iterator.hasNext()) {
-      cond = cond.and(iterator.next());
-    }
-    return cond;
-  }
-
-  public static IExpression or(Collection<IExpression> conds) {
-    if (conds.isEmpty()) {
-      return null;
-    }
-    Iterator<IExpression> iterator = conds.iterator();
-    IExpression cond = iterator.next();
-    while (iterator.hasNext()) {
-      cond = cond.or(iterator.next());
-    }
-    return cond;
-  }
-
-  public static IExpression xor(Collection<IExpression> conds) {
-    if (conds.isEmpty()) {
-      return null;
-    }
-    Iterator<IExpression> iterator = conds.iterator();
-    IExpression cond = iterator.next();
-    while (iterator.hasNext()) {
-      cond = cond.xor(iterator.next());
-    }
-    return cond;
-  }
 }

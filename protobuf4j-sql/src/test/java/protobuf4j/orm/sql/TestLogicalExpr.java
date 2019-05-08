@@ -3,10 +3,7 @@ package protobuf4j.orm.sql;
 import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
-import protobuf4j.orm.sql.expr.Column;
-import protobuf4j.orm.sql.expr.LogicalExpr;
-import protobuf4j.orm.sql.expr.LogicalOp;
-import protobuf4j.orm.sql.expr.Value;
+import protobuf4j.orm.sql.expr.*;
 
 import java.util.List;
 
@@ -65,7 +62,7 @@ public class TestLogicalExpr {
 
   @Test
   public void testEmbedding() {
-    IExpression expr = LogicalExpr.and(FieldAndValue.add("a", 1), FieldAndField.add("a", "b"));
+    IExpression expr = Expressions.and(FieldAndValue.add("a", 1), FieldAndField.add("a", "b"));
     System.out.println(expr);
     assertEquals("(a+?) AND (a+b)", expr.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("(a+1) AND (a+b)", expr.toSolidSql(new StringBuilder()).toString());
@@ -74,15 +71,15 @@ public class TestLogicalExpr {
     assertEquals("a", sqlValues.get(0).getField());
     assertEquals(1, sqlValues.get(0).getValue());
 
-    expr = LogicalExpr.and(FieldAndField.and("a", "b"), FieldAndField.and("c", "d"));
+    expr = Expressions.and(FieldAndField.and("a", "b"), FieldAndField.and("c", "d"));
     System.out.println(expr);
     assertEquals("a AND b AND c AND d", expr.toSqlTemplate(new StringBuilder()).toString());
 
-    expr = LogicalExpr.and(FieldAndField.or("a", "b"), FieldAndField.and("c", "d"));
+    expr = Expressions.and(FieldAndField.or("a", "b"), FieldAndField.and("c", "d"));
     System.out.println(expr);
     assertEquals("(a OR b) AND c AND d", expr.toSqlTemplate(new StringBuilder()).toString());
 
-    expr = LogicalExpr.and(FieldAndField.gt("a", "b"), FieldAndField.and("c", "d"));
+    expr = Expressions.and(FieldAndField.gt("a", "b"), FieldAndField.and("c", "d"));
     System.out.println(expr);
     assertEquals("a>b AND c AND d", expr.toSqlTemplate(new StringBuilder()).toString());
 

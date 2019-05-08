@@ -16,27 +16,5 @@ public class ArithmeticExpr extends AbstractBinaryExpr<ArithmeticOp> {
     super(left, op, right);
   }
 
-  public static ArithmeticExpr add(IExpression left, IExpression right) {
-    return new ArithmeticExpr(left, ArithmeticOp.ADD, right);
-  }
 
-  public static ArithmeticExpr subtract(IExpression left, IExpression right) {
-    return new ArithmeticExpr(left, ArithmeticOp.SUBTRACT, right);
-  }
-
-  public static ArithmeticExpr multiply(IExpression left, IExpression right) {
-    return new ArithmeticExpr(left, ArithmeticOp.MULTIPLY, right);
-  }
-
-  public static ArithmeticExpr divide(IExpression left, IExpression right) {
-    return new ArithmeticExpr(left, ArithmeticOp.DIVIDE, right);
-  }
-
-  public static ArithmeticExpr divRound(IExpression left, IExpression right) {
-    return new ArithmeticExpr(left, ArithmeticOp.DIV_ROUND, right);
-  }
-
-  public static ArithmeticExpr mod(IExpression left, IExpression right) {
-    return new ArithmeticExpr(left, ArithmeticOp.MOD, right);
-  }
 }
