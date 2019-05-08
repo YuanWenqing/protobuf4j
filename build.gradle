@@ -29,7 +29,7 @@ buildscript {
 
 // git version
 apply plugin: "org.ajoberstar.grgit"
-version = "0.9.3.alpha"
+version = "1.0.0"
 if (!project.hasProperty("release")) {
     int commits = grgit.log().size()
 //    String abbreviatedId = grgit.head().abbreviatedId

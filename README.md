@@ -24,7 +24,7 @@ A Facility framework to develop with Google Protobuf, including:
 implementation("xyz.codemeans.protobuf4j:protobuf4j-orm-starter:$protobuf4jVersion")
 ~~~
 
-The latest version is `protobuf4jVersion=0.9.3.alpha`
+The latest version can be found in maven central repository.
 
 ### Properties
 
