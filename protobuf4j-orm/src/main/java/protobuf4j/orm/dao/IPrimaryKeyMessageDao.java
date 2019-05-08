@@ -1,7 +1,5 @@
 package protobuf4j.orm.dao;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -20,8 +18,7 @@ public interface IPrimaryKeyMessageDao<K, T> extends IMessageDao<T> {
    *
    * @param key 主键值
    */
-  @Nullable
-  T selectOneByPrimaryKey(@Nonnull K key);
+  T selectOneByPrimaryKey(K key);
 
   /**
    * 通过主键值集合查找多条数据

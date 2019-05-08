@@ -14,6 +14,7 @@ public class MsgsForTest {
   public static TestModel.MsgA allSetMsgA =
       TestModel.MsgA.newBuilder().setInt32(1).setInt64(1).setFloat(1).setDouble(1).setBool(true)
           .setString("1").setBytes(ByteString.copyFromUtf8("a")).setEnuma(TestModel.EnumA.EA2)
+          .setMsga(TestModel.MsgA.newBuilder().setString("a").getMsga())
           .setMsgb(TestModel.MsgB.newBuilder().setId("").build()).addInt32Arr(1).addInt64Arr(1)
           .addFloatArr(1).addDoubleArr(1).addBoolArr(false).addStringArr("a")
           .addBytesArr(ByteString.EMPTY).addEnumaArr(TestModel.EnumA.EA2)

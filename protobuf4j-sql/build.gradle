@@ -7,5 +7,6 @@ dependencies {
     api("org.apache.commons:commons-lang3:$commonsLang3Version")
     api("com.google.guava:guava:$guavaVersion")
 
+    testImplementation(project(":test-proto")) // dao testcase use this
     testImplementation("org.springframework:spring-test:${springVersion}")
 }

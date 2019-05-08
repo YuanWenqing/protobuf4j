@@ -1,0 +1,63 @@
+apply plugin: "com.google.protobuf"
+protobuf {
+    generatedFilesBaseDir = "$projectDir/gen/"
+    def userhome = System.properties['user.home']
+    plugins {
+        // define a codegen plugin named as `naming`
+        naming {
+            path = "$userhome/.protobuf/naming.py"
+        }
+    }
+    generateProtoTasks {
+        ofSourceSet('main')
+        // all() returns the collection of all protoc tasks
+        all().each { task ->
+            // Here you can configure the task by name of each codegen plugin
+            task.plugins {
+                naming {
+                    outputSubDir = "java"
+                }
+            }
+        }
+    }
+}
+clean {
+    delete protobuf.generatedFilesBaseDir
+}
+sourceSets {
+    main.java.srcDir("${protobuf.generatedFilesBaseDir}/main/java")
+}
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+// copy spring-configuration-metadata.json when it's generated
+compileJava.doLast {
+    project.copy {
+        from("${sourceSets.main.java.outputDir}/META-INF") {
+            include "*.json"
+        }
+        into "src/main/resources/META-INF"
+    }
+}
+
+dependencies {
+    // lombok
+    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
+
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    // protobuf
+    implementation("com.google.protobuf:protobuf-java:$protobufJavaVersion")
+
+    //    implementation("xyz.codemeans.protobuf4j:protobuf4j-orm-starter:$protobuf4jVersion")
+    implementation(project(":protobuf4j-orm-starter"))
+
+    // spring
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation('org.springframework.boot:spring-boot-starter-jdbc')
+
+    // db
+    implementation("mysql:mysql-connector-java:$mysqlConnectorVersion")
+
+}

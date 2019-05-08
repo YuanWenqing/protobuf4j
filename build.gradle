@@ -15,6 +15,7 @@ buildscript {
         classpath "com.google.protobuf:protobuf-gradle-plugin:$protobufPluginVersion"
         // http://ajoberstar.org/grgit/grgit-reference.html
         classpath "org.ajoberstar.grgit:grgit-gradle:$grgitGradleVersion"
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
 
@@ -96,6 +97,9 @@ subprojects {
 }
 
 project(":test-proto") {
+    ext.publishable = false
+}
+project(":example") {
     ext.publishable = false
 }
 // 配置发布
