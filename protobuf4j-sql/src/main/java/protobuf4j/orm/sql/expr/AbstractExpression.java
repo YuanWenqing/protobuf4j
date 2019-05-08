@@ -12,21 +12,21 @@ import protobuf4j.orm.sql.IExpression;
 public abstract class AbstractExpression extends AbstractSqlObject implements IExpression {
   @Override
   public IExpression and(IExpression right) {
-    return LogicalExpr.and(this, right);
+    return Expressions.and(this, right);
   }
 
   @Override
   public IExpression or(IExpression right) {
-    return LogicalExpr.or(this, right);
+    return Expressions.or(this, right);
   }
 
   @Override
   public IExpression xor(IExpression right) {
-    return LogicalExpr.xor(this, right);
+    return Expressions.xor(this, right);
   }
 
   @Override
   public IExpression not() {
-    return LogicalExpr.not(this);
+    return Expressions.not(this);
   }
 }
