@@ -34,7 +34,7 @@ protobuf4j.datasource.auto-enable=<if-auto-configuration-enalbed:default true>
 
 ### Java
 
-Example: [example](example/src/main)
+Example Code: [example](example/src/main)
 
 interface
 
