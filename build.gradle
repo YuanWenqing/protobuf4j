@@ -1,19 +1,23 @@
 buildscript {
     repositories {
         mavenLocal()
-        if (project.hasProperty("nexus")) {
-            maven {
-                name "nexus"
-                url property("nexus.repo.url")
-                credentials {
-                    username property("nexus.username")
-                    password property("nexus.password")
-                }
-            }
-        } else {
-            mavenCentral()
-            gradlePluginPortal()
+        maven {
+            name "alimaven"
+            url "http://maven.aliyun.com/nexus/content/groups/public/"
         }
+//        if (project.hasProperty("maven")) {
+//            mavenCentral()
+//            gradlePluginPortal()
+//        } else {
+//            maven {
+//                name "nexus"
+//                url property("nexus.repo.url")
+//                credentials {
+//                    username property("nexus.username")
+//                    password property("nexus.password")
+//                }
+//            }
+//        }
     }
     dependencies {
         classpath "com.google.protobuf:protobuf-gradle-plugin:$protobufPluginVersion"
@@ -50,17 +54,9 @@ subprojects {
 
     repositories {
         mavenLocal()
-        if (project.hasProperty("nexus")) {
-            maven {
-                name "nexus"
-                url property("nexus.repo.url")
-                credentials {
-                    username property("nexus.username")
-                    password property("nexus.password")
-                }
-            }
-        } else {
-            mavenCentral()
+        maven {
+            name "alimaven"
+            url "http://maven.aliyun.com/nexus/content/groups/public/"
         }
     }
 
