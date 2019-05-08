@@ -88,6 +88,31 @@ public Map<Long, Example> getExamples(Collection<Long> ids) {
 }
 ~~~
 
+## SQL Usage
+
+~~~java
+# condition
+
+
+# pagination
+
+
+# select specified columns
+
+
+# update whole message with different fields
+
+
+# update specified columns
+
+
+# complex insert/select/update/delete
+
+
+~~~
+
+
+
 ## Reference
 
 * `naming`: a Protobuf codegen plugin to generate *Naming class containing field naming constatns, see <https://github.com/YuanWenqing/protoplugin>
