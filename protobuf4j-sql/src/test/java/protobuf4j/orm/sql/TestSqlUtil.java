@@ -3,6 +3,7 @@ package protobuf4j.orm.sql;
 import com.google.common.collect.Lists;
 import org.junit.Test;
 import protobuf4j.orm.sql.expr.ArithmeticOp;
+import protobuf4j.test.proto.TestModel;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +12,11 @@ import static org.junit.Assert.*;
  * date: 2018/7/17
  */
 public class TestSqlUtil {
+  @Test
+  public void testTableName() {
+    assertEquals("msg_a", SqlUtil.defaultTableName(TestModel.MsgA.class));
+  }
+
   @Test
   public void testLike() {
     assertEquals("%a", SqlUtil.likeSuffix("a"));
