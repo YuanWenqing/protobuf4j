@@ -11,8 +11,7 @@ import protobuf4j.orm.dao.PrimaryKeyProtoMessageDao;
  * Date: 2019/5/8
  */
 @Repository
-public class ExampleDaoImpl extends PrimaryKeyProtoMessageDao<String, Example>
-    implements ExampleDao {
+public class ExampleDaoImpl extends PrimaryKeyProtoMessageDao<Long, Example> implements ExampleDao {
   public ExampleDaoImpl() {
     super(Example.class, ExampleNaming.ID);
   }

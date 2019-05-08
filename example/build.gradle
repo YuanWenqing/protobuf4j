@@ -41,6 +41,10 @@ compileJava.doLast {
 }
 
 dependencies {
+    // lombok
+    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
+
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     // protobuf
@@ -51,8 +55,9 @@ dependencies {
 
     // spring
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation('org.springframework.boot:spring-boot-starter-jdbc')
 
     // db
-    implementation("com.h2database:h2:$h2DatabaseVersion") // embedded h2 database and jdbc driver
+    implementation("mysql:mysql-connector-java:$mysqlConnectorVersion")
 
 }

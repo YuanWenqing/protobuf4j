@@ -1,6 +1,8 @@
 package protobuf4j.example;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import protobuf4j.core.ProtobufObjectMapper;
 
 /**
  * Author: yuanwq
@@ -8,4 +10,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class ExampleConfiguration {
+  @Bean
+  public ProtobufObjectMapper protobufObjectMapper() {
+    return ProtobufObjectMapper.DEFAULT;
+  }
+
 }
