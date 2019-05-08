@@ -6,7 +6,7 @@ import protobuf4j.orm.sql.expr.Value;
 
 /**
  * 构建sql语句元素的util
- *
+ * <p>
  * author: yuanwq
  * date: 2018/7/16
  */
@@ -31,6 +31,10 @@ public abstract class QueryCreator {
 
   public static FromClause from(String tableName) {
     return new FromClause(table(tableName));
+  }
+
+  public static FromClause fromType(Class<?> messageType) {
+    return new FromClause(table(SqlUtil.defaultTableName(messageType)));
   }
 
   public static ITableRef table(String tableName) {

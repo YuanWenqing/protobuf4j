@@ -34,6 +34,8 @@ protobuf4j.datasource.auto-enable=<if-auto-configuration-enalbed:default true>
 
 ### Java
 
+Example: [example](example/src/main)
+
 interface
 
 ~~~java
@@ -91,23 +93,26 @@ public Map<Long, Example> getExamples(Collection<Long> ids) {
 ## SQL Usage
 
 ~~~java
-# condition
+// condition
+List<IExpression> conds = Lists.newArrayList();
+conds.add(FieldAndValue.like(ExampleNaming.NAME, SqlUtil.likePrefix(prefix)));
+conds.add(FieldAndValue.gte(ExampleNaming.ID, beg));
+conds.add(FieldAndValue.lt(ExampleNaming.ID, end));
+IExpression allAndCond = LogicalExpr.and(conds));
 
+// pagination
+PaginationClause.newBuilder(limit).buildByOffset(offset);
+PaginationClause.newBuilder(limit).buildByPageNo(pn)
 
-# pagination
+// select specified columns
+SelectClause selectClause = new SelectClause();
+selectClause.select(ExampleNaming.NAME);
+FromClause fromClause = QueryCreator.fromType(Example.class);
+SelectSql sql = new SelectSql(selectClause, fromClause);
+exampleDao.doSelect(sql, new SingleColumnRowMapper<>(String.class));
 
-
-# select specified columns
-
-
-# update whole message with different fields
-
-
-# update specified columns
-
-
-# complex insert/select/update/delete
-
+// update whole message with different fields
+exampleDao.updateMessageByPrimaryKey(newValue, oldValue);
 
 ~~~
 

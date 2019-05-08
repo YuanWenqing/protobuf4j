@@ -4,14 +4,16 @@ import com.google.common.collect.Lists;
 import com.google.protobuf.util.Timestamps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.web.bind.annotation.*;
 import protobuf4j.example.api.DataNotFoundException;
 import protobuf4j.example.dao.ExampleDao;
 import protobuf4j.example.proto.Example;
 import protobuf4j.example.proto.naming.ExampleNaming;
-import protobuf4j.orm.sql.FieldAndValue;
-import protobuf4j.orm.sql.IExpression;
-import protobuf4j.orm.sql.SqlUtil;
+import protobuf4j.orm.sql.*;
+import protobuf4j.orm.sql.clause.FromClause;
+import protobuf4j.orm.sql.clause.PaginationClause;
+import protobuf4j.orm.sql.clause.SelectClause;
 import protobuf4j.orm.sql.clause.WhereClause;
 import protobuf4j.orm.sql.expr.LogicalExpr;
 
@@ -31,7 +33,9 @@ public class ExampleController {
   @GetMapping
   public List<Example> list(@RequestParam(value = "prefix", defaultValue = "") String prefix,
       @RequestParam(value = "beg", defaultValue = "0") long beg,
-      @RequestParam(value = "end", defaultValue = "0") long end) {
+      @RequestParam(value = "end", defaultValue = "0") long end,
+      @RequestParam(value = "pn", defaultValue = "1") int pn,
+      @RequestParam(value = "limit", defaultValue = "10") int limit) {
     List<IExpression> conds = Lists.newArrayList();
     if (StringUtils.isNotBlank(prefix)) {
       conds.add(FieldAndValue.like(ExampleNaming.NAME, SqlUtil.likePrefix(prefix)));
@@ -45,7 +49,17 @@ public class ExampleController {
     WhereClause whereClause = new WhereClause();
     whereClause.setCond(LogicalExpr.and(conds));
     whereClause.orderBy().asc(ExampleNaming.ID);
+    whereClause.setPagination(PaginationClause.newBuilder(limit).buildByPageNo(pn));
     return exampleDao.selectByWhere(whereClause);
+  }
+
+  @GetMapping("names")
+  public List<String> listNames() {
+    SelectClause selectClause = new SelectClause();
+    selectClause.select(ExampleNaming.NAME);
+    FromClause fromClause = QueryCreator.fromType(Example.class);
+    SelectSql sql = new SelectSql(selectClause, fromClause);
+    return exampleDao.doSelect(sql, new SingleColumnRowMapper<>(String.class));
   }
 
   @GetMapping("{id}")

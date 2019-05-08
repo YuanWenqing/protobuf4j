@@ -1,7 +1,7 @@
 package protobuf4j.orm.dao;
 
 import org.junit.Test;
-import protobuf4j.orm.util.OrmUtils;
+import protobuf4j.orm.sql.SqlUtil;
 import protobuf4j.test.proto.TestModel;
 
 import static org.junit.Assert.*;
@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 public class TestOrmUtils {
   @Test
   public void testTableName() {
-    assertEquals("msg_a", OrmUtils.tableName(TestModel.MsgA.class));
+    assertEquals("msg_a", SqlUtil.defaultTableName(TestModel.MsgA.class));
   }
 
 }
