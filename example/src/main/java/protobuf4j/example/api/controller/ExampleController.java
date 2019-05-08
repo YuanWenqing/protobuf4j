@@ -22,13 +22,14 @@ import java.util.List;
  * Author: yuanwq
  * Date: 2019/5/8
  */
-@RestController("/api/examples")
+@RestController
+@RequestMapping("/api/examples")
 public class ExampleController {
   @Autowired
   private ExampleDao exampleDao;
 
   @GetMapping
-  public List<Example> list(@RequestParam("prefix") String prefix,
+  public List<Example> list(@RequestParam(value = "prefix", defaultValue = "") String prefix,
       @RequestParam(value = "beg", defaultValue = "0") long beg,
       @RequestParam(value = "end", defaultValue = "0") long end) {
     List<IExpression> conds = Lists.newArrayList();
