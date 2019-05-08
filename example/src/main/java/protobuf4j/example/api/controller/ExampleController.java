@@ -15,6 +15,7 @@ import protobuf4j.orm.sql.clause.FromClause;
 import protobuf4j.orm.sql.clause.PaginationClause;
 import protobuf4j.orm.sql.clause.SelectClause;
 import protobuf4j.orm.sql.clause.WhereClause;
+import protobuf4j.orm.sql.expr.Expressions;
 import protobuf4j.orm.sql.expr.LogicalExpr;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +48,7 @@ public class ExampleController {
       conds.add(FieldAndValue.lt(ExampleNaming.ID, end));
     }
     WhereClause whereClause = new WhereClause();
-    whereClause.setCond(LogicalExpr.and(conds));
+    whereClause.setCond(Expressions.and(conds));
     whereClause.orderBy().asc(ExampleNaming.ID);
     whereClause.setPagination(PaginationClause.newBuilder(limit).buildByPageNo(pn));
     return exampleDao.selectByWhere(whereClause);

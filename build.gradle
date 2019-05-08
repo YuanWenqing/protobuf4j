@@ -12,6 +12,7 @@ buildscript {
             }
         } else {
             mavenCentral()
+            gradlePluginPortal()
         }
     }
     dependencies {
