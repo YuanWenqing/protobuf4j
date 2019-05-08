@@ -5,8 +5,6 @@ import com.google.protobuf.Message;
 import protobuf4j.orm.sql.FieldAndValue;
 import protobuf4j.orm.sql.IExpression;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +18,7 @@ public class PrimaryKeyProtoMessageDao<K, T extends Message> extends ProtoMessag
     implements IPrimaryKeyMessageDao<K, T> {
   protected final String primaryKey;
 
-  public PrimaryKeyProtoMessageDao(@Nonnull Class<T> messageType, String primaryKey) {
+  public PrimaryKeyProtoMessageDao(Class<T> messageType, String primaryKey) {
     super(messageType);
     this.primaryKey = primaryKey;
   }
@@ -30,9 +28,8 @@ public class PrimaryKeyProtoMessageDao<K, T extends Message> extends ProtoMessag
     return primaryKey;
   }
 
-  @Nullable
   @Override
-  public T selectOneByPrimaryKey(@Nonnull K key) {
+  public T selectOneByPrimaryKey(K key) {
     return selectOneByCond(FieldAndValue.eq(primaryKey, key));
   }
 

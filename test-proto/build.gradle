@@ -1,5 +1,3 @@
-ext.publishable = false
-
 // 测试用的proto module
 // https://github.com/google/protobuf-gradle-plugin
 apply plugin: "com.google.protobuf"

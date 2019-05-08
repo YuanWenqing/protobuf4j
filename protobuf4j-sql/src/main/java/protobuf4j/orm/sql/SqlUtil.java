@@ -1,5 +1,6 @@
 package protobuf4j.orm.sql;
 
+import com.google.common.base.CaseFormat;
 import org.apache.commons.lang3.StringUtils;
 import protobuf4j.orm.sql.clause.SelectItem;
 import protobuf4j.orm.sql.expr.AbstractExpression;
@@ -15,6 +16,10 @@ import java.util.List;
  * date: 2018/7/15
  */
 public abstract class SqlUtil {
+  public static String defaultTableName(Class<?> cls) {
+    return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, cls.getSimpleName());
+  }
+
   public static final SelectItem SELECT_STAR = new SelectItem(new RawExpr("*")) {
     @Override
     public void setAlias(String alias) {

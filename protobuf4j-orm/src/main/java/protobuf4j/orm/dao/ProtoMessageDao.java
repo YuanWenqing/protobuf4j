@@ -19,7 +19,6 @@ import protobuf4j.orm.converter.IFieldResolver;
 import protobuf4j.orm.sql.*;
 import protobuf4j.orm.sql.clause.*;
 import protobuf4j.orm.sql.expr.RawExpr;
-import protobuf4j.orm.util.OrmUtils;
 import protobuf4j.orm.util.ThreadLocalTimer;
 
 import javax.annotation.Nonnull;
@@ -77,7 +76,7 @@ public class ProtoMessageDao<T extends Message> implements IMessageDao<T>, Initi
     this.fieldResolver = checkNotNull(fieldResolver);
     this.messageHelper = ProtoMessageHelper.getHelper(messageType);
     this.messageMapper = new ProtoMessageRowMapper<>(messageHelper, fieldResolver);
-    this.tableName = StringUtils.defaultIfBlank(tableName, OrmUtils.tableName(messageType));
+    this.tableName = StringUtils.defaultIfBlank(tableName, SqlUtil.defaultTableName(messageType));
     this.fromClause = QueryCreator.from(this.tableName);
 
     this.daoLogger = LoggerFactory

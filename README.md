@@ -24,7 +24,7 @@ A Facility framework to develop with Google Protobuf, including:
 implementation("xyz.codemeans.protobuf4j:protobuf4j-orm-starter:$protobuf4jVersion")
 ~~~
 
-The latest version is `protobuf4jVersion=0.9.3.alpha`
+The latest version can be found in maven central repository.
 
 ### Properties
 
@@ -33,6 +33,8 @@ protobuf4j.datasource.auto-enable=<if-auto-configuration-enalbed:default true>
 ~~~
 
 ### Java
+
+Example Code: [example](example/src/main)
 
 interface
 
@@ -87,6 +89,34 @@ public Map<Long, Example> getExamples(Collection<Long> ids) {
   return exampleDao.selectMultiByPrimaryKey(ids);
 }
 ~~~
+
+## SQL Usage
+
+~~~java
+// condition
+List<IExpression> conds = Lists.newArrayList();
+conds.add(FieldAndValue.like(ExampleNaming.NAME, SqlUtil.likePrefix(prefix)));
+conds.add(FieldAndValue.gte(ExampleNaming.ID, beg));
+conds.add(FieldAndValue.lt(ExampleNaming.ID, end));
+IExpression allAndCond = LogicalExpr.and(conds));
+
+// pagination
+PaginationClause.newBuilder(limit).buildByOffset(offset);
+PaginationClause.newBuilder(limit).buildByPageNo(pn)
+
+// select specified columns
+SelectClause selectClause = new SelectClause();
+selectClause.select(ExampleNaming.NAME);
+FromClause fromClause = QueryCreator.fromType(Example.class);
+SelectSql sql = new SelectSql(selectClause, fromClause);
+exampleDao.doSelect(sql, new SingleColumnRowMapper<>(String.class));
+
+// update whole message with different fields
+exampleDao.updateMessageByPrimaryKey(newValue, oldValue);
+
+~~~
+
+
 
 ## Reference
 

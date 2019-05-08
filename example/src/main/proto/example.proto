@@ -1,0 +1,20 @@
+syntax = "proto3";
+package example;
+
+// 测试用的proto定义
+
+import "google/protobuf/timestamp.proto";
+
+option java_package = "protobuf4j.example.proto";
+option java_outer_classname = "ExampleProtos";
+option java_multiple_files = true;
+
+message Example {
+  int64 id = 1;
+  string name = 2;
+  repeated string tag = 3;
+  map<string, string> payload = 4;
+
+  google.protobuf.Timestamp create_time = 10;
+  google.protobuf.Timestamp update_time = 11;
+}

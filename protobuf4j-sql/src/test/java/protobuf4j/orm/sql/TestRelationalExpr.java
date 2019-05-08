@@ -141,8 +141,8 @@ public class TestRelationalExpr {
       assertTrue(betweenExpr.getMin() instanceof Value);
       assertTrue(betweenExpr.getMax() instanceof Value);
 
-      expr = RelationalExpr
-          .between(Column.of("a"), FieldAndValue.add("b", 1), FieldAndValue.mod("c", 2));
+      expr =
+          Expressions.between(Column.of("a"), FieldAndValue.add("b", 1), FieldAndValue.mod("c", 2));
       System.out.println(expr);
       assertEquals("a BETWEEN (b+?) AND (c MOD ?)",
           expr.toSqlTemplate(new StringBuilder()).toString());
@@ -254,7 +254,7 @@ public class TestRelationalExpr {
 
   @Test
   public void testEmbedding() {
-    RelationalExpr expr = RelationalExpr.eq(FieldAndValue.eq("a", 1), FieldAndField.gt("a", "b"));
+    RelationalExpr expr = Expressions.eq(FieldAndValue.eq("a", 1), FieldAndField.gt("a", "b"));
     System.out.println(expr);
     assertEquals("(a=?)=(a>b)", expr.toSqlTemplate(new StringBuilder()).toString());
     assertEquals("(a=1)=(a>b)", expr.toSolidSql(new StringBuilder()).toString());
@@ -263,11 +263,11 @@ public class TestRelationalExpr {
     assertEquals("a", sqlValues.get(0).getField());
     assertEquals(1, sqlValues.get(0).getValue());
 
-    expr = RelationalExpr.gt(FieldAndField.add("a", "b"), FieldAndField.multiply("c", "d"));
+    expr = Expressions.gt(FieldAndField.add("a", "b"), FieldAndField.multiply("c", "d"));
     System.out.println(expr);
     assertEquals("(a+b)>(c*d)", expr.toSqlTemplate(new StringBuilder()).toString());
 
-    expr = RelationalExpr.lt(FieldAndField.eq("a", "b"), FieldAndField.and("c", "d"));
+    expr = Expressions.lt(FieldAndField.eq("a", "b"), FieldAndField.and("c", "d"));
     System.out.println(expr);
     assertEquals("(a=b)<(c AND d)", expr.toSqlTemplate(new StringBuilder()).toString());
   }
