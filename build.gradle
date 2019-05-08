@@ -31,15 +31,11 @@ buildscript {
 apply plugin: "org.ajoberstar.grgit"
 version = "1.0.0"
 if (!project.hasProperty("release")) {
-    int commits = grgit.log().size()
-//    String abbreviatedId = grgit.head().abbreviatedId
     String branch = grgit.branch.current().name
-    if (branch == 'master') {
-        version = "${version}.${commits}"
-    } else {
-        String prefix = branch.replace("/", "-")
-        version = "${prefix}-${version}.${commits}"
-    }
+    String prefix = branch.replace("/", "-")
+    int commits = grgit.log().size()
+    String abbreviatedId = grgit.head().abbreviatedId
+    version = "${prefix}-${version}.${commits}.${abbreviatedId}"
 }
 println("version=$version")
 
