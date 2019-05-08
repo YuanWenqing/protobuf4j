@@ -3,7 +3,7 @@ buildscript {
         mavenLocal()
         maven {
             name "nexus"
-            url "https://nexus.ilovelook.cn/repository/maven-public/"
+            url property("nexus.repo.url")
             credentials {
                 username property("nexus.username")
                 password property("nexus.password")
@@ -47,7 +47,7 @@ subprojects {
         mavenLocal()
         maven {
             name "nexus"
-            url "https://nexus.ilovelook.cn/repository/maven-public/"
+            url property("nexus.repo.url")
             credentials {
                 username property("nexus.username")
                 password property("nexus.password")
