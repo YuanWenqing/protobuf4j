@@ -1,15 +1,18 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven {
-            name "nexus"
-            url property("nexus.repo.url")
-            credentials {
-                username property("nexus.username")
-                password property("nexus.password")
+        if (project.hasProperty("nexus")) {
+            maven {
+                name "nexus"
+                url property("nexus.repo.url")
+                credentials {
+                    username property("nexus.username")
+                    password property("nexus.password")
+                }
             }
+        } else {
+            mavenCentral()
         }
-//        mavenCentral()
     }
     dependencies {
         classpath "com.google.protobuf:protobuf-gradle-plugin:$protobufPluginVersion"
@@ -46,15 +49,18 @@ subprojects {
 
     repositories {
         mavenLocal()
-        maven {
-            name "nexus"
-            url property("nexus.repo.url")
-            credentials {
-                username property("nexus.username")
-                password property("nexus.password")
+        if (project.hasProperty("nexus")) {
+            maven {
+                name "nexus"
+                url property("nexus.repo.url")
+                credentials {
+                    username property("nexus.username")
+                    password property("nexus.password")
+                }
             }
+        } else {
+            mavenCentral()
         }
-//        mavenCentral()
     }
 
     apply plugin: "java"
