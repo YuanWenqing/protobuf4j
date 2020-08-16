@@ -28,7 +28,7 @@ public class BooleanCodec implements ICodec<Boolean> {
   @Override
   public Boolean decode(@Nullable byte[] data) {
     if (data == null) return null;
-    return Boolean.valueOf(TRUE.equals(nativeCodec().decode(data)));
+    return TRUE.equals(nativeCodec().decode(data));
   }
 
   @Override

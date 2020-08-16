@@ -68,7 +68,7 @@ public abstract class Codecs {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> byte[] encode(@Nullable T v) {
+  public static <T> byte[] encode(@Nullable T v) throws IOException {
     if (v == null) {
       return null;
     }
