@@ -14,18 +14,30 @@ import static org.junit.Assert.*;
  * date: 2018/7/6
  */
 public class TestObjectMapper {
-  ObjectMapper mapper = ProtobufObjectMapper.DEFAULT;
+  @Test
+  public void testMapperDefault() throws IOException {
+    ObjectMapper mapper = ProtobufObjectMapper.DEFAULT;
+    testJson(mapper);
+    testDecode(mapper);
+    testEnum(mapper);
+  }
 
   @Test
-  public void testJson() throws IOException {
+  public void testMapperCopy() throws IOException {
+    ObjectMapper mapper2 = ProtobufObjectMapper.DEFAULT.copy();
+    testJson(mapper2);
+    testDecode(mapper2);
+    testEnum(mapper2);
+  }
+
+  public void testJson(ObjectMapper mapper) throws IOException {
     System.out.println(
         mapper.writerWithDefaultPrettyPrinter().writeValueAsString(MsgsForTest.allSetMsgA));
     System.out
         .println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(MsgsForTest.emtpyMsgA));
   }
 
-  @Test
-  public void testDecode() throws IOException {
+  public void testDecode(ObjectMapper mapper) throws IOException {
     assertEquals(MsgsForTest.emtpyMsgA,
         mapper.readValue(mapper.writeValueAsString(MsgsForTest.emtpyMsgA), TestModel.MsgA.class));
     assertEquals(MsgsForTest.allSetMsgA,
@@ -37,8 +49,7 @@ public class TestObjectMapper {
         mapper.readValue(mapper.writeValueAsBytes(MsgsForTest.allSetMsgA), TestModel.MsgA.class));
   }
 
-  @Test
-  public void testEnum() throws IOException {
+  public void testEnum(ObjectMapper mapper) throws IOException {
     for (TestModel.EnumA enumA : TestModel.EnumA.values()) {
       if (enumA == TestModel.EnumA.UNRECOGNIZED) {
         continue;
