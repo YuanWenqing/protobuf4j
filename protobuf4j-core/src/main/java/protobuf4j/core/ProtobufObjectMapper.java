@@ -21,30 +21,32 @@ import java.util.concurrent.ConcurrentMap;
  * author: yuanwq
  * date: 2018/7/6
  */
-public abstract class ProtobufObjectMapper extends ObjectMapper {
+public class ProtobufObjectMapper extends ObjectMapper {
   public ProtobufObjectMapper() {
     config();
   }
 
-  protected abstract void config();
+  protected ProtobufObjectMapper(ProtobufObjectMapper src) {
+    super(src);
+  }
 
-  public static final ProtobufObjectMapper DEFAULT = new ProtobufObjectMapper() {
-    @Override
-    protected void config() {
-      this.registerModule(new ProtobufModule2());
-      this.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-      this.setSerializationInclusion(JsonInclude.Include.ALWAYS);
-      this.enable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
-      this.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    }
+  protected void config() {
+    this.registerModule(new ProtobufModule2());
+    this.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+    this.setSerializationInclusion(JsonInclude.Include.ALWAYS);
+    this.enable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
+    this.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+  }
 
-    @Override
-    public MutableConfigOverride configOverride(Class<?> type) {
-      return super.configOverride(type);
-    }
-  };
+  @Override
+  public ProtobufObjectMapper copy() {
+    _checkInvalidCopy(ProtobufObjectMapper.class);
+    return new ProtobufObjectMapper(this);
+  }
 
-  private static class ProtobufModule2 extends ProtobufModule {
+  public static final ProtobufObjectMapper DEFAULT = new ProtobufObjectMapper();
+
+  protected static class ProtobufModule2 extends ProtobufModule {
     @Override
     public void setupModule(SetupContext context) {
       super.setupModule(context);
@@ -58,7 +60,7 @@ public abstract class ProtobufObjectMapper extends ObjectMapper {
     }
   }
 
-  private static class ProtoEnumSerializer extends StdScalarSerializer<ProtocolMessageEnum> {
+  protected static class ProtoEnumSerializer extends StdScalarSerializer<ProtocolMessageEnum> {
 
     protected ProtoEnumSerializer() {
       super(ProtocolMessageEnum.class);
@@ -76,7 +78,7 @@ public abstract class ProtobufObjectMapper extends ObjectMapper {
   }
 
   @SuppressWarnings("unchecked")
-  private static class ProtoEnumDeserializerFactory extends Deserializers.Base {
+  protected static class ProtoEnumDeserializerFactory extends Deserializers.Base {
     private final ConcurrentMap<Class<? extends ProtocolMessageEnum>, ProtoEnumDeserializer<?>>
         deserializerCache = new ConcurrentHashMap<>();
 
@@ -103,7 +105,7 @@ public abstract class ProtobufObjectMapper extends ObjectMapper {
   }
 
   @SuppressWarnings("unchecked")
-  private static class ProtoEnumDeserializer<T extends ProtocolMessageEnum>
+  protected static class ProtoEnumDeserializer<T extends ProtocolMessageEnum>
       extends StdDeserializer<T> {
     private final Class<T> cls;
 

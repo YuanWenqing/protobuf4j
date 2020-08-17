@@ -55,7 +55,7 @@ public class ProtoEnumCodec<T extends ProtocolMessageEnum> implements ICodec<T> 
   }
 
   @Override
-  public byte[] encode(@Nullable T v) {
+  public byte[] encode(@Nullable T v) throws IOException {
     if (v == null) return null;
     if ("UNRECOGNIZED".equals(String.valueOf(v))) {
       return nativeCodec().encode(-1);

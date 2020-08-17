@@ -14,6 +14,6 @@ public interface ICodec<T> {
 
   T decode(@Nullable byte[] data) throws IOException;
 
-  byte[] encode(@Nullable T v);
+  byte[] encode(@Nullable T v) throws IOException;
 
 }
