@@ -26,6 +26,10 @@ public class ProtobufObjectMapper extends ObjectMapper {
     config();
   }
 
+  protected ProtobufObjectMapper(ProtobufObjectMapper src) {
+    super(src);
+  }
+
   protected void config() {
     this.registerModule(new ProtobufModule2());
     this.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -37,6 +41,12 @@ public class ProtobufObjectMapper extends ObjectMapper {
   @Override
   public MutableConfigOverride configOverride(Class<?> type) {
     return super.configOverride(type);
+  }
+
+  @Override
+  public ProtobufObjectMapper copy() {
+    _checkInvalidCopy(ProtobufObjectMapper.class);
+    return new ProtobufObjectMapper(this);
   }
 
   public static final ProtobufObjectMapper DEFAULT = new ProtobufObjectMapper();
