@@ -39,11 +39,6 @@ public class ProtobufObjectMapper extends ObjectMapper {
   }
 
   @Override
-  public MutableConfigOverride configOverride(Class<?> type) {
-    return super.configOverride(type);
-  }
-
-  @Override
   public ProtobufObjectMapper copy() {
     _checkInvalidCopy(ProtobufObjectMapper.class);
     return new ProtobufObjectMapper(this);
