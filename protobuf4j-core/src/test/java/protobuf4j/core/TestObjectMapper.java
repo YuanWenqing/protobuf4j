@@ -30,14 +30,14 @@ public class TestObjectMapper {
     testEnum(mapper2);
   }
 
-  public void testJson(ObjectMapper mapper) throws IOException {
+  private void testJson(ObjectMapper mapper) throws IOException {
     System.out.println(
         mapper.writerWithDefaultPrettyPrinter().writeValueAsString(MsgsForTest.allSetMsgA));
     System.out
         .println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(MsgsForTest.emtpyMsgA));
   }
 
-  public void testDecode(ObjectMapper mapper) throws IOException {
+  private void testDecode(ObjectMapper mapper) throws IOException {
     assertEquals(MsgsForTest.emtpyMsgA,
         mapper.readValue(mapper.writeValueAsString(MsgsForTest.emtpyMsgA), TestModel.MsgA.class));
     assertEquals(MsgsForTest.allSetMsgA,
@@ -49,7 +49,7 @@ public class TestObjectMapper {
         mapper.readValue(mapper.writeValueAsBytes(MsgsForTest.allSetMsgA), TestModel.MsgA.class));
   }
 
-  public void testEnum(ObjectMapper mapper) throws IOException {
+  private void testEnum(ObjectMapper mapper) throws IOException {
     for (TestModel.EnumA enumA : TestModel.EnumA.values()) {
       if (enumA == TestModel.EnumA.UNRECOGNIZED) {
         continue;
